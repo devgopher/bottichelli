@@ -4,8 +4,6 @@ using Botticelli.Framework.Extensions;
 using Botticelli.Framework.Telegram;
 using Botticelli.Framework.Telegram.Extensions;
 using Botticelli.Schedule.Quartz.Extensions;
-using MessagingSample.Common.Commands;
-using MessagingSample.Common.Commands.Processors;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
