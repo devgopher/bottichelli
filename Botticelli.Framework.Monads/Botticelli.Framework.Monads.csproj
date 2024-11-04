@@ -1,0 +1,49 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+	<PropertyGroup>
+		<TargetFramework>net8.0</TargetFramework>
+		<ImplicitUsings>enable</ImplicitUsings>
+		<Nullable>enable</Nullable>
+		<Version>0.6.0</Version>
+		<Title>Botticelli.Framework.Monads</Title>
+		<Authors>BotticelliBots</Authors>
+		<PackageIcon>new_logo_compact.png</PackageIcon>
+		<Description>Botticelli framework for making bots easily</Description>
+		<Copyright>BotticelliBots</Copyright>
+		<PackageProjectUrl>https://botticellibots.com</PackageProjectUrl>
+		<RepositoryUrl>https://github.com/devgopher/botticelli</RepositoryUrl>
+		<PackageTags>telegram, bots, botticelli, vk, facebook, wechat, whatsapp</PackageTags>
+		<GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+	</PropertyGroup>
+
+	<ItemGroup>
+		<None Include="..\new_logo_compact.png">
+			<Pack>True</Pack>
+			<PackagePath></PackagePath>
+			<Link>new_logo_compact.png</Link>
+		</None>
+	</ItemGroup>
+	<ItemGroup>
+		<PackageReference Include="EasyCaching.Core" Version="1.9.2" />
+		<PackageReference Include="EasyCaching.InMemory" Version="1.9.2" />
+		<PackageReference Include="LanguageExt.Core" Version="4.4.9" />
+		<PackageReference Include="LanguageExt.Transformers" Version="4.4.8" />
+		<PackageReference Include="Microsoft.Extensions.Configuration.Abstractions" Version="8.0.0"/>
+		<PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="8.0.1" />
+		<PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="8.0.2" />
+		<PackageReference Include="Microsoft.Extensions.Hosting.Abstractions" Version="8.0.1" />
+		<PackageReference Include="Microsoft.Extensions.Http" Version="8.0.1" />
+		<PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="8.0.2" />
+		<PackageReference Include="NLog.Extensions.Logging" Version="5.3.14" />
+	</ItemGroup>
+	<ItemGroup>
+		<None Include="..\logo.jpg">
+			<Pack>True</Pack>
+			<PackagePath>\</PackagePath>
+		</None>
+	</ItemGroup>
+	<ItemGroup>
+	  <ProjectReference Include="..\Botticelli.Bot.Interfaces\Botticelli.Bot.Interfaces.csproj" />
+	  <ProjectReference Include="..\Botticelli.Framework\Botticelli.Framework.csproj" />
+	</ItemGroup>
+</Project>
