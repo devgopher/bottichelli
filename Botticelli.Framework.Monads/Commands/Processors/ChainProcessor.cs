@@ -31,7 +31,7 @@ public abstract class ChainProcessor<TCommand> : IChainProcessor<TCommand> where
         }
     }
 
-    public abstract Task InnerProcessAsync(TCommand command);
-    
-    public abstract Task InnerErrorProcessAsync(TCommand command);
+    protected abstract Task InnerProcessAsync(TCommand command);
+
+    protected abstract Task InnerErrorProcessAsync(TCommand command);
 }
