@@ -1,7 +1,7 @@
 namespace Botticelli.Framework.Monads.Commands.Context;
 
 /// <summary>
-/// A context for monad-based commands
+///     A context for monad-based commands
 /// </summary>
 public interface ICommandContext
 {
