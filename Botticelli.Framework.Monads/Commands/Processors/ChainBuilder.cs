@@ -5,21 +5,32 @@ using Microsoft.Extensions.Logging;
 
 namespace Botticelli.Framework.Monads.Commands.Processors;
 
-public class ChainBuilder<TCommand> where TCommand : IChainCommand
+public class ChainBuilder<TCommand>(IServiceCollection services)
+    where TCommand : IChainCommand
 {
     private readonly List<IChainProcessor<TCommand>> _chain = new(5);
     private ChainRunner<TCommand>? _runner;
-    
-    public ChainBuilder<TCommand> Add(IChainProcessor<TCommand> processor)
+
+    public ChainBuilder<TCommand> AddElement(IChainProcessor<TCommand> processor)
     {
         _chain.Add(processor);
         
         return this;
     }
 
-    public ChainRunner<TCommand> Build(IServiceProvider sp)
+    public ChainBuilder<TCommand> AddElement<TProcessor>() 
+        where TProcessor : IChainProcessor<TCommand>
     {
-        _runner ??= new ChainRunner<TCommand>(_chain, sp.GetRequiredService<ILogger<ChainRunner<TCommand>>>());
+        var processor = services.BuildServiceProvider()
+            .GetRequiredService<TProcessor>();
+        
+        return AddElement(processor);
+    }
+    
+    public ChainRunner<TCommand> Build()
+    {
+        _runner ??= new ChainRunner<TCommand>(_chain, services.BuildServiceProvider()
+            .GetRequiredService<ILogger<ChainRunner<TCommand>>>());
         
         return _runner;
     }

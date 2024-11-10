@@ -1,48 +1,43 @@
 ﻿using System.Reflection;
-using Botticelli.Client.Analytics;
-using Botticelli.Framework.Commands.Processors;
-using Botticelli.Framework.Commands.Validators;
 using Botticelli.Framework.Controls.Parsers;
+using Botticelli.Framework.Monads.Commands.Context;
+using Botticelli.Framework.Monads.Commands.Processors;
+using Botticelli.Framework.Monads.Commands.Result;
 using Botticelli.Framework.SendOptions;
 using Botticelli.Scheduler;
 using Botticelli.Scheduler.Interfaces;
 using Botticelli.Shared.API.Client.Requests;
 using Botticelli.Shared.Constants;
 using Botticelli.Shared.ValueObjects;
-using Microsoft.Extensions.Logging;
 
 namespace TelegramMonadsBasedBot.Commands.Processors;
 
-public class StartCommandProcessor<TReplyMarkup> : CommandProcessor<StartCommand> where TReplyMarkup : class
+public class StartCommandProcessor<TReplyMarkup> : ChainProcessor<StartCommand>
+    where TReplyMarkup : class
 {
     private readonly IJobManager _jobManager;
     private readonly SendOptionsBuilder<TReplyMarkup> _options;
-    
+
     public StartCommandProcessor(ILogger<StartCommandProcessor<TReplyMarkup>> logger,
-                                 ICommandValidator<StartCommand> validator,
-                                 MetricsProcessor metricsProcessor,
-                                 IJobManager jobManager,
-                                 ILayoutSupplier<TReplyMarkup> layoutSupplier,
-                                 ILayoutParser layoutParser)
-        : base(logger, validator, metricsProcessor)
+        IJobManager jobManager,
+        ILayoutSupplier<TReplyMarkup> layoutSupplier,
+        ILayoutParser layoutParser)
+        : base(new CommandContext(), logger)
     {
         _jobManager = jobManager;
 
         var location = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location) ?? string.Empty;
         var responseLayout = layoutParser.ParseFromFile(Path.Combine(location, "main_layout.json"));
         var responseMarkup = layoutSupplier.GetMarkup(responseLayout);
-        
+
         _options = SendOptionsBuilder<TReplyMarkup>.CreateBuilder(responseMarkup);
     }
 
-    protected override Task InnerProcessContact(Message message, string argsString, CancellationToken token) => Task.CompletedTask;
 
-    protected override Task InnerProcessPoll(Message message, string argsString, CancellationToken token) => Task.CompletedTask;
-
-    protected override Task InnerProcessLocation(Message message, string argsString, CancellationToken token) => Task.CompletedTask;
-
-    protected override async Task InnerProcess(Message message, string args, CancellationToken token)
+    protected override async Task InnerProcessAsync(IResult<StartCommand> command, CancellationToken token)
     {
+        var message = command.Message;
+
         var chatId = message.ChatIds.FirstOrDefault();
         var greetingMessageRequest = new SendMessageRequest
         {
@@ -78,7 +73,7 @@ public class StartCommandProcessor<TReplyMarkup> : CommandProcessor<StartCommand
                 Poll = new Poll
                 {
                     Question = "To be or not to be?",
-                    Variants = new []
+                    Variants = new[]
                     {
                         "To be!",
                         "Not to be!"
@@ -119,4 +114,7 @@ public class StartCommandProcessor<TReplyMarkup> : CommandProcessor<StartCommand
                 Cron = "*/30 * * ? * * *"
             });
     }
+
+    protected override Task InnerErrorProcessAsync(IResult<StartCommand> command, CancellationToken token) =>
+        throw new NotImplementedException();
 }

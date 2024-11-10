@@ -12,7 +12,7 @@ public class SendOptionsBuilder<T> : ISendOptionsBuilder<T> where T : class
 {
     private T _innerObject;
 
-    protected SendOptionsBuilder()
+    private SendOptionsBuilder()
     {
     }
 

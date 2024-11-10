@@ -9,6 +9,7 @@ using NLog.Extensions.Logging;
 using Telegram.Bot.Types.ReplyMarkups;
 using TelegramMonadsBasedBot;
 using TelegramMonadsBasedBot.Commands;
+using TelegramMonadsBasedBot.Commands.Processors;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -19,23 +20,24 @@ builder.Services
     .AddHostedService<TestBotHostedService>()
     .AddScoped<ILayoutParser, JsonLayoutParser>();
 
-builder.Services.AddBotCommand<InfoCommand>()
-    .AddProcessor<TelegramMonadsBasedBot.Commands.Processors.InfoCommandProcessor<ReplyMarkupBase>>()
-    .AddValidator<PassValidator<InfoCommand>>();
-
 builder.Services.AddBotCommand<StartCommand>()
-    .AddProcessor<TelegramMonadsBasedBot.Commands.Processors.StartCommandProcessor<ReplyMarkupBase>>()
-    .AddValidator<PassValidator<StartCommand>>();
+    .AddMonadsChain<StartCommand, PassValidator<StartCommand>>(builder.Services, 
+        chainBuilder => chainBuilder.AddElement<StartCommandProcessor<StartCommand>>());
 
-builder.Services.AddBotCommand<StopCommand>()
-    .AddProcessor<TelegramMonadsBasedBot.Commands.Processors.StopCommandProcessor<ReplyMarkupBase>>()
-    .AddValidator<PassValidator<StopCommand>>();
+// builder.Services.AddBotCommand<InfoCommand>()
+//     .AddProcessor<TelegramMonadsBasedBot.Commands.Processors.InfoCommandProcessor<ReplyMarkupBase>>()
+//     .AddValidator<PassValidator<InfoCommand>>();
+//
+//
+// builder.Services.AddBotCommand<StopCommand>()
+//     .AddProcessor<TelegramMonadsBasedBot.Commands.Processors.StopCommandProcessor<ReplyMarkupBase>>()
+//     .AddValidator<PassValidator<StopCommand>>();
 
 builder.Services.AddEndpointsApiExplorer()
     .AddSwaggerGen();
 
 var app = builder.Build();
-app.Services.UseMonadsChain<>();
+app.Services.UseMonadsChain<StartCommand, TelegramBot>();
     // .RegisterBotCommand<StartCommand, TelegramMonadsBasedBot.Commands.Processors.StartCommandProcessor<ReplyMarkupBase>, TelegramBot>()
     // .RegisterProcessor<TelegramMonadsBasedBot.Commands.Processors.StopCommandProcessor<ReplyMarkupBase>>()
     // .RegisterProcessor<TelegramMonadsBasedBot.Commands.Processors.InfoCommandProcessor<ReplyMarkupBase>>();
