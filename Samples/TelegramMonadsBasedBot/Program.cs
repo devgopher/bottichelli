@@ -1,6 +1,7 @@
 using Botticelli.Framework.Commands.Validators;
 using Botticelli.Framework.Controls.Parsers;
 using Botticelli.Framework.Extensions;
+using Botticelli.Framework.Monads.Extensions;
 using Botticelli.Framework.Telegram;
 using Botticelli.Framework.Telegram.Extensions;
 using Botticelli.Schedule.Quartz.Extensions;
@@ -34,9 +35,10 @@ builder.Services.AddEndpointsApiExplorer()
     .AddSwaggerGen();
 
 var app = builder.Build();
-app.Services.RegisterBotCommand<StartCommand, TelegramMonadsBasedBot.Commands.Processors.StartCommandProcessor<ReplyMarkupBase>, TelegramBot>()
-    .RegisterProcessor<TelegramMonadsBasedBot.Commands.Processors.StopCommandProcessor<ReplyMarkupBase>>()
-    .RegisterProcessor<TelegramMonadsBasedBot.Commands.Processors.InfoCommandProcessor<ReplyMarkupBase>>();
+app.Services.UseMonadsChain<>();
+    // .RegisterBotCommand<StartCommand, TelegramMonadsBasedBot.Commands.Processors.StartCommandProcessor<ReplyMarkupBase>, TelegramBot>()
+    // .RegisterProcessor<TelegramMonadsBasedBot.Commands.Processors.StopCommandProcessor<ReplyMarkupBase>>()
+    // .RegisterProcessor<TelegramMonadsBasedBot.Commands.Processors.InfoCommandProcessor<ReplyMarkupBase>>();
 
 if (app.Environment.IsDevelopment())
 {

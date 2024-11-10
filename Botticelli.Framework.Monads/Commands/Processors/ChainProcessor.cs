@@ -1,84 +1,39 @@
 using Botticelli.Framework.Commands;
 using Botticelli.Framework.Monads.Commands.Context;
 using Botticelli.Framework.Monads.Commands.Result;
-using Botticelli.Shared.ValueObjects;
 using LanguageExt;
+using Microsoft.Extensions.Logging;
 
 namespace Botticelli.Framework.Monads.Commands.Processors;
-
-public class ChainBuilder<TCommand> where TCommand : ICommand
-{
-    
-    
-    public ChainBuilder<TCommand> Add(ChainBuilder<TCommand> processor)
-    {
-        
-    }
-
-    public ChainRunner<TCommand> Build()
-    {
-        
-        
-        
-    }
-}
-
-public class ChainRunner<TCommand> where TCommand : ICommand
-{
-    private readonly List<ChainProcessor<TCommand>> _chain;
-
-    public ChainRunner(List<ChainProcessor<TCommand>> chain)
-    {
-        _chain = chain;
-    }
-
-    public async Task<Either<FailResult<TCommand>, SuccessResult<TCommand>>> Run(TCommand command)
-    {
-        var output = new Either<FailResult<TCommand>, SuccessResult<TCommand>>();
-        
-        foreach (var tc in _chain)
-        {
-            output = await tc.Process(output);
-
-            if (!output.IsSuccess) return output;
-        }
-        
-        return output;;
-    }
-}
 
 /// <summary>
 ///     Chain processor
 /// </summary>
 /// <typeparam name="TCommand"></typeparam>
 /// TODO: add logging!
-public abstract class ChainProcessor<TCommand>(ICommandContext commandContext) : IChainProcessor<TCommand>
-        where TCommand : ICommand
+public abstract class ChainProcessor<TCommand>(ICommandContext commandContext, ILogger<ChainProcessor<TCommand>> logger) : IChainProcessor<TCommand>
+        where TCommand : IChainCommand
 {
-    public async Task<Either<FailResult<TCommand>, SuccessResult<TCommand>>> Process(IResult<TCommand> command)
+    protected readonly ILogger<ChainProcessor<TCommand>> Logger = logger;
+    
+    public async Task<Either<FailResult<TCommand>, SuccessResult<TCommand>>> Process(Either<FailResult<TCommand>, SuccessResult<TCommand>> command)
     {
         try
         {
-            if (command.IsSuccess)
-            {
-                await InnerProcessAsync(command);
+            if (command.IsRight) await InnerProcessAsync((IResult<TCommand>)command.Case);
 
-                return SuccessResult<TCommand>.Create(command.Command, commandContext, command.Message));
-            }
-
-            return FailResult<TCommand>.Create(command.Command,
-                                               commandContext,
-                                               string.Empty,
-                                               command.Message);
+            return command;
         }
         catch (Exception ex)
         {
-            await InnerErrorProcessAsync(command);
+            Logger.LogError(ex, ex.Message);
+            var errCmd = (IResult<TCommand>)command.Case;
+            await InnerErrorProcessAsync((IResult<TCommand>)command.Case);
 
-            return FailResult<TCommand>.Create(command.Command,
+            return FailResult<TCommand>.Create(errCmd.Command,
                                                commandContext,
                                                ex.Message,
-                                               command.Message);
+                                               errCmd.Message);
         }
     }
 
