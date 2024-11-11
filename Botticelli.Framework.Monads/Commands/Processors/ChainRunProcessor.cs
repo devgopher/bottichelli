@@ -20,7 +20,7 @@ public class ChainRunProcessor<TCommand>(
     {
         var command = new TCommand()
         {
-            Context = new CommandContext()
+            Context = new CommandContext(),
         };
         
         command.Context.Set("message", message);

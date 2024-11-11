@@ -11,8 +11,7 @@ public class ChainRunner<TCommand>(List<IChainProcessor<TCommand>> chain, ILogge
 {
     public async Task<Either<FailResult<TCommand>, SuccessResult<TCommand>>> Run(TCommand command)
     {
-        var output = new Either<FailResult<TCommand>, SuccessResult<TCommand>>();
-        var eitherContext = output.Right(_ => command);
+        var output =   Either<FailResult<TCommand>, SuccessResult<TCommand>>.Right(SuccessResult<TCommand>.Create(command));
 
         logger.LogInformation("Chain processing for {TCommand} start...", typeof(TCommand).Name);
         foreach (var tc in chain)

@@ -7,16 +7,12 @@ namespace Botticelli.Framework.Monads.Commands.Result;
 public class BasicResult<TCommand> : IResult<TCommand>
     where TCommand : ICommand
 {
-    protected BasicResult(TCommand command, ICommandContext commandContext, Message? message, bool isSuccess)
+    protected BasicResult(TCommand command, bool isSuccess)
     {
         Command = command;
-        Context = commandContext;
-        Message = message;
         IsSuccess = isSuccess;
     }
 
     public bool IsSuccess { get; }
     public TCommand Command { get; }
-    public ICommandContext Context { get; }
-    public Message? Message { get; }
 }

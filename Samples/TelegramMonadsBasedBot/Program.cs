@@ -4,6 +4,7 @@ using Botticelli.Framework.Extensions;
 using Botticelli.Framework.Monads.Extensions;
 using Botticelli.Framework.Telegram;
 using Botticelli.Framework.Telegram.Extensions;
+using Botticelli.Framework.Telegram.Layout;
 using Botticelli.Schedule.Quartz.Extensions;
 using NLog.Extensions.Logging;
 using Telegram.Bot.Types.ReplyMarkups;
@@ -18,11 +19,14 @@ builder.Services
     .AddLogging(cfg => cfg.AddNLog())
     .AddQuartzScheduler(builder.Configuration)
     .AddHostedService<TestBotHostedService>()
-    .AddScoped<ILayoutParser, JsonLayoutParser>();
+    .AddScoped<ILayoutParser, JsonLayoutParser>()
+    .AddTelegramLayoutsSupport();
 
 builder.Services.AddBotCommand<StartCommand>()
-    .AddMonadsChain<StartCommand, PassValidator<StartCommand>>(builder.Services, 
-        chainBuilder => chainBuilder.AddElement<StartCommandProcessor<StartCommand>>());
+    .AddMonadsChain<StartCommand, PassValidator<StartCommand>, ReplyMarkupBase, ReplyTelegramLayoutSupplier>(
+        builder.Services,
+        cb => cb.AddElement<StartCommandProcessor<ReplyMarkupBase>>()
+            .AddElement<StartCommandPromptProcessor<ReplyMarkupBase>>());
 
 // builder.Services.AddBotCommand<InfoCommand>()
 //     .AddProcessor<TelegramMonadsBasedBot.Commands.Processors.InfoCommandProcessor<ReplyMarkupBase>>()
@@ -38,9 +42,9 @@ builder.Services.AddEndpointsApiExplorer()
 
 var app = builder.Build();
 app.Services.UseMonadsChain<StartCommand, TelegramBot>();
-    // .RegisterBotCommand<StartCommand, TelegramMonadsBasedBot.Commands.Processors.StartCommandProcessor<ReplyMarkupBase>, TelegramBot>()
-    // .RegisterProcessor<TelegramMonadsBasedBot.Commands.Processors.StopCommandProcessor<ReplyMarkupBase>>()
-    // .RegisterProcessor<TelegramMonadsBasedBot.Commands.Processors.InfoCommandProcessor<ReplyMarkupBase>>();
+// .RegisterBotCommand<StartCommand, TelegramMonadsBasedBot.Commands.Processors.StartCommandProcessor<ReplyMarkupBase>, TelegramBot>()
+// .RegisterProcessor<TelegramMonadsBasedBot.Commands.Processors.StopCommandProcessor<ReplyMarkupBase>>()
+// .RegisterProcessor<TelegramMonadsBasedBot.Commands.Processors.InfoCommandProcessor<ReplyMarkupBase>>();
 
 if (app.Environment.IsDevelopment())
 {

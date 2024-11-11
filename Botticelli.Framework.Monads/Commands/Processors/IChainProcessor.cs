@@ -14,6 +14,8 @@ public interface IChainProcessor<TCommand> where TCommand : IChainCommand
 {
     public IBot? Bot { get; }
 
+    public void SetBot(IBot bot);
+
     public Task<Either<FailResult<TCommand>, SuccessResult<TCommand>>> Process(
-        Either<FailResult<TCommand>, SuccessResult<TCommand>> command, CancellationToken token = default);
+        Either<FailResult<TCommand>, SuccessResult<TCommand>> stepResult, CancellationToken token = default);
 }

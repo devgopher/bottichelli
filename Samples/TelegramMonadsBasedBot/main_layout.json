@@ -1,0 +1,19 @@
+{
+  "Name": "MainLayout",
+  "Layout": [
+    [
+      {
+        "Button": {
+          "Content": "/stop ❌"
+        }
+      }
+    ],
+    [
+      {
+        "Button": {
+          "Content": "/info \uD83D\uDDE8\uFE0F"
+        }
+      }
+    ]
+  ]
+}

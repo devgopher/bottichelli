@@ -34,9 +34,9 @@ public class StartCommandProcessor<TReplyMarkup> : ChainProcessor<StartCommand>
     }
 
 
-    protected override async Task InnerProcessAsync(IResult<StartCommand> command, CancellationToken token)
+    protected override async Task InnerProcessAsync(IResult<StartCommand> stepResult, CancellationToken token)
     {
-        var message = command.Message;
+        var message = GetMessage(stepResult.Command);
 
         var chatId = message.ChatIds.FirstOrDefault();
         var greetingMessageRequest = new SendMessageRequest
@@ -45,7 +45,7 @@ public class StartCommandProcessor<TReplyMarkup> : ChainProcessor<StartCommand>
             {
                 Uid = Guid.NewGuid().ToString(),
                 ChatIds = message.ChatIds,
-                Body = "Bot started..."
+                Body = "Сhain step 1: Bot started..."
             }
         };
 

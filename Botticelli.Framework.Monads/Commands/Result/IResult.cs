@@ -13,10 +13,4 @@ public interface IResult<out TCommand>
 
     [Required]
     public TCommand Command { get; }
-
-    [Required]
-    public ICommandContext Context { get; }
-    
-    [Required]
-    public Message? Message { get; }
 }
