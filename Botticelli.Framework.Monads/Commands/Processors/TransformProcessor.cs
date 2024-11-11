@@ -15,17 +15,17 @@ public abstract class TransformProcessor<TCommand>(ICommandContext commandContex
     : ChainProcessor<TCommand>(commandContext, logger)
     where TCommand : IChainCommand
 {
-    public override async Task<Either<FailResult<TCommand>, SuccessResult<TCommand>>> Process(
+    public override Task<Either<FailResult<TCommand>, SuccessResult<TCommand>>> Process(
         Either<FailResult<TCommand>, SuccessResult<TCommand>> stepResult, CancellationToken token = default)
     {
         try
         {
-            return stepResult.IsRight ? stepResult.Map(successFunc) : stepResult.MapLeft(failFunc);
+            return Task.FromResult(stepResult.IsRight ? stepResult.Map(successFunc) : stepResult.MapLeft(failFunc));
         }
         catch (Exception ex)
         {
             Logger.LogError(ex, ex.Message);
-            return stepResult.MapLeft(failFunc);
+            return Task.FromResult(stepResult.MapLeft(failFunc));
         }
     }
 }
