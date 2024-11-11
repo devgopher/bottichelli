@@ -7,15 +7,30 @@ public class CommandContext : ICommandContext
 {
     private readonly Dictionary<string, object> _parameters = new();
 
-    public T? Get<T>(string name) where T : class
+    public T? Get<T>(string name)
     {
-        return _parameters[name] as T ?? null;
+        if (_parameters.TryGetValue(name, out var parameter))
+            return (T?)parameter;
+
+        return default;
     }
 
-    public void Set<T>(string name, T value)
+    public T Set<T>(string name, T value)
     {
         if (value is null) throw new ArgumentNullException(nameof(value));
 
         _parameters[name] = value;
+
+        return (T)_parameters[name];
+    }
+
+    public T Transform<T>(string name, Func<T, T> func)
+    {
+        if (!_parameters.ContainsKey(name)) 
+            throw new KeyNotFoundException(name);
+        
+        _parameters[name] = func((T)_parameters[name]);
+
+        return (T)_parameters[name];
     }
 }

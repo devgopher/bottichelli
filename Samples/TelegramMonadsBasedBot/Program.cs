@@ -1,6 +1,8 @@
 using Botticelli.Framework.Commands.Validators;
 using Botticelli.Framework.Controls.Parsers;
 using Botticelli.Framework.Extensions;
+using Botticelli.Framework.Monads.Commands.Context;
+using Botticelli.Framework.Monads.Commands.Processors;
 using Botticelli.Framework.Monads.Extensions;
 using Botticelli.Framework.Telegram;
 using Botticelli.Framework.Telegram.Extensions;
@@ -27,6 +29,19 @@ builder.Services.AddBotCommand<StartCommand>()
         builder.Services,
         cb => cb.AddElement<StartCommandProcessor<ReplyMarkupBase>>()
             .AddElement<StartCommandPromptProcessor<ReplyMarkupBase>>());
+
+builder.Services.AddBotCommand<SqrtCommand>()
+    .AddMonadsChain<SqrtCommand, PassValidator<SqrtCommand>, ReplyMarkupBase, ReplyTelegramLayoutSupplier>(
+        builder.Services,
+        cb => cb.AddElement<InputCommandProcessor<SqrtCommand>>()
+            .AddElement<TransformProcessor<SqrtCommand>>(tp => tp.SuccessFunc = step =>
+            {
+                step.Command.Context.Transform<double>("input", Math.Sqrt);
+
+                return step;
+            })
+            .AddElement<OutputCommandProcessor<ReplyMarkupBase, SqrtCommand>>());
+
 
 // builder.Services.AddBotCommand<InfoCommand>()
 //     .AddProcessor<TelegramMonadsBasedBot.Commands.Processors.InfoCommandProcessor<ReplyMarkupBase>>()

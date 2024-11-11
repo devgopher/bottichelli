@@ -9,23 +9,38 @@ namespace Botticelli.Framework.Monads.Commands.Processors;
 ///     Func transform processor processor
 /// </summary>
 /// <typeparam name="TCommand"></typeparam>
-public abstract class TransformProcessor<TCommand>(ICommandContext commandContext, ILogger<TransformProcessor<TCommand>> logger, 
-    Func<SuccessResult<TCommand>, SuccessResult<TCommand>> successFunc,
-    Func<FailResult<TCommand>, FailResult<TCommand>> failFunc)
-    : ChainProcessor<TCommand>(commandContext, logger)
+public class TransformProcessor<TCommand> : ChainProcessor<TCommand>
     where TCommand : IChainCommand
 {
+    /// <summary>
+    ///     Func transform processor processor
+    /// </summary>
+    /// <typeparam name="TCommand"></typeparam>
+    protected TransformProcessor(ICommandContext commandContext, ILogger<TransformProcessor<TCommand>> logger)
+        : base(commandContext, logger)
+    {
+    }
+
+    public Func<SuccessResult<TCommand>, SuccessResult<TCommand>> SuccessFunc { get; set; } = t => t;
+    public Func<FailResult<TCommand>, FailResult<TCommand>> FailFunc { get; set; } = t => t;
+
     public override Task<Either<FailResult<TCommand>, SuccessResult<TCommand>>> Process(
         Either<FailResult<TCommand>, SuccessResult<TCommand>> stepResult, CancellationToken token = default)
     {
         try
         {
-            return Task.FromResult(stepResult.IsRight ? stepResult.Map(successFunc) : stepResult.MapLeft(failFunc));
+            return Task.FromResult(stepResult.IsRight ? stepResult.Map(SuccessFunc) : stepResult.MapLeft(FailFunc));
         }
         catch (Exception ex)
         {
             Logger.LogError(ex, ex.Message);
-            return Task.FromResult(stepResult.MapLeft(failFunc));
+            return Task.FromResult(stepResult.MapLeft(FailFunc));
         }
     }
+
+    protected override Task InnerProcessAsync(IResult<TCommand> stepResult, CancellationToken token) =>
+        throw new NotImplementedException();
+
+    protected override Task InnerErrorProcessAsync(IResult<TCommand> command, CancellationToken token) =>
+        throw new NotImplementedException();
 }

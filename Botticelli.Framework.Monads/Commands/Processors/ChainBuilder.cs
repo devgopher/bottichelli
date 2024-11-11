@@ -30,6 +30,17 @@ public class ChainBuilder<TCommand>(IServiceCollection services)
         return AddElement(processor);
     }
     
+    public ChainBuilder<TCommand> AddElement<TProcessor>(Action<TProcessor> func) 
+        where TProcessor : class, IChainProcessor<TCommand>
+    {
+        services.AddScoped<TProcessor>();
+        var processor = services.BuildServiceProvider()
+            .GetRequiredService<TProcessor>();
+        func(processor);
+        
+        return AddElement(processor);
+    }
+    
     public ChainBuilder<TCommand> SetBot<TBot>(TBot bot) 
         where TBot : IBot<TBot>
     {
