@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using Botticelli.Locations.Integration;
 using Botticelli.Locations.Options;
+using FluentAssertions;
 using Microsoft.Extensions.Options;
 using Microsoft.VisualBasic.CompilerServices;
 using Moq;
@@ -33,8 +34,9 @@ public class OsmLocationProviderTest
     public async Task SearchTest(string query, int maxPoints)
     {
         var result = await _locationProvider.Search(query, maxPoints);
-        
-        Assert.NotNull(result);
+
+        result.Should().NotBeNull();
+        result.Should().NotBeEmpty();
     }
     
     [Test]
@@ -43,7 +45,7 @@ public class OsmLocationProviderTest
     {
         var result = await _locationProvider.GetAddress(new Location(lat, lng));
         
-        Assert.NotNull(result);
+        result.Should().NotBeNull();
     }
 
     [Test]
@@ -52,7 +54,7 @@ public class OsmLocationProviderTest
     {
         var result = await _locationProvider.GetTimeZone(new Location(lat, lng));
         
-        Assert.NotNull(result);
-        Assert.AreEqual(result.BaseUtcOffset, TimeSpan.Zero);
+        result.Should().NotBeNull();
+        result.BaseUtcOffset.Should().Be(TimeSpan.Zero);
     }
 }
