@@ -18,15 +18,9 @@ public class OutputCommandProcessor<TReplyMarkup, TCommand> : ChainProcessor<TCo
     public OutputCommandProcessor(ILogger<OutputCommandProcessor<TReplyMarkup, TCommand>> logger,
         ILayoutSupplier<TReplyMarkup> layoutSupplier,
         ILayoutParser layoutParser)
-        : base(logger)
-    {
-        var location = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location) ?? string.Empty;
-        var responseLayout = layoutParser.ParseFromFile(Path.Combine(location, "main_layout.json"));
-        var responseMarkup = layoutSupplier.GetMarkup(responseLayout);
+        : base(logger) =>
+        _options = SendOptionsBuilder<TReplyMarkup>.CreateBuilder();
 
-        _options = SendOptionsBuilder<TReplyMarkup>.CreateBuilder(responseMarkup);
-    }
-    
     protected override async Task InnerProcessAsync(IResult<TCommand> stepResult, CancellationToken token)
     {
         var message = GetMessage(stepResult.Command);
@@ -35,13 +29,13 @@ public class OutputCommandProcessor<TReplyMarkup, TCommand> : ChainProcessor<TCo
             Message = new Message
             {
                 Uid = Guid.NewGuid().ToString(),
-                ChatIds = message.ChatIds,
-                Body = $"Result:{GetArgs(stepResult.Command)}"
+                ChatIds = message!.ChatIds,
+                Body = $"Result: {GetArgs(stepResult.Command)}"
             }
         };
 
         await Bot.SendMessageAsync(outputMessageRequest, _options, token);
     }
 
-    protected override Task InnerErrorProcessAsync(IResult<TCommand> command, CancellationToken token) => throw new NotImplementedException();
+    protected override Task InnerErrorProcessAsync(FailResult<TCommand> stepResult, CancellationToken token) => throw new NotImplementedException();
 }

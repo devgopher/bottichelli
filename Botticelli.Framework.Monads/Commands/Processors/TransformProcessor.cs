@@ -24,12 +24,12 @@ public class TransformProcessor<TCommand> : ChainProcessor<TCommand>
     public Func<SuccessResult<TCommand>, SuccessResult<TCommand>> SuccessFunc { get; set; } = t => t;
     public Func<FailResult<TCommand>, FailResult<TCommand>> FailFunc { get; set; } = t => t;
 
-    public override Task<Either<FailResult<TCommand>, SuccessResult<TCommand>>> Process(
-        Either<FailResult<TCommand>, SuccessResult<TCommand>> stepResult, CancellationToken token = default)
+    public override Task<EitherAsync<FailResult<TCommand>, SuccessResult<TCommand>>> Process(
+        EitherAsync<FailResult<TCommand>, SuccessResult<TCommand>> stepResult, CancellationToken token = default)
     {
         try
         {
-            return Task.FromResult(stepResult.IsRight ? stepResult.Map(SuccessFunc) : stepResult.MapLeft(FailFunc));
+            return Task.FromResult(stepResult.BiMap(SuccessFunc, FailFunc));
         }
         catch (Exception ex)
         {
@@ -41,6 +41,6 @@ public class TransformProcessor<TCommand> : ChainProcessor<TCommand>
     protected override Task InnerProcessAsync(IResult<TCommand> stepResult, CancellationToken token) =>
         Task.CompletedTask;
 
-    protected override Task InnerErrorProcessAsync(IResult<TCommand> command, CancellationToken token) =>
+    protected override Task InnerErrorProcessAsync(FailResult<TCommand> stepResult, CancellationToken token) =>
         Task.CompletedTask;
 }

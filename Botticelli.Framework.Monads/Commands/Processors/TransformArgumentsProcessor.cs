@@ -24,26 +24,24 @@ public class TransformArgumentsProcessor<TCommand, TArgs> : ChainProcessor<TComm
     public Func<TArgs, TArgs> SuccessFunc { get; set; } = t => t;
     public Func<TArgs, TArgs> FailFunc { get; set; } = t => t;
 
-    public override Task<Either<FailResult<TCommand>, SuccessResult<TCommand>>> Process(
-        Either<FailResult<TCommand>, SuccessResult<TCommand>> stepResult, CancellationToken token = default)
+    public override Task<EitherAsync<FailResult<TCommand>, SuccessResult<TCommand>>> Process(
+        EitherAsync<FailResult<TCommand>, SuccessResult<TCommand>> stepResult, CancellationToken token = default)
     {
         try
         {
-            return Task.FromResult(stepResult.IsRight
-                ? stepResult.Map(t =>
-                {
-                    t.Command.Context.Set(Names.Args,
-                        SuccessFunc.Invoke(t.Command.Context.Get<TArgs>(Names.Args)!));
+            return Task.FromResult(stepResult.BiMapAsync(t =>
+            {
+                t.Command.Context.Set(Names.Args,
+                    SuccessFunc.Invoke(t.Command.Context.Get<TArgs>(Names.Args)!));
 
-                    return t;
-                })
-                : stepResult.MapLeft(t =>
-                {
-                    t.Command.Context.Set(Names.Args,
-                        FailFunc.Invoke(t.Command.Context.Get<TArgs>(Names.Args)!));
+                return Task.FromResult(t);
+            }, t =>
+            {
+                t.Command.Context.Set(Names.Args,
+                    FailFunc.Invoke(t.Command.Context.Get<TArgs>(Names.Args)!));
 
-                    return t;
-                }));
+                return Task.FromResult(t);
+            }));
         }
         catch (Exception ex)
         {
@@ -61,6 +59,6 @@ public class TransformArgumentsProcessor<TCommand, TArgs> : ChainProcessor<TComm
     protected override Task InnerProcessAsync(IResult<TCommand> stepResult, CancellationToken token) =>
         Task.CompletedTask;
 
-    protected override Task InnerErrorProcessAsync(IResult<TCommand> command, CancellationToken token) =>
+    protected override Task InnerErrorProcessAsync(FailResult<TCommand> stepResult, CancellationToken token) =>
         Task.CompletedTask;
 }

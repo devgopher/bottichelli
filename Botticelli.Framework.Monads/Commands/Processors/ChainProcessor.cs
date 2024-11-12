@@ -20,33 +20,27 @@ public abstract class ChainProcessor<TCommand>(ILogger logger)
     public IBot Bot { get; private set; }
 
     public void SetBot(IBot bot) => Bot = bot;
-    
-    public virtual async Task<Either<FailResult<TCommand>, SuccessResult<TCommand>>> Process(
-        Either<FailResult<TCommand>, SuccessResult<TCommand>> stepResult, CancellationToken token = default)
+
+    public virtual async Task<EitherAsync<FailResult<TCommand>, SuccessResult<TCommand>>> Process(
+        EitherAsync<FailResult<TCommand>, SuccessResult<TCommand>> stepResult, CancellationToken token = default)
     {
-        try
-        {
-            if (stepResult.IsRight) await InnerProcessAsync((IResult<TCommand>)stepResult.Case, token);
+        var unit = await stepResult.BiIter(r => InnerProcessAsync(r, token),
+            l => InnerErrorProcessAsync(l, token));
 
-            return stepResult;
-        }
-        catch (Exception ex)
-        {
-            Logger.LogError(ex, ex.Message);
-            var errResult = (IResult<TCommand>)stepResult.Case;
-            await InnerErrorProcessAsync((IResult<TCommand>)stepResult.Case, token);
-
-            return FailResult<TCommand>.Create(errResult.Command,
-                ex.Message,
-                GetMessage(errResult.Command));
-        }
+        return stepResult;
     }
 
     protected abstract Task InnerProcessAsync(IResult<TCommand> stepResult, CancellationToken token);
 
-    protected abstract Task InnerErrorProcessAsync(IResult<TCommand> command, CancellationToken token);
+    protected virtual Task InnerErrorProcessAsync(FailResult<TCommand> stepResult, CancellationToken token)
+    {
+        var message = GetMessage(stepResult.Command);
+        Logger.LogError(message?.Body ?? $"Error in: {nameof(ChainProcessor<TCommand>)}");
+
+        return Task.CompletedTask;
+    }
 
     protected Message? GetMessage(TCommand command) => command.Context.Get<Message>("message");
-    
+
     protected string? GetArgs(TCommand command) => command.Context.Get("args");
 }

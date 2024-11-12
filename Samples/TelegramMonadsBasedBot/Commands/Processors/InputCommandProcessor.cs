@@ -10,5 +10,5 @@ public class InputCommandProcessor<TCommand>(ILogger<InputCommandProcessor<TComm
 {
     protected override Task InnerProcessAsync(IResult<TCommand> stepResult, CancellationToken token) => Task.CompletedTask;
 
-    protected override Task InnerErrorProcessAsync(IResult<TCommand> command, CancellationToken token) => Task.CompletedTask;
+    protected override Task InnerErrorProcessAsync(FailResult<TCommand> stepResult, CancellationToken token) => Task.CompletedTask;
 }

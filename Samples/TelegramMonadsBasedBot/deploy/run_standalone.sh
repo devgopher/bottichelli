@@ -15,4 +15,4 @@ dotnet run TelegramMonadsBasedBot.csproj &
 echo BOT ID:
 cat Data/botId
 
-popd
+popd || exit
