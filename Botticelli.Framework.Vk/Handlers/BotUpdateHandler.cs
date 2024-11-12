@@ -115,24 +115,25 @@ public class BotUpdateHandler : IBotUpdateHandler
     /// <summary>
     ///     Processes requests
     /// </summary>
-    /// <param name="request"></param>
+    /// <param name="message"></param>
     /// <param name="token"></param>
-    protected async Task Process(Message request, CancellationToken token)
+    protected Task Process(Message message, CancellationToken token)
     {
-        _logger.LogDebug($"{nameof(Process)}({request.Uid}) started...");
+        _logger.LogDebug($"{nameof(Process)}({message.Uid}) started...");
 
-        if (token is { CanBeCanceled: true, IsCancellationRequested: true }) return;
+        if (token is { CanBeCanceled: true, IsCancellationRequested: true }) return Task.CompletedTask;
 
         var clientNonChainedTasks = _processorFactory
             .GetProcessors(excludeChain: true)
-            .Select(p => p.ProcessAsync(request, token));
+            .Select(p => p.ProcessAsync(message, token));
 
         var clientChainedTasks = _processorFactory
                                     .GetCommandChainProcessors()
-                                    .Select(p => p.ProcessAsync(request, token));
+                                    .Select(p => p.ProcessAsync(message, token));
 
-        Task.WaitAll(clientNonChainedTasks.Concat(clientChainedTasks).ToArray());
+        Task.WaitAll(clientNonChainedTasks.Concat(clientChainedTasks).ToArray(), token);
 
-        _logger.LogDebug($"{nameof(Process)}({request.Uid}) finished...");
+        _logger.LogDebug($"{nameof(Process)}({message.Uid}) finished...");
+        return Task.CompletedTask;
     }
 }
