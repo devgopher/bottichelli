@@ -23,8 +23,8 @@ public class CommandContext : ICommandContext
     {
         if (value is null) throw new ArgumentNullException(nameof(value));
         
-        if (name == "args") // args are always string
-            _parameters[name] = value as string ?? string.Empty;
+        if (name == Names.Args) // args are always string
+            _parameters[name] = value.ToString()!;
         else
             _parameters[name] = JsonSerializer.Serialize(value);
 

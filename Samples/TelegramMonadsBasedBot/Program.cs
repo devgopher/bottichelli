@@ -1,6 +1,7 @@
 using Botticelli.Framework.Commands.Validators;
 using Botticelli.Framework.Controls.Parsers;
 using Botticelli.Framework.Extensions;
+using Botticelli.Framework.Monads.Commands;
 using Botticelli.Framework.Monads.Commands.Context;
 using Botticelli.Framework.Monads.Commands.Processors;
 using Botticelli.Framework.Monads.Extensions;
@@ -30,17 +31,13 @@ builder.Services.AddBotCommand<StartCommand>()
         cb => cb.Next<StartCommandProcessor<ReplyMarkupBase>>()
             .Next<StartCommandPromptProcessor<ReplyMarkupBase>>());
 
-builder.Services.AddBotCommand<SqrtCommand>()
-    .AddMonadsChain<SqrtCommand, PassValidator<SqrtCommand>, ReplyMarkupBase, ReplyTelegramLayoutSupplier>(
+builder.Services.AddBotCommand<MathCommand>()
+    .AddMonadsChain<MathCommand, PassValidator<MathCommand>, ReplyMarkupBase, ReplyTelegramLayoutSupplier>(
         builder.Services,
-        cb => cb.Next<InputCommandProcessor<SqrtCommand>>()
-            .Next<TransformProcessor<SqrtCommand>>(tp => tp.SuccessFunc = step =>
-            {
-                step.Command.Context.Transform<double>("args", Math.Sqrt);
-
-                return step;
-            })
-            .Next<OutputCommandProcessor<ReplyMarkupBase, SqrtCommand>>());
+        cb => cb.Next<InputCommandProcessor<MathCommand>>()
+            .Next<TransformArgumentsProcessor<MathCommand, double>>(tp => tp.SuccessFunc = Math.Sqrt)
+            .Next<TransformArgumentsProcessor<MathCommand, double>>(tp => tp.SuccessFunc = Math.Cos)
+            .Next<OutputCommandProcessor<ReplyMarkupBase, MathCommand>>());
 
 
 // builder.Services.AddBotCommand<InfoCommand>()
@@ -57,7 +54,7 @@ builder.Services.AddEndpointsApiExplorer()
 
 var app = builder.Build();
 app.Services.UseMonadsChain<StartCommand, TelegramBot>()
-    .UseMonadsChain<SqrtCommand, TelegramBot>();
+    .UseMonadsChain<MathCommand, TelegramBot>();
 // .RegisterBotCommand<StartCommand, TelegramMonadsBasedBot.Commands.Processors.StartCommandProcessor<ReplyMarkupBase>, TelegramBot>()
 // .RegisterProcessor<TelegramMonadsBasedBot.Commands.Processors.StopCommandProcessor<ReplyMarkupBase>>()
 // .RegisterProcessor<TelegramMonadsBasedBot.Commands.Processors.InfoCommandProcessor<ReplyMarkupBase>>();

@@ -23,8 +23,8 @@ public class ChainRunProcessor<TCommand>(
             Context = new CommandContext(),
         };
         
-        command.Context.Set("message", message);
-        command.Context.Set("args", args);
+        command.Context.Set(Names.Message, message);
+        command.Context.Set(Names.Args, args);
         
         _ = await chainRunner.Run(command);
     }

@@ -6,7 +6,7 @@ using Microsoft.Extensions.Logging;
 namespace Botticelli.Framework.Monads.Commands.Processors;
 
 /// <summary>
-///     Func transform processor processor
+///     Func transform processor
 /// </summary>
 /// <typeparam name="TCommand"></typeparam>
 public class TransformProcessor<TCommand> : ChainProcessor<TCommand>
@@ -39,8 +39,8 @@ public class TransformProcessor<TCommand> : ChainProcessor<TCommand>
     }
 
     protected override Task InnerProcessAsync(IResult<TCommand> stepResult, CancellationToken token) =>
-        throw new NotImplementedException();
+        Task.CompletedTask;
 
     protected override Task InnerErrorProcessAsync(IResult<TCommand> command, CancellationToken token) =>
-        throw new NotImplementedException();
+        Task.CompletedTask;
 }
