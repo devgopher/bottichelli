@@ -6,7 +6,6 @@ using Botticelli.Framework.Monads.Extensions;
 using Botticelli.Framework.Telegram;
 using Botticelli.Framework.Telegram.Extensions;
 using Botticelli.Framework.Telegram.Layout;
-using Botticelli.Schedule.Quartz.Extensions;
 using NLog.Extensions.Logging;
 using Telegram.Bot.Types.ReplyMarkups;
 using TelegramMonadsBasedBot;
@@ -18,7 +17,6 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services
     .AddTelegramBot(builder.Configuration)
     .AddLogging(cfg => cfg.AddNLog())
-    .AddQuartzScheduler(builder.Configuration)
     .AddHostedService<TestBotHostedService>()
     .AddScoped<ILayoutParser, JsonLayoutParser>()
     .AddTelegramLayoutsSupport();
