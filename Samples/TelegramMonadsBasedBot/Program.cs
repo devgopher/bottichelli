@@ -10,7 +10,6 @@ using NLog.Extensions.Logging;
 using Telegram.Bot.Types.ReplyMarkups;
 using TelegramMonadsBasedBot;
 using TelegramMonadsBasedBot.Commands;
-using TelegramMonadsBasedBot.Commands.Processors;
 
 var builder = WebApplication.CreateBuilder(args);
 

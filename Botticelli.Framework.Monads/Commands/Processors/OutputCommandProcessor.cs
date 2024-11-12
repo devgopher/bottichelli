@@ -1,13 +1,12 @@
-using System.Reflection;
 using Botticelli.Framework.Controls.Parsers;
 using Botticelli.Framework.Monads.Commands.Context;
-using Botticelli.Framework.Monads.Commands.Processors;
 using Botticelli.Framework.Monads.Commands.Result;
 using Botticelli.Framework.SendOptions;
 using Botticelli.Shared.API.Client.Requests;
 using Botticelli.Shared.ValueObjects;
+using Microsoft.Extensions.Logging;
 
-namespace TelegramMonadsBasedBot.Commands.Processors;
+namespace Botticelli.Framework.Monads.Commands.Processors;
 
 public class OutputCommandProcessor<TReplyMarkup, TCommand> : ChainProcessor<TCommand> 
     where TReplyMarkup : class
@@ -30,7 +29,7 @@ public class OutputCommandProcessor<TReplyMarkup, TCommand> : ChainProcessor<TCo
             {
                 Uid = Guid.NewGuid().ToString(),
                 ChatIds = message!.ChatIds,
-                Body = $"Result: {GetArgs(stepResult.Command)}"
+                Body = GetArgs(stepResult.Command)
             }
         };
 

@@ -1,8 +1,8 @@
 using Botticelli.Framework.Monads.Commands.Context;
-using Botticelli.Framework.Monads.Commands.Processors;
 using Botticelli.Framework.Monads.Commands.Result;
+using Microsoft.Extensions.Logging;
 
-namespace TelegramMonadsBasedBot.Commands.Processors;
+namespace Botticelli.Framework.Monads.Commands.Processors;
 
 public class InputCommandProcessor<TCommand>(ILogger<InputCommandProcessor<TCommand>> logger)
     : ChainProcessor<TCommand>(logger)
