@@ -15,7 +15,7 @@ public class OutputCommandProcessor<TReplyMarkup, TCommand> : ChainProcessor<TCo
 {
     private readonly SendOptionsBuilder<TReplyMarkup> _options;
 
-    public OutputCommandProcessor(ILogger<StartCommandProcessor<TReplyMarkup>> logger,
+    public OutputCommandProcessor(ILogger<OutputCommandProcessor<TReplyMarkup, TCommand>> logger,
         ILayoutSupplier<TReplyMarkup> layoutSupplier,
         ILayoutParser layoutParser)
         : base(logger)
