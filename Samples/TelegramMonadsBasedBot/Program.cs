@@ -27,20 +27,20 @@ builder.Services
 builder.Services.AddBotCommand<StartCommand>()
     .AddMonadsChain<StartCommand, PassValidator<StartCommand>, ReplyMarkupBase, ReplyTelegramLayoutSupplier>(
         builder.Services,
-        cb => cb.AddElement<StartCommandProcessor<ReplyMarkupBase>>()
-            .AddElement<StartCommandPromptProcessor<ReplyMarkupBase>>());
+        cb => cb.Next<StartCommandProcessor<ReplyMarkupBase>>()
+            .Next<StartCommandPromptProcessor<ReplyMarkupBase>>());
 
 builder.Services.AddBotCommand<SqrtCommand>()
     .AddMonadsChain<SqrtCommand, PassValidator<SqrtCommand>, ReplyMarkupBase, ReplyTelegramLayoutSupplier>(
         builder.Services,
-        cb => cb.AddElement<InputCommandProcessor<SqrtCommand>>()
-            .AddElement<TransformProcessor<SqrtCommand>>(tp => tp.SuccessFunc = step =>
+        cb => cb.Next<InputCommandProcessor<SqrtCommand>>()
+            .Next<TransformProcessor<SqrtCommand>>(tp => tp.SuccessFunc = step =>
             {
                 step.Command.Context.Transform<double>("args", Math.Sqrt);
 
                 return step;
             })
-            .AddElement<OutputCommandProcessor<ReplyMarkupBase, SqrtCommand>>());
+            .Next<OutputCommandProcessor<ReplyMarkupBase, SqrtCommand>>());
 
 
 // builder.Services.AddBotCommand<InfoCommand>()

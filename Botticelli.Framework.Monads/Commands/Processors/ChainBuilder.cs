@@ -13,24 +13,24 @@ public class ChainBuilder<TCommand>(IServiceCollection services)
     private IBot? _bot;
     private ChainRunner<TCommand>? _runner;
 
-    public ChainBuilder<TCommand> AddElement(IChainProcessor<TCommand> processor)
+    public ChainBuilder<TCommand> Next(IChainProcessor<TCommand> processor)
     {
         _chain.Add(processor);
         
         return this;
     }
 
-    public ChainBuilder<TCommand> AddElement<TProcessor>() 
+    public ChainBuilder<TCommand> Next<TProcessor>() 
         where TProcessor : class, IChainProcessor<TCommand>
     {
         services.AddScoped<TProcessor>();
         var processor = services.BuildServiceProvider()
             .GetRequiredService<TProcessor>();
         
-        return AddElement(processor);
+        return Next(processor);
     }
     
-    public ChainBuilder<TCommand> AddElement<TProcessor>(Action<TProcessor> func) 
+    public ChainBuilder<TCommand> Next<TProcessor>(Action<TProcessor> func) 
         where TProcessor : class, IChainProcessor<TCommand>
     {
         services.AddScoped<TProcessor>();
@@ -38,7 +38,7 @@ public class ChainBuilder<TCommand>(IServiceCollection services)
             .GetRequiredService<TProcessor>();
         func(processor);
         
-        return AddElement(processor);
+        return Next(processor);
     }
     
     public ChainBuilder<TCommand> SetBot<TBot>(TBot bot) 
