@@ -1,3 +1,5 @@
+using System.Text.Json;
+
 namespace Botticelli.Framework.Monads.Commands.Context;
 
 /// <summary>
@@ -5,32 +7,46 @@ namespace Botticelli.Framework.Monads.Commands.Context;
 /// </summary>
 public class CommandContext : ICommandContext
 {
-    private readonly Dictionary<string, object> _parameters = new();
+    private readonly Dictionary<string, string> _parameters = new();
 
     public T? Get<T>(string name)
     {
         if (_parameters.TryGetValue(name, out var parameter))
-            return (T?)parameter;
+            return JsonSerializer.Deserialize<T>(parameter);
 
         return default;
     }
 
+    public string Get(string name) => _parameters[name];
+
     public T Set<T>(string name, T value)
     {
         if (value is null) throw new ArgumentNullException(nameof(value));
+        
+        if (name == "args") // args are always string
+            _parameters[name] = value as string ?? string.Empty;
+        else
+            _parameters[name] = JsonSerializer.Serialize(value);
 
-        _parameters[name] = value;
-
-        return (T)_parameters[name];
+        return value;
     }
 
+    public string Set(string name, string value)
+    {
+        _parameters[name] = value;
+        return value;
+    }
+
+    
     public T Transform<T>(string name, Func<T, T> func)
     {
-        if (!_parameters.ContainsKey(name)) 
+        if (!_parameters.TryGetValue(name, out var parameter)) 
             throw new KeyNotFoundException(name);
         
-        _parameters[name] = func((T)_parameters[name]);
+        var deserialized = JsonSerializer.Deserialize<T>(parameter);
+        
+        _parameters[name] = JsonSerializer.Serialize(func(deserialized));
 
-        return (T)_parameters[name];
+        return deserialized;
     }
 }

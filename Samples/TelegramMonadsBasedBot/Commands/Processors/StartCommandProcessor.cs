@@ -1,6 +1,5 @@
 ﻿using System.Reflection;
 using Botticelli.Framework.Controls.Parsers;
-using Botticelli.Framework.Monads.Commands.Context;
 using Botticelli.Framework.Monads.Commands.Processors;
 using Botticelli.Framework.Monads.Commands.Result;
 using Botticelli.Framework.SendOptions;
@@ -22,7 +21,7 @@ public class StartCommandProcessor<TReplyMarkup> : ChainProcessor<StartCommand>
         IJobManager jobManager,
         ILayoutSupplier<TReplyMarkup> layoutSupplier,
         ILayoutParser layoutParser)
-        : base(new CommandContext(), logger)
+        : base(logger)
     {
         _jobManager = jobManager;
 

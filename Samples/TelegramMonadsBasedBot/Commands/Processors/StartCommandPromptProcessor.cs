@@ -1,6 +1,5 @@
 using System.Reflection;
 using Botticelli.Framework.Controls.Parsers;
-using Botticelli.Framework.Monads.Commands.Context;
 using Botticelli.Framework.Monads.Commands.Processors;
 using Botticelli.Framework.Monads.Commands.Result;
 using Botticelli.Framework.SendOptions;
@@ -17,7 +16,7 @@ public class StartCommandPromptProcessor<TReplyMarkup> : ChainProcessor<StartCom
     public StartCommandPromptProcessor(ILogger<StartCommandPromptProcessor<TReplyMarkup>> logger,
         ILayoutSupplier<TReplyMarkup> layoutSupplier,
         ILayoutParser layoutParser)
-    : base(new CommandContext(), logger)
+    : base(logger)
     { 
         var location = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location) ?? string.Empty;
         var responseLayout = layoutParser.ParseFromFile(Path.Combine(location, "main_layout.json"));

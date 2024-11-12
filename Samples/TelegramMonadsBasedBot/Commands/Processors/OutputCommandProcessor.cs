@@ -18,7 +18,7 @@ public class OutputCommandProcessor<TReplyMarkup, TCommand> : ChainProcessor<TCo
     public OutputCommandProcessor(ILogger<StartCommandProcessor<TReplyMarkup>> logger,
         ILayoutSupplier<TReplyMarkup> layoutSupplier,
         ILayoutParser layoutParser)
-        : base(new CommandContext(), logger)
+        : base(logger)
     {
         var location = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location) ?? string.Empty;
         var responseLayout = layoutParser.ParseFromFile(Path.Combine(location, "main_layout.json"));
@@ -30,17 +30,17 @@ public class OutputCommandProcessor<TReplyMarkup, TCommand> : ChainProcessor<TCo
     protected override async Task InnerProcessAsync(IResult<TCommand> stepResult, CancellationToken token)
     {
         var message = GetMessage(stepResult.Command);
-        var greetingMessageRequest = new SendMessageRequest
+        var outputMessageRequest = new SendMessageRequest
         {
             Message = new Message
             {
                 Uid = Guid.NewGuid().ToString(),
                 ChatIds = message.ChatIds,
-                Body = message.Body
+                Body = $"Result:{GetArgs(stepResult.Command)}"
             }
         };
 
-        await Bot.SendMessageAsync(greetingMessageRequest, _options, token);
+        await Bot.SendMessageAsync(outputMessageRequest, _options, token);
     }
 
     protected override Task InnerErrorProcessAsync(IResult<TCommand> command, CancellationToken token) => throw new NotImplementedException();

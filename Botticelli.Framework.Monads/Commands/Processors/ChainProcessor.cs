@@ -11,7 +11,7 @@ namespace Botticelli.Framework.Monads.Commands.Processors;
 ///     Chain processor
 /// </summary>
 /// <typeparam name="TCommand"></typeparam>
-public abstract class ChainProcessor<TCommand>(ICommandContext commandContext, ILogger logger)
+public abstract class ChainProcessor<TCommand>(ILogger logger)
     : IChainProcessor<TCommand>
     where TCommand : IChainCommand
 {
@@ -48,5 +48,5 @@ public abstract class ChainProcessor<TCommand>(ICommandContext commandContext, I
 
     protected Message? GetMessage(TCommand command) => command.Context.Get<Message>("message");
     
-    protected string? GetArgs(TCommand command) => command.Context.Get<string>("args");
+    protected string? GetArgs(TCommand command) => command.Context.Get("args");
 }

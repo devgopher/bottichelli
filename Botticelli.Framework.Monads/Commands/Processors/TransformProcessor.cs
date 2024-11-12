@@ -16,8 +16,8 @@ public class TransformProcessor<TCommand> : ChainProcessor<TCommand>
     ///     Func transform processor processor
     /// </summary>
     /// <typeparam name="TCommand"></typeparam>
-    protected TransformProcessor(ICommandContext commandContext, ILogger<TransformProcessor<TCommand>> logger)
-        : base(commandContext, logger)
+    public TransformProcessor(ILogger<TransformProcessor<TCommand>> logger)
+        : base(logger)
     {
     }
 

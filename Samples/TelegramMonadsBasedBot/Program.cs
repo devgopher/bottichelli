@@ -36,7 +36,7 @@ builder.Services.AddBotCommand<SqrtCommand>()
         cb => cb.AddElement<InputCommandProcessor<SqrtCommand>>()
             .AddElement<TransformProcessor<SqrtCommand>>(tp => tp.SuccessFunc = step =>
             {
-                step.Command.Context.Transform<double>("input", Math.Sqrt);
+                step.Command.Context.Transform<double>("args", Math.Sqrt);
 
                 return step;
             })
@@ -56,7 +56,8 @@ builder.Services.AddEndpointsApiExplorer()
     .AddSwaggerGen();
 
 var app = builder.Build();
-app.Services.UseMonadsChain<StartCommand, TelegramBot>();
+app.Services.UseMonadsChain<StartCommand, TelegramBot>()
+    .UseMonadsChain<SqrtCommand, TelegramBot>();
 // .RegisterBotCommand<StartCommand, TelegramMonadsBasedBot.Commands.Processors.StartCommandProcessor<ReplyMarkupBase>, TelegramBot>()
 // .RegisterProcessor<TelegramMonadsBasedBot.Commands.Processors.StopCommandProcessor<ReplyMarkupBase>>()
 // .RegisterProcessor<TelegramMonadsBasedBot.Commands.Processors.InfoCommandProcessor<ReplyMarkupBase>>();
