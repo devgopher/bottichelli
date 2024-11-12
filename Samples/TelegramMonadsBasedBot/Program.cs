@@ -28,8 +28,10 @@ builder.Services.AddBotCommand<MathCommand>()
         builder.Services,
         cb => cb.Next<InputCommandProcessor<MathCommand>>()
             .Next<TransformArgumentsProcessor<MathCommand, double>>(tp => tp.SuccessFunc = Math.Sqrt)
+            .Next<TransformArgumentsProcessor<MathCommand, double>>(tp => tp.SuccessFunc = Math.Sqrt)
             .Next<TransformArgumentsProcessor<MathCommand, double>>(tp => tp.SuccessFunc = Math.Cos)
-            .Next<TransformArgumentsProcessor<MathCommand, double>>(tp => tp.SuccessFunc = Math.Log10)
+            .Next<TransformArgumentsProcessor<MathCommand, double>>(tp => tp.SuccessFunc = Math.Abs)
+            .Next<TransformArgumentsProcessor<MathCommand, double>>(tp => tp.SuccessFunc = Math.Sqrt)
             .Next<OutputCommandProcessor<ReplyMarkupBase, MathCommand>>());
 
 var app = builder.Build();

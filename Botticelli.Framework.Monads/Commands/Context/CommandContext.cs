@@ -1,3 +1,4 @@
+using System.Diagnostics.CodeAnalysis;
 using System.Text.Json;
 
 namespace Botticelli.Framework.Monads.Commands.Context;
@@ -12,8 +13,21 @@ public class CommandContext : ICommandContext
     public T? Get<T>(string name)
     {
         if (_parameters.TryGetValue(name, out var parameter))
-            return JsonSerializer.Deserialize<T>(parameter);
+        {
+            var type = typeof(T);
+            if (type == typeof(double) || type == typeof(float) || type == typeof(decimal))
+            {
+                var chunk = parameter.Replace('.', ',');
 
+                if (type == typeof(double))
+                    return (T?)(object)(double.Parse(chunk));
+                if (type == typeof(float))
+                    return (T?)(object)(float.Parse(chunk));
+                if (type == typeof(decimal))
+                    return (T?)(object)(decimal.Parse(chunk));
+
+            } else  return JsonSerializer.Deserialize<T>(parameter);
+        }
         return default;
     }
 
@@ -24,16 +38,25 @@ public class CommandContext : ICommandContext
         if (value is null) throw new ArgumentNullException(nameof(value));
         
         if (name == Names.Args) // args are always string
-            _parameters[name] = value.ToString()!;
+            _parameters[name] = Stringify(value);
         else
             _parameters[name] = JsonSerializer.Serialize(value);
 
         return value;
     }
 
+    private static string Stringify<T>([DisallowNull] T value) =>
+        value switch
+        {
+            double dbl => dbl.ToString("G").Replace(',', '.'),
+            float flt => flt.ToString("G").Replace(',', '.'),
+            decimal dcm => dcm.ToString("G").Replace(',', '.'),
+            _ => value.ToString()!
+        };
+
     public string Set(string name, string value)
     {
-        _parameters[name] = value;
+        _parameters[name] = Stringify(value);
         return value;
     }
 
