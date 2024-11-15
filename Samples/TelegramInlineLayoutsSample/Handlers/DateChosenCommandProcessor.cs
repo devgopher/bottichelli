@@ -8,15 +8,17 @@ using Botticelli.Framework.SendOptions;
 using Botticelli.Interfaces;
 using Botticelli.Shared.API.Client.Requests;
 using Botticelli.Shared.ValueObjects;
+using FluentValidation;
 
 namespace TelegramInlineLayoutsSample.Handlers;
 
 public class DateChosenCommandProcessor(
         IBot bot,
-        ICommandValidator<DateChosenCommand> validator,
+        ICommandValidator<DateChosenCommand> commandValidator,
         MetricsProcessor metricsProcessor,
-        ILogger<GetCalendarCommandProcessor> logger)
-        : CommandProcessor<DateChosenCommand>(logger, validator, metricsProcessor)
+        ILogger<GetCalendarCommandProcessor> logger, 
+        IValidator<Message> messageValidator)
+        : CommandProcessor<DateChosenCommand>(logger, commandValidator, metricsProcessor, messageValidator)
 {
     protected override async Task InnerProcess(Message message, string args, CancellationToken token)
     {

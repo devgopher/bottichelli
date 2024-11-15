@@ -6,8 +6,6 @@ namespace Botticelli.Shared.Extensions;
 
 public static class ServiceCollectionExtensions
 {
-    public static IServiceCollection AddSharedValidation(this IServiceCollection services)
-    {
-        return services.AddValidatorsFromAssemblyContaining<Message>(ServiceLifetime.Singleton);
-    }
+    public static IServiceCollection AddSharedValidation(this IServiceCollection services) 
+        => services.AddValidatorsFromAssemblyContaining<Message>(ServiceLifetime.Singleton);
 }

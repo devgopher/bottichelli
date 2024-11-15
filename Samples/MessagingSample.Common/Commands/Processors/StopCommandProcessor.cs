@@ -7,6 +7,7 @@ using Botticelli.Framework.SendOptions;
 using Botticelli.Scheduler.Interfaces;
 using Botticelli.Shared.API.Client.Requests;
 using Botticelli.Shared.ValueObjects;
+using FluentValidation;
 using Microsoft.Extensions.Logging;
 
 namespace MessagingSample.Common.Commands.Processors;
@@ -18,11 +19,13 @@ public class StopCommandProcessor<TReplyMarkup> : CommandProcessor<StopCommand>
     private readonly SendOptionsBuilder<TReplyMarkup> _options;
     
     public StopCommandProcessor(ILogger<StopCommandProcessor<TReplyMarkup>> logger,
-        ICommandValidator<StopCommand> validator,
+        ICommandValidator<StopCommand> commandValidator,
         MetricsProcessor metricsProcessor,
         IJobManager jobManager,
         ILayoutSupplier<TReplyMarkup> layoutSupplier,
-        ILayoutParser layoutParser) : base(logger, validator, metricsProcessor)
+        ILayoutParser layoutParser,
+        IValidator<Message> messageValidator)
+        : base(logger, commandValidator, metricsProcessor, messageValidator)
     {
         _jobManager = jobManager;
         var location = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location) ?? string.Empty;

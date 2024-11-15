@@ -2,6 +2,7 @@ using Botticelli.Client.Analytics;
 using Botticelli.Framework.Commands.Validators;
 using Botticelli.Interfaces;
 using Botticelli.Shared.ValueObjects;
+using FluentValidation;
 using Microsoft.Extensions.Logging;
 
 namespace Botticelli.Framework.Commands.Processors;
@@ -15,8 +16,10 @@ public abstract class WaitForClientResponseCommandChainProcessor<TInputCommand> 
         where TInputCommand : class, ICommand
 {
     protected WaitForClientResponseCommandChainProcessor(ILogger<CommandChainProcessor<TInputCommand>> logger,
-                                                         ICommandValidator<TInputCommand> validator,
-                                                         MetricsProcessor metricsProcessor) : base(logger, validator, metricsProcessor)
+                                                         ICommandValidator<TInputCommand> commandValidator,
+                                                         MetricsProcessor metricsProcessor,
+                                                         IValidator<Message> messageValidator)
+        : base(logger, commandValidator, metricsProcessor, messageValidator)
     {
     }
 

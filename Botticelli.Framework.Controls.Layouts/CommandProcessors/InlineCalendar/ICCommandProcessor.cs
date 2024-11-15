@@ -8,6 +8,7 @@ using Botticelli.Framework.Controls.Parsers;
 using Botticelli.Framework.SendOptions;
 using Botticelli.Shared.API.Client.Requests;
 using Botticelli.Shared.ValueObjects;
+using FluentValidation;
 using Microsoft.Extensions.Logging;
 
 namespace Botticelli.Framework.Controls.Layouts.CommandProcessors.InlineCalendar;
@@ -23,10 +24,11 @@ public class ICCommandProcessor<TCommand, TReplyMarkup> : CommandProcessor<TComm
     private readonly ILayoutSupplier<TReplyMarkup> _layoutSupplier;
 
     public ICCommandProcessor(ILogger<ICCommandProcessor<TCommand, TReplyMarkup>> logger,
-                              ICommandValidator<TCommand> validator,
+                              ICommandValidator<TCommand> commandValidator,
                               ILayoutSupplier<TReplyMarkup> layoutSupplier,
-                              MetricsProcessor metricsProcessor) 
-            : base(logger, validator, metricsProcessor) =>
+                              MetricsProcessor metricsProcessor,
+                              IValidator<Message> messageValidator) 
+            : base(logger, commandValidator, metricsProcessor, messageValidator) =>
             _layoutSupplier = layoutSupplier;
 
     protected override async Task InnerProcess(Message message, string args, CancellationToken token)

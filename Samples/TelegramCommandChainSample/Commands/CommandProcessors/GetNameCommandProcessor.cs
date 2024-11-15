@@ -3,14 +3,16 @@ using Botticelli.Framework.Commands.Processors;
 using Botticelli.Framework.Commands.Validators;
 using Botticelli.Shared.API.Client.Requests;
 using Botticelli.Shared.ValueObjects;
+using FluentValidation;
 
 namespace TelegramCommandChainSample.Commands.CommandProcessors;
 
 public class GetNameCommandProcessor : WaitForClientResponseCommandChainProcessor<GetNameCommand>
 {
     public GetNameCommandProcessor(ILogger<CommandChainProcessor<GetNameCommand>> logger,
-        ICommandValidator<GetNameCommand> validator,
-        MetricsProcessor metricsProcessor) : base(logger, validator, metricsProcessor)
+        ICommandValidator<GetNameCommand> commandValidator,
+        MetricsProcessor metricsProcessor,
+        IValidator<Message> messageValidator) : base(logger, commandValidator, metricsProcessor, messageValidator)
     {
     }
 

@@ -6,6 +6,7 @@ using Botticelli.Framework.Controls.Parsers;
 using Botticelli.Framework.SendOptions;
 using Botticelli.Shared.API.Client.Requests;
 using Botticelli.Shared.ValueObjects;
+using FluentValidation;
 using Microsoft.Extensions.Logging;
 
 namespace MessagingSample.Common.Commands.Processors;
@@ -15,10 +16,12 @@ public class InfoCommandProcessor<TReplyMarkup> : CommandProcessor<InfoCommand> 
     private readonly SendOptionsBuilder<TReplyMarkup> _options;
     
     public InfoCommandProcessor(ILogger<InfoCommandProcessor<TReplyMarkup>> logger, 
-        ICommandValidator<InfoCommand> validator, 
+        ICommandValidator<InfoCommand> commandValidator, 
         MetricsProcessor metricsProcessor,
         ILayoutSupplier<TReplyMarkup> layoutSupplier,
-        ILayoutParser layoutParser) : base(logger, validator, metricsProcessor)
+        ILayoutParser layoutParser,
+        IValidator<Message> messageValidator) 
+        : base(logger, commandValidator, metricsProcessor, messageValidator)
     {
         var location = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location) ?? string.Empty;
         var responseLayout = layoutParser.ParseFromFile(Path.Combine(location, "main_layout.json"));

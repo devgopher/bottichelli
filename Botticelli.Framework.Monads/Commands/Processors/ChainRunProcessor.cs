@@ -4,6 +4,7 @@ using Botticelli.Framework.Commands.Processors;
 using Botticelli.Framework.Commands.Validators;
 using Botticelli.Framework.Monads.Commands.Context;
 using Botticelli.Shared.ValueObjects;
+using FluentValidation;
 using Microsoft.Extensions.Logging;
 
 namespace Botticelli.Framework.Monads.Commands.Processors;
@@ -12,8 +13,9 @@ public class ChainRunProcessor<TCommand>(
     ILogger<ChainRunProcessor<TCommand>> logger,
     ICommandValidator<TCommand> validator,
     MetricsProcessor metricsProcessor,
-    ChainRunner<TCommand> chainRunner)
-    : CommandProcessor<TCommand>(logger, validator, metricsProcessor)
+    ChainRunner<TCommand> chainRunner,
+    IValidator<Message> messageValidator)
+    : CommandProcessor<TCommand>(logger, validator, metricsProcessor, messageValidator)
     where TCommand : class, IChainCommand, new()
 {
     protected override async Task InnerProcess(Message message, string args, CancellationToken token)

@@ -10,6 +10,7 @@ using Botticelli.Framework.Controls.Parsers;
 using Botticelli.Framework.SendOptions;
 using Botticelli.Shared.API.Client.Requests;
 using Botticelli.Shared.ValueObjects;
+using FluentValidation;
 using Microsoft.Extensions.Logging;
 using Telegram.Bot.Types.ReplyMarkups;
 
@@ -20,11 +21,12 @@ public class AiCommandProcessor<TReplyMarkup> : CommandProcessor<AiCommand> wher
     private readonly IEventBusClient _bus;
 
     public AiCommandProcessor(ILogger<AiCommandProcessor<TReplyMarkup>> logger,
-        ICommandValidator<AiCommand> validator,
+        ICommandValidator<AiCommand> commandValidator,
         MetricsProcessor metricsProcessor,
         IEventBusClient bus, 
-        ILayoutSupplier<TReplyMarkup> layoutSupplier)
-        : base(logger, validator, metricsProcessor)
+        ILayoutSupplier<TReplyMarkup> layoutSupplier,
+        IValidator<Message> messageValidator)
+        : base(logger, commandValidator, metricsProcessor, messageValidator)
     {
         _bus = bus;
         var responseLayout = new AiLayout();

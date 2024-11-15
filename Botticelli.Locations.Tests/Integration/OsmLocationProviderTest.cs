@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using Botticelli.Locations.Integration;
 using Botticelli.Locations.Options;
@@ -19,7 +20,7 @@ namespace Botticelli.Locations.Tests.Integration;
 [TestOf(typeof(OsmLocationProvider))]
 public class OsmLocationProviderTest
 {
-    private ILocationProvider _locationProvider;
+    private readonly ILocationProvider _locationProvider;
 
     public OsmLocationProviderTest()
     {
@@ -33,7 +34,7 @@ public class OsmLocationProviderTest
     [TestCase("Test", 1000)]
     public async Task SearchTest(string query, int maxPoints)
     {
-        var result = await _locationProvider.Search(query, maxPoints);
+        var result = (await _locationProvider.Search(query, maxPoints))?.ToArray();
 
         result.Should().NotBeNull();
         result.Should().NotBeEmpty();
@@ -55,6 +56,6 @@ public class OsmLocationProviderTest
         var result = await _locationProvider.GetTimeZone(new Location(lat, lng));
         
         result.Should().NotBeNull();
-        result.BaseUtcOffset.Should().Be(TimeSpan.Zero);
+        result?.BaseUtcOffset.Should().Be(TimeSpan.Zero);
     }
 }

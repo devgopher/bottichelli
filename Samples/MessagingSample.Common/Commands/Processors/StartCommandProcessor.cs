@@ -9,6 +9,7 @@ using Botticelli.Scheduler.Interfaces;
 using Botticelli.Shared.API.Client.Requests;
 using Botticelli.Shared.Constants;
 using Botticelli.Shared.ValueObjects;
+using FluentValidation;
 using Microsoft.Extensions.Logging;
 using Telegram.Bot.Types.ReplyMarkups;
 
@@ -20,12 +21,13 @@ public class StartCommandProcessor<TReplyMarkup> : CommandProcessor<StartCommand
     private readonly SendOptionsBuilder<TReplyMarkup> _options;
     
     public StartCommandProcessor(ILogger<StartCommandProcessor<TReplyMarkup>> logger,
-                                 ICommandValidator<StartCommand> validator,
+                                 ICommandValidator<StartCommand> commandValidator,
                                  MetricsProcessor metricsProcessor,
                                  IJobManager jobManager,
                                  ILayoutSupplier<TReplyMarkup> layoutSupplier,
-                                 ILayoutParser layoutParser)
-        : base(logger, validator, metricsProcessor)
+                                 ILayoutParser layoutParser, 
+                                 IValidator<Message> messageValidator)
+        : base(logger, commandValidator, metricsProcessor, messageValidator)
     {
         _jobManager = jobManager;
 

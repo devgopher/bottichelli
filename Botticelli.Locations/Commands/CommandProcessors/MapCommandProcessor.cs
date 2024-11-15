@@ -3,6 +3,7 @@ using Botticelli.Framework.Commands.Processors;
 using Botticelli.Framework.Commands.Validators;
 using Botticelli.Shared.API.Client.Requests;
 using Botticelli.Shared.ValueObjects;
+using FluentValidation;
 using Microsoft.Extensions.Logging;
 
 namespace Botticelli.Locations.Commands.CommandProcessors;
@@ -11,8 +12,10 @@ public class MapCommandProcessor<TReplyMarkup> : CommandProcessor<MapCommand>
     where TReplyMarkup : class
 {
     public MapCommandProcessor(ILogger<MapCommandProcessor<TReplyMarkup>> logger,
-                               ICommandValidator<MapCommand> validator,
-                               MetricsProcessor metricsProcessor) : base(logger, validator, metricsProcessor)
+                               ICommandValidator<MapCommand> commandValidator,
+                               MetricsProcessor metricsProcessor,
+                               IValidator<Message> messageValidator) 
+        : base(logger, commandValidator, metricsProcessor, messageValidator)
     {
     }
 

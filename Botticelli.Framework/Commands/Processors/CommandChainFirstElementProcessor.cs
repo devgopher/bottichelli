@@ -1,6 +1,7 @@
 using Botticelli.Client.Analytics;
 using Botticelli.Framework.Commands.Validators;
 using Botticelli.Shared.ValueObjects;
+using FluentValidation;
 using Microsoft.Extensions.Logging;
 
 namespace Botticelli.Framework.Commands.Processors;
@@ -9,9 +10,10 @@ public class CommandChainFirstElementProcessor<TInputCommand> : CommandChainProc
         where TInputCommand : class, ICommand
 {
     public CommandChainFirstElementProcessor(ILogger<CommandChainProcessor<TInputCommand>> logger,
-                                             ICommandValidator<TInputCommand> validator,
-                                             MetricsProcessor metricsProcessor)
-            : base(logger, validator, metricsProcessor)
+                                             ICommandValidator<TInputCommand> commandValidator,
+                                             MetricsProcessor metricsProcessor,
+                                             IValidator<Message> messageValidator)
+            : base(logger, commandValidator, metricsProcessor, messageValidator)
     {
     }
 

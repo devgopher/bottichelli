@@ -7,6 +7,7 @@ using Botticelli.Framework.Commands.Validators;
 using Botticelli.Interfaces;
 using Botticelli.Shared.API.Client.Requests;
 using Botticelli.Shared.ValueObjects;
+using FluentValidation;
 using Microsoft.Extensions.Logging;
 
 namespace Botticelli.Framework.Commands.Processors;
@@ -17,16 +18,19 @@ public abstract partial class CommandProcessor<TCommand> : ICommandProcessor
     private readonly string _command;
     protected readonly ILogger Logger;
     private readonly MetricsProcessor _metricsProcessor;
-    private readonly ICommandValidator<TCommand> _validator;
+    private readonly ICommandValidator<TCommand> _commandValidator;
+    private readonly IValidator<Message> _messageValidator;
     protected IBot Bot;
 
     protected CommandProcessor(ILogger logger,
-                               ICommandValidator<TCommand> validator,
-                               MetricsProcessor metricsProcessor)
+                               ICommandValidator<TCommand> commandValidator,
+                               MetricsProcessor metricsProcessor, 
+                               IValidator<Message> messageValidator)
     {
         Logger = logger;
-        _validator = validator;
+        _commandValidator = commandValidator;
         _metricsProcessor = metricsProcessor;
+        _messageValidator = messageValidator;
         _command = GetOldFashionedCommandName(typeof(TCommand).Name);
     }
 
@@ -49,6 +53,16 @@ public abstract partial class CommandProcessor<TCommand> : ICommandProcessor
     {
         try
         {
+            var messageValidationResult = await _messageValidator.ValidateAsync(message, token);
+            if (!messageValidationResult.IsValid)
+            {
+                _metricsProcessor.Process(MetricNames.BotError, BotDataUtils.GetBotId());
+                Logger.LogError(
+                    $"Error in {GetType().Name} invalid input message: {messageValidationResult.Errors.Select(e => $"({e.PropertyName} : {e.ErrorCode} : {e.ErrorMessage})")}");
+                
+                return;
+            }
+            
             if (message.From!.Id!.Equals(Bot.BotUserId, StringComparison.InvariantCulture)) return;
 
             Classify(ref message);
@@ -151,7 +165,7 @@ public abstract partial class CommandProcessor<TCommand> : ICommandProcessor
             return;
         }
         
-        if (await _validator.Validate(message.ChatIds, message.Body))
+        if (await _commandValidator.Validate(message.ChatIds, message.Body))
         {
             SendMetric();
             await InnerProcess(message, args, token);
@@ -162,7 +176,7 @@ public abstract partial class CommandProcessor<TCommand> : ICommandProcessor
             {
                 Message =
                 {
-                    Body = _validator.Help()
+                    Body = _commandValidator.Help()
                 }
             };
 
