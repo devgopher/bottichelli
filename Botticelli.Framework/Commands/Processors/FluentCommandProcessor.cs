@@ -25,7 +25,7 @@ public abstract class FluentCommandProcessor<TCommand>(
     {
         if (!CheckCommand(message)) return;
 
-        if (await validator.Validate(message.ChatIds, message.Body))
+        if (await validator.Validate(message.Body))
         {
             SendMetric();
             await InnerProcess(message, token);

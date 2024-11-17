@@ -4,7 +4,7 @@ namespace Botticelli.Framework.Commands.Processors;
 
 public class CommandChainProcessorBuilder<TInputCommand> where TInputCommand : class, ICommand
 {
-    private ICommandChainProcessor<TInputCommand> _chainProcessor;
+    private ICommandChainProcessor<TInputCommand>? _chainProcessor;
     private readonly List<Type> _typesChain = new(3);
     private readonly IServiceCollection _services;
 
@@ -25,9 +25,9 @@ public class CommandChainProcessorBuilder<TInputCommand> where TInputCommand : c
         return this;
     }
     
-    public ICommandChainProcessor<TInputCommand> Build()
+    public ICommandChainProcessor<TInputCommand>? Build()
     {
-        if (!_typesChain.Any()) return null;
+        if (_typesChain.Count == 0) return null;
         
         // initializing chain processors...
  

@@ -6,8 +6,8 @@ namespace Botticelli.Framework.Commands.Processors;
 
 public class ClientProcessorFactory
 {
-    private static readonly IList<IClientMessageProcessor> ClientProcessors
-        = new List<IClientMessageProcessor>(10);
+    private static readonly IList<IClientMessageProcessor?> ClientProcessors
+        = new List<IClientMessageProcessor?>(10);
 
     private readonly Random _rnd = new(DateTime.Now.Millisecond);
 
@@ -26,7 +26,7 @@ public class ClientProcessorFactory
         ClientProcessors.Add(proc);
     }
     
-    public void AddSingleProcessor<TBot>(IServiceProvider sp, ICommandProcessor proc)
+    public void AddSingleProcessor<TBot>(IServiceProvider sp, ICommandProcessor? proc)
             where TBot : IBot<TBot>
     { 
         var bot = sp.GetRequiredService<IBot<TBot>>();

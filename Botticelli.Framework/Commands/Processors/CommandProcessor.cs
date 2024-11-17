@@ -165,7 +165,7 @@ public abstract partial class CommandProcessor<TCommand> : ICommandProcessor
             return;
         }
         
-        if (await _commandValidator.Validate(message.ChatIds, message.Body))
+        if (await _commandValidator.Validate(message.Body))
         {
             SendMetric();
             await InnerProcess(message, args, token);
