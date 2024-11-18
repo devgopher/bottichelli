@@ -24,7 +24,7 @@ public class FindLocationsCommandProcessor<TReplyMarkup>(
     : CommandProcessor<FindLocationsCommand>(logger, commandValidator, metricsProcessor, messageValidator)
     where TReplyMarkup : class
 {
-    protected override async Task InnerProcess(Message message, string args, CancellationToken token)
+    protected override async Task InnerProcess(Message message, CancellationToken token)
     {
         var query = string.Join(" ", values: message.Body?.Split(" ").Skip(1) ?? Array.Empty<string>());
         

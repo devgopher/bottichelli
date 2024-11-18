@@ -49,15 +49,15 @@ public class AiCommandProcessor<TReplyMarkup> : CommandProcessor<AiCommand> wher
         };
     }
 
-    protected override async Task InnerProcessLocation(Message message, string argsString, CancellationToken token)
+    protected override async Task InnerProcessLocation(Message message, CancellationToken token)
     {
         message.Body =
             $"{$"Coordinates {message.Location.Latitude:##.#####}".Replace(",", ".")},{$"{message.Location.Longitude:##.#####}".Replace(",", ".")}";
-        await InnerProcess(message, argsString, token);
+        await InnerProcess(message, token);
     }
 
 
-    protected override async Task InnerProcess(Message message, string args, CancellationToken token) =>
+    protected override async Task InnerProcess(Message message, CancellationToken token) =>
         await _bus.Send(new SendMessageRequest(message.Uid)
         {
             Message = new AiMessage(message.Uid)

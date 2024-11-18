@@ -1,4 +1,5 @@
-﻿using Botticelli.Bot.Interfaces.Processors;
+﻿using System.Text.Json;
+using Botticelli.Bot.Interfaces.Processors;
 using Botticelli.Bot.Utils;
 using Botticelli.Client.Analytics;
 using Botticelli.Framework.Commands.Validators;
@@ -12,21 +13,30 @@ namespace Botticelli.Framework.Commands.Processors;
 public abstract class FluentCommandProcessor<TCommand>(
         ILogger logger,
         MetricsProcessor metricsProcessor,
-        ICommandValidator<TCommand> validator,
+        ICommandValidator<TCommand> commandValidator,
         IBot bot)
         : ICommandProcessor
         where TCommand : class, IFluentCommand
 {
-    private readonly ILogger _logger = logger;
     protected IBot Bot = bot;
     public string CommandText { get; init; }
 
     public async Task ProcessAsync(Message message, CancellationToken token)
     {
-        if (!CheckCommand(message)) return;
+        logger.LogDebug("{processorName}.ProcessAsync() : processing a message {messageUid}: {message}",
+                        nameof(FluentCommandProcessor<TCommand>), message.Uid, JsonSerializer.Serialize(message));
 
-        if (await validator.Validate(message.Body))
+        if (!CheckCommand(message))
         {
+            logger.LogDebug("{processorName}.ProcessAsync() : processing a message {messageUid}: failed",
+                            nameof(FluentCommandProcessor<TCommand>), message.Uid);
+            return;
+        }
+
+        if (await commandValidator.Validate(message))
+        {
+            logger.LogDebug("{processorName}.ProcessAsync() : processing a message {messageUid}: command is valid",
+                            nameof(FluentCommandProcessor<TCommand>), message.Uid);
             SendMetric();
             await InnerProcess(message, token);
         }
@@ -36,10 +46,14 @@ public abstract class FluentCommandProcessor<TCommand>(
             {
                 Message =
                 {
-                    Body = validator.Help()
+                    Body = commandValidator.Help()
                 }
             };
 
+            logger.LogDebug("{processorName}.ProcessAsync() : processing a message {messageUid}: command is NOT valid!",
+                            nameof(FluentCommandProcessor<TCommand>),
+                            message.Uid);
+            
             await Bot.SendMessageAsync(errMessageRequest, token);
         }
     }
@@ -54,9 +68,11 @@ public abstract class FluentCommandProcessor<TCommand>(
     private bool CheckCommand(Message message) => message.Body?.ToLowerInvariant().Trim() == CommandText.ToLowerInvariant().Trim();
 
 
-    private void SendMetric(string metricName) => metricsProcessor.Process(metricName, BotDataUtils.GetBotId()!);
-
-    private void SendMetric() => metricsProcessor.Process($"{GetType().Name.Replace("Processor", string.Empty)}Command", BotDataUtils.GetBotId()!);
+    private void SendMetric()
+    {
+        logger.LogDebug("{processorName}.SendMetric() : sending a metric...", nameof(FluentCommandProcessor<TCommand>));
+        metricsProcessor.Process($"{GetType().Name.Replace("Processor", string.Empty)}Command", BotDataUtils.GetBotId()!);
+    }
 
 
     protected abstract Task InnerProcess(Message message, CancellationToken token);

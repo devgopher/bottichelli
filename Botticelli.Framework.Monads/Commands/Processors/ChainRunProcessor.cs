@@ -18,7 +18,7 @@ public class ChainRunProcessor<TCommand>(
     : CommandProcessor<TCommand>(logger, validator, metricsProcessor, messageValidator)
     where TCommand : class, IChainCommand, new()
 {
-    protected override async Task InnerProcess(Message message, string args, CancellationToken token)
+    protected override async Task InnerProcess(Message message, CancellationToken token)
     {
         var command = new TCommand()
         {
@@ -26,7 +26,7 @@ public class ChainRunProcessor<TCommand>(
         };
         
         command.Context.Set(Names.Message, message);
-        command.Context.Set(Names.Args, args);
+        command.Context.Set(Names.Args, message.Body ?? string.Empty);
         
         _ = await chainRunner.Run(command);
     }

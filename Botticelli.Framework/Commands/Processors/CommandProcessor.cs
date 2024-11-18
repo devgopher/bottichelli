@@ -94,7 +94,6 @@ public abstract partial class CommandProcessor<TCommand> : ICommandProcessor
                 if (commandName != _command) return;
 
                 await ValidateAndProcess(message,
-                    string.Empty,
                     token);
 
                 SendMetric(MetricNames.CommandReceived);
@@ -113,7 +112,6 @@ public abstract partial class CommandProcessor<TCommand> : ICommandProcessor
                 if (commandName != _command) return;
 
                 await ValidateAndProcess(message,
-                    argsString,
                     token);
 
                 SendMetric(MetricNames.CommandReceived);
@@ -122,13 +120,12 @@ public abstract partial class CommandProcessor<TCommand> : ICommandProcessor
             {
                 if (GetType().IsAssignableTo(typeof(CommandChainProcessor<TCommand>)))
                     await ValidateAndProcess(message,
-                                             string.Empty,
                                              token);
             }
 
-            if (message.Location != default) await InnerProcessLocation(message, string.Empty, token);
-            if (message.Poll != default) await InnerProcessPoll(message, string.Empty, token);
-            if (message.Contact != default) await InnerProcessContact(message, string.Empty, token);
+            if (message.Location != default) await InnerProcessLocation(message, token);
+            if (message.Poll != default) await InnerProcessPoll(message,  token);
+            if (message.Contact != default) await InnerProcessContact(message, token);
         }
         catch (Exception ex)
         {
@@ -153,22 +150,21 @@ public abstract partial class CommandProcessor<TCommand> : ICommandProcessor
         => fullCommand.ToLowerInvariant().Replace("command", "");
 
     private async Task ValidateAndProcess(Message message,
-        string args,
-        CancellationToken token)
+                                          CancellationToken token)
     {
         if (message.Type == Message.MessageType.Messaging)
         {
             SendMetric();
 
-            await InnerProcess(message, args, token);
+            await InnerProcess(message, token);
 
             return;
         }
         
-        if (await _commandValidator.Validate(message.Body))
+        if (await _commandValidator.Validate(message))
         {
             SendMetric();
-            await InnerProcess(message, args, token);
+            await InnerProcess(message, token);
         }
         else
         {
@@ -184,10 +180,10 @@ public abstract partial class CommandProcessor<TCommand> : ICommandProcessor
         }
     }
 
-    protected virtual Task InnerProcessContact(Message message, string args, CancellationToken token) => Task.CompletedTask;
-    protected virtual Task InnerProcessPoll(Message message, string args, CancellationToken token) => Task.CompletedTask;
-    protected virtual Task InnerProcessLocation(Message message, string args, CancellationToken token) => Task.CompletedTask;
-    protected abstract Task InnerProcess(Message message, string args, CancellationToken token);
+    protected virtual Task InnerProcessContact(Message message, CancellationToken token) => Task.CompletedTask;
+    protected virtual Task InnerProcessPoll(Message message, CancellationToken token) => Task.CompletedTask;
+    protected virtual Task InnerProcessLocation(Message message, CancellationToken token) => Task.CompletedTask;
+    protected abstract Task InnerProcess(Message message, CancellationToken token);
    
     [GeneratedRegex("\\/([a-zA-Z0-9]*)$")]
     private static partial Regex SimpleCommandRegex();

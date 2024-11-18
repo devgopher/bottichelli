@@ -20,7 +20,7 @@ public class DateChosenCommandProcessor(
         IValidator<Message> messageValidator)
         : CommandProcessor<DateChosenCommand>(logger, commandValidator, metricsProcessor, messageValidator)
 {
-    protected override async Task InnerProcess(Message message, string args, CancellationToken token)
+    protected override async Task InnerProcess(Message message, CancellationToken token)
     {
         var request = new SendMessageRequest
         {

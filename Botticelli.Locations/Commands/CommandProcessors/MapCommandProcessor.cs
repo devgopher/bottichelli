@@ -19,7 +19,7 @@ public class MapCommandProcessor<TReplyMarkup> : CommandProcessor<MapCommand>
     {
     }
 
-    protected override async Task InnerProcess(Message message, string args, CancellationToken token)
+    protected override async Task InnerProcess(Message message, CancellationToken token)
     {
         var request = new SendMessageRequest
         {
@@ -27,7 +27,7 @@ public class MapCommandProcessor<TReplyMarkup> : CommandProcessor<MapCommand>
             {
                 Uid = Guid.NewGuid().ToString(),
                 ChatIds = message.ChatIds,
-                Body = args,
+                Body = message.Body
             }
         };
 

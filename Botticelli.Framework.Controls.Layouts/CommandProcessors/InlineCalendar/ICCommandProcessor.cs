@@ -31,11 +31,11 @@ public class ICCommandProcessor<TCommand, TReplyMarkup> : CommandProcessor<TComm
             : base(logger, commandValidator, metricsProcessor, messageValidator) =>
             _layoutSupplier = layoutSupplier;
 
-    protected override async Task InnerProcess(Message message, string args, CancellationToken token)
+    protected override async Task InnerProcess(Message message, CancellationToken token)
     {
         Inlines.InlineCalendar calendar;
 
-        if (!DateTime.TryParse(args, out var dt)) return;
+        if (!DateTime.TryParse(message.Body, out var dt)) return;
         
         if (typeof(TCommand) == typeof(MonthBackwardCommand))
             calendar = CalendarFactory.GetMonthsForward(dt, CultureInfo.InvariantCulture.Name, -1);

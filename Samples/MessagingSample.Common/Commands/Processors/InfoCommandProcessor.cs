@@ -30,13 +30,13 @@ public class InfoCommandProcessor<TReplyMarkup> : CommandProcessor<InfoCommand> 
         _options = SendOptionsBuilder<TReplyMarkup>.CreateBuilder(responseMarkup);
     }
 
-    protected override Task InnerProcessContact(Message message, string args, CancellationToken token) => throw new NotImplementedException();
+    protected override Task InnerProcessContact(Message message, CancellationToken token) => throw new NotImplementedException();
 
-    protected override Task InnerProcessPoll(Message message, string args, CancellationToken token) => throw new NotImplementedException();
+    protected override Task InnerProcessPoll(Message message, CancellationToken token) => throw new NotImplementedException();
 
-    protected override Task InnerProcessLocation(Message message, string args, CancellationToken token) => throw new NotImplementedException();
+    protected override Task InnerProcessLocation(Message message, CancellationToken token) => throw new NotImplementedException();
 
-    protected override async Task InnerProcess(Message message, string args, CancellationToken token)
+    protected override async Task InnerProcess(Message message, CancellationToken token)
     {
         var greetingMessageRequest = new SendMessageRequest
         {

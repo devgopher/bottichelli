@@ -1,18 +1,15 @@
-﻿namespace Botticelli.Framework.Commands.Validators;
+﻿using Botticelli.Shared.ValueObjects;
 
-public interface ICommandValidator<TCommand>
+namespace Botticelli.Framework.Commands.Validators;
+
+public interface ICommandValidator<in TCommand>
         where TCommand : ICommand
 {
-    /// <summary>
-    ///     Input command
-    /// </summary>
-    protected ICommand Command { get; }
-
     /// <summary>
     ///     Main validation procedure
     /// </summary>
     /// <returns></returns>
-    public Task<bool> Validate(string args);
+    public Task<bool> Validate(Message message);
 
     /// <summary>
     ///     A help for a concrete command
