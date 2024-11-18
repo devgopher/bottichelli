@@ -1,6 +1,7 @@
 using System.Globalization;
 using Botticelli.Client.Analytics;
 using Botticelli.Framework.Commands.Processors;
+using Botticelli.Framework.Commands.Utils;
 using Botticelli.Framework.Commands.Validators;
 using Botticelli.Framework.Controls.Layouts.Commands.InlineCalendar;
 using Botticelli.Framework.Controls.Layouts.Inlines;
@@ -35,7 +36,7 @@ public class ICCommandProcessor<TCommand, TReplyMarkup> : CommandProcessor<TComm
     {
         Inlines.InlineCalendar calendar;
 
-        if (!DateTime.TryParse(message.Body, out var dt)) return;
+        if (!DateTime.TryParse(message.Body?.GetArguments(), out var dt)) return;
         
         if (typeof(TCommand) == typeof(MonthBackwardCommand))
             calendar = CalendarFactory.GetMonthsForward(dt, CultureInfo.InvariantCulture.Name, -1);

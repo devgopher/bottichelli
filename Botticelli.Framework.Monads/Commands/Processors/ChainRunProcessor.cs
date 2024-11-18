@@ -1,6 +1,7 @@
 using Botticelli.Client.Analytics;
 using Botticelli.Framework.Commands;
 using Botticelli.Framework.Commands.Processors;
+using Botticelli.Framework.Commands.Utils;
 using Botticelli.Framework.Commands.Validators;
 using Botticelli.Framework.Monads.Commands.Context;
 using Botticelli.Shared.ValueObjects;
@@ -26,7 +27,7 @@ public class ChainRunProcessor<TCommand>(
         };
         
         command.Context.Set(Names.Message, message);
-        command.Context.Set(Names.Args, message.Body ?? string.Empty);
+        command.Context.Set(Names.Args, message.Body.GetArguments());
         
         _ = await chainRunner.Run(command);
     }

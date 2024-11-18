@@ -4,6 +4,7 @@ using Botticelli.AI.Message;
 using Botticelli.Bot.Interfaces.Client;
 using Botticelli.Client.Analytics;
 using Botticelli.Framework.Commands.Processors;
+using Botticelli.Framework.Commands.Utils;
 using Botticelli.Framework.Commands.Validators;
 using Botticelli.Framework.Controls.Layouts;
 using Botticelli.Framework.Controls.Parsers;
@@ -64,8 +65,7 @@ public class AiCommandProcessor<TReplyMarkup> : CommandProcessor<AiCommand> wher
             {
                 ChatIds = message.ChatIds,
                 Subject = string.Empty,
-                Body = message.Body?.Replace("/ai", string.Empty)
-                    .Trim(),
+                Body = message.Body?.GetArguments(),
                 Attachments = null,
                 From = message.From,
                 ForwardedFrom = message.ForwardedFrom

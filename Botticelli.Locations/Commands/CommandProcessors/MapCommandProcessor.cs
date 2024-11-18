@@ -1,5 +1,6 @@
 using Botticelli.Client.Analytics;
 using Botticelli.Framework.Commands.Processors;
+using Botticelli.Framework.Commands.Utils;
 using Botticelli.Framework.Commands.Validators;
 using Botticelli.Shared.API.Client.Requests;
 using Botticelli.Shared.ValueObjects;
@@ -27,7 +28,7 @@ public class MapCommandProcessor<TReplyMarkup> : CommandProcessor<MapCommand>
             {
                 Uid = Guid.NewGuid().ToString(),
                 ChatIds = message.ChatIds,
-                Body = message.Body
+                Body = message.Body?.GetArguments()
             }
         };
 
