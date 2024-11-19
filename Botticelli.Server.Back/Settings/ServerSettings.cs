@@ -1,6 +1,6 @@
 ﻿using FluentEmail.MailKitSmtp;
 
-namespace Botticelli.Server.Settings;
+namespace Botticelli.Server.Back.Settings;
 
 public class ServerSettings
 {

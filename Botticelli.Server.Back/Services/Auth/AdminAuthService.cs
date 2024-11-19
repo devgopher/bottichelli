@@ -1,11 +1,11 @@
 ﻿using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
+using Botticelli.Server.Back.Settings;
 using Botticelli.Server.Data;
 using Botticelli.Server.Data.Entities.Auth;
 using Botticelli.Server.Data.Exceptions;
 using Botticelli.Server.Models.Responses;
-using Botticelli.Server.Settings;
 using Botticelli.Shared.Utils;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;

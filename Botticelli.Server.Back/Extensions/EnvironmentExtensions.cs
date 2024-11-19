@@ -1,4 +1,4 @@
-namespace Botticelli.Server.Extensions;
+namespace Botticelli.Server.Back.Extensions;
 
 public static class EnvironmentExtensions
 {

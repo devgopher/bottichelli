@@ -1,9 +1,7 @@
-﻿using Botticelli.Server.Data.Entities;
-using Botticelli.Server.Data.Entities.Bot;
+﻿using Botticelli.Server.Data.Entities.Bot;
 using Botticelli.Shared.API.Admin.Responses;
-using Botticelli.Shared.ValueObjects;
 
-namespace Botticelli.Server.Services;
+namespace Botticelli.Server.Back.Services;
 
 /// <summary>
 ///     This interface is intended for bot management purposes (Getting a bots list/context/status)

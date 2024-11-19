@@ -1,6 +1,5 @@
 ﻿using Botticelli.Server.Data;
 using Botticelli.Server.Data.Entities.Bot;
-using Botticelli.Server.Services;
 using Botticelli.Shared.API.Admin.Responses;
 
 namespace Botticelli.Server.Back.Services;

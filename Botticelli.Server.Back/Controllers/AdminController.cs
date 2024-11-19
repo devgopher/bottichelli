@@ -1,5 +1,5 @@
-﻿using Botticelli.Server.Data.Entities.Bot;
-using Botticelli.Server.Services;
+﻿using Botticelli.Server.Back.Services;
+using Botticelli.Server.Data.Entities.Bot;
 using Botticelli.Shared.API.Admin.Responses;
 using Botticelli.Shared.API.Client.Requests;
 using Botticelli.Shared.API.Client.Responses;

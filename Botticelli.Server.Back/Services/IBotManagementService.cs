@@ -1,7 +1,7 @@
 ﻿using Botticelli.Shared.API.Admin.Responses;
 using Botticelli.Shared.Constants;
 
-namespace Botticelli.Server.Services;
+namespace Botticelli.Server.Back.Services;
 
 public interface IBotManagementService
 {

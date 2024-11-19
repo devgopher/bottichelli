@@ -1,5 +1,5 @@
-using Botticelli.Server.Extensions;
-using Botticelli.Server.Settings;
+using Botticelli.Server.Back.Extensions;
+using Botticelli.Server.Back.Settings;
 using FluentEmail.Core;
 using FluentEmail.Core.Interfaces;
 

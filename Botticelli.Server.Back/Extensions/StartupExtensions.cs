@@ -4,9 +4,8 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Server.Kestrel.Core;
 using Microsoft.AspNetCore.Server.Kestrel.Https;
 using Microsoft.EntityFrameworkCore;
-using MimeKit.Cryptography;
 
-namespace Botticelli.Server.Extensions;
+namespace Botticelli.Server.Back.Extensions;
 
 public static class StartupExtensions
 {

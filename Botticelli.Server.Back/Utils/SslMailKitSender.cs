@@ -7,7 +7,7 @@ using MailKit.Net.Smtp;
 using Microsoft.Extensions.Options;
 using MimeKit;
 
-namespace Botticelli.Server.Utils;
+namespace Botticelli.Server.Back.Utils;
 
 /// <summary>
 ///     Send emails with the MailKit Library.

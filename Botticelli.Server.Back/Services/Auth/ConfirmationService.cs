@@ -1,5 +1,5 @@
 ﻿using System.Text;
-using Botticelli.Server.Settings;
+using Botticelli.Server.Back.Settings;
 using FluentEmail.Core;
 using FluentEmail.Core.Interfaces;
 using Flurl;
