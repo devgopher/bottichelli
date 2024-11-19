@@ -11,7 +11,6 @@ using Botticelli.Talks.Extensions;
 using MessagingSample.Common.Commands;
 using MessagingSample.Common.Commands.Processors;
 using NLog.Extensions.Logging;
-using VkMessagingSample;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -19,7 +18,6 @@ builder.Services
        .AddVkBot(builder.Configuration)
        .AddLogging(cfg => cfg.AddNLog())
        .AddQuartzScheduler(builder.Configuration)
-       .AddHostedService<TestBotHostedService>()
        .AddScoped<StartCommandProcessor<VkKeyboardMarkup>>()
        .AddScoped<StopCommandProcessor<VkKeyboardMarkup>>()
        .AddOpenTtsTalks(builder.Configuration)

@@ -16,7 +16,6 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services
     .AddTelegramBot(builder.Configuration)
     .AddLogging(cfg => cfg.AddNLog())
-    .AddHostedService<TestBotHostedService>()
     .AddScoped<ILayoutParser, JsonLayoutParser>()
     .AddTelegramLayoutsSupport();
 
