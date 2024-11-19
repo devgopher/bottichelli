@@ -12,7 +12,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 
-namespace Botticelli.Server.Services.Auth;
+namespace Botticelli.Server.Back.Services.Auth;
 
 /// <summary>
 ///     Authentication service

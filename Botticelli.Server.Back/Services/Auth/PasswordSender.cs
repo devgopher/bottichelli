@@ -3,7 +3,7 @@ using Botticelli.Server.Settings;
 using FluentEmail.Core;
 using FluentEmail.Core.Interfaces;
 
-namespace Botticelli.Server.Services.Auth;
+namespace Botticelli.Server.Back.Services.Auth;
 
 public class PasswordSender : IPasswordSender
 {

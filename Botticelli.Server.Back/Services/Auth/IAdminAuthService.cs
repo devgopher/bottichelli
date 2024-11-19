@@ -2,7 +2,7 @@
 using Botticelli.Server.Data.Exceptions;
 using Botticelli.Server.Models.Responses;
 
-namespace Botticelli.Server.Services.Auth;
+namespace Botticelli.Server.Back.Services.Auth;
 
 public interface IAdminAuthService
 {

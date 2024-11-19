@@ -1,9 +1,9 @@
 using System.Text;
 using Botticelli.Server.Back.Services;
+using Botticelli.Server.Back.Services.Auth;
 using Botticelli.Server.Data;
 using Botticelli.Server.Extensions;
 using Botticelli.Server.Services;
-using Botticelli.Server.Services.Auth;
 using Botticelli.Server.Settings;
 using Botticelli.Server.Utils;
 using FluentEmail.Core.Interfaces;

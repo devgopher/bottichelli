@@ -1,5 +1,5 @@
-﻿using Botticelli.Server.Data.Entities.Auth;
-using Botticelli.Server.Services.Auth;
+﻿using Botticelli.Server.Back.Services.Auth;
+using Botticelli.Server.Data.Entities.Auth;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 

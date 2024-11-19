@@ -1,4 +1,4 @@
-﻿namespace Botticelli.Server.Services.Auth;
+﻿namespace Botticelli.Server.Back.Services.Auth;
 
 public interface IPasswordSender
 {

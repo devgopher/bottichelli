@@ -1,6 +1,6 @@
 ﻿using Microsoft.AspNetCore.Identity;
 
-namespace Botticelli.Server.Services.Auth;
+namespace Botticelli.Server.Back.Services.Auth;
 
 /// <summary>
 ///     Email confirmation service

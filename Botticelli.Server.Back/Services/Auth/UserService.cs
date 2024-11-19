@@ -5,7 +5,7 @@ using Botticelli.Shared.Utils;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 
-namespace Botticelli.Server.Services.Auth;
+namespace Botticelli.Server.Back.Services.Auth;
 
 public class UserService : IUserService
 {
@@ -32,14 +32,20 @@ public class UserService : IUserService
     {
         try
         {
+            request.NotNull();
+            request.Email.NotNull();
+            
             if (await _context.ApplicationUsers.AnyAsync(token))
                 return false;
 
             await AddAsync(request, false, token);
 
             var user = await _context.ApplicationUsers.FirstOrDefaultAsync(
-                u => u.NormalizedEmail == GetNormalized(request.Email), token);
-            user.EmailConfirmed = true;
+                u => u.NormalizedEmail == GetNormalized(request.Email!), token);
+            
+            user.NotNull();
+            
+            user!.EmailConfirmed = true;
             await _context.SaveChangesAsync(token);
 
             return true;
@@ -57,10 +63,14 @@ public class UserService : IUserService
         try
         {
             _logger.LogInformation($"{nameof(AddAsync)}({request.UserName}) started...");
+            request.NotNull();
+            request.UserName.NotNull();
+            request.Email.NotNull();
+            request.Password.NotNull();
 
             if (_context.ApplicationUsers.AsQueryable()
-                .Any(u => u.NormalizedUserName == GetNormalized(request.UserName) ||
-                          u.Email == GetNormalized(request.Email)))
+                .Any(u => u.NormalizedUserName == GetNormalized(request.UserName!) ||
+                          u.Email == GetNormalized(request.Email!)))
                 throw new DataException($"User with name {request.UserName} and/or email {request.Email}" +
                                         " already exists!");
 
@@ -69,9 +79,9 @@ public class UserService : IUserService
                 Id = Guid.NewGuid().ToString(),
                 Email = request.Email,
                 UserName = request.UserName,
-                NormalizedUserName = GetNormalized(request.UserName),
-                NormalizedEmail = GetNormalized(request.Email),
-                PasswordHash = HashUtils.GetHash(request.Password, _config["Authorization:Salt"])
+                NormalizedUserName = GetNormalized(request.UserName!),
+                NormalizedEmail = GetNormalized(request.Email!),
+                PasswordHash = HashUtils.GetHash(request.Password!, _config["Authorization:Salt"])
             };
             
             #if DEBUG
@@ -121,20 +131,26 @@ public class UserService : IUserService
         {
             _logger.LogInformation($"{nameof(UpdateAsync)}({request.UserName}) started...");
 
+            request.NotNull();
+            request.UserName.NotNull();
+            request.Email.NotNull();
+            request.Password.NotNull();
+
             if (_context.ApplicationUsers.AsQueryable()
-                .All(u => u.NormalizedUserName != GetNormalized(request.UserName)))
+                .All(u => u.NormalizedUserName != GetNormalized(request.UserName!)))
                 throw new DataException($"User with name {request.UserName} doesn't exist!");
 
             var user = await _context.ApplicationUsers.FirstOrDefaultAsync(
-                u => u.NormalizedUserName == GetNormalized(request.UserName), token);
+                u => u.NormalizedUserName == GetNormalized(request.UserName!), token);
+            
+            user.NotNull();
 
-
-            var prevMail = user.NormalizedEmail;
+            var prevMail = user!.NormalizedEmail;
             user.Email = request.Email;
-            user.NormalizedEmail = GetNormalized(request.Email);
-            user.PasswordHash = HashUtils.GetHash(request.Password, _config["Authorization:Salt"]);
+            user.NormalizedEmail = GetNormalized(request.Email!);
+            user.PasswordHash = HashUtils.GetHash(request.Password!, _config["Authorization:Salt"]);
 
-            if (prevMail != GetNormalized(request.Email))
+            if (prevMail != GetNormalized(request.Email!))
                 await _confirmationService.SendConfirmationCode(user, token);
 
             _context.ApplicationUsers.Update(user);
@@ -157,14 +173,18 @@ public class UserService : IUserService
         {
             _logger.LogInformation($"{nameof(DeleteAsync)}({request.UserName}) started...");
 
+            request.NotNull();
+            request.UserName.NotNull();
+            
             if (_context.ApplicationUsers.AsQueryable()
-                .All(u => u.NormalizedUserName != GetNormalized(request.UserName)))
+                .All(u => u.NormalizedUserName != GetNormalized(request.UserName!)))
                 throw new DataException($"User with name {request.UserName} doesn't exist!");
 
             var user = await _context.ApplicationUsers.FirstOrDefaultAsync(
-                u => u.NormalizedUserName == GetNormalized(request.UserName), token);
+                u => u.NormalizedUserName == GetNormalized(request.UserName!), token);
 
-            _context.ApplicationUsers.Remove(user);
+            user.NotNull();
+            _context.ApplicationUsers.Remove(user!);
 
             await _context.SaveChangesAsync(token);
 
@@ -185,12 +205,15 @@ public class UserService : IUserService
             _logger.LogInformation($"{nameof(GetAsync)}({request.UserName}) started...");
 
             if (_context.ApplicationUsers.AsQueryable()
-                .All(u => u.NormalizedUserName != GetNormalized(request.UserName)))
+                .All(u => u.NormalizedUserName != GetNormalized(request.UserName!)))
                 throw new DataException($"User with name {request.UserName} doesn't exist!");
 
             var user = await _context.ApplicationUsers.FirstOrDefaultAsync(
-                u => u.NormalizedUserName == GetNormalized(request.UserName), token);
+                u => u.NormalizedUserName == GetNormalized(request.UserName!), token);
 
+            user.NotNull();
+            user!.Email.NotNull();
+            
             _logger.LogInformation($"{nameof(GetAsync)}({request.UserName}) finished...");
 
             return new UserGetResponse
@@ -220,5 +243,5 @@ public class UserService : IUserService
     }
 
     private static string GetNormalized(string input)
-        => input?.ToUpper();
+        => input.ToUpper();
 }

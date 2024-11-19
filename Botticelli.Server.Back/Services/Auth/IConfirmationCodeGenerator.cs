@@ -1,4 +1,6 @@
-﻿namespace Botticelli.Server.Services.Auth;
+﻿using Botticelli.Server.Back.Services.Auth.Models;
+
+namespace Botticelli.Server.Back.Services.Auth;
 
 /// <summary>
 ///     Code generator
@@ -9,7 +11,7 @@ public interface IConfirmationCodeGenerator
     ///     Generates a code
     /// </summary>
     /// <param name="size"></param>
-    /// <param name="lifetimeSec"></param>
+    /// <param name="lifetime"></param>
     /// <returns></returns>
-    public string GenerateCode(int size = 4, int lifetimeSec = 600);
+    public ConfirmationCode GenerateCode(int size = 4,  TimeSpan lifetime = default);
 }

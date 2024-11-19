@@ -1,18 +1,24 @@
-﻿using System.Text;
+﻿using System.ComponentModel.DataAnnotations;
+using System.Text;
+using Botticelli.Server.Back.Services.Auth.Models;
 
-namespace Botticelli.Server.Services.Auth;
+namespace Botticelli.Server.Back.Services.Auth;
 
 public class ConfirmationCodeGenerator : IConfirmationCodeGenerator
 {
     private readonly Random _rand = new(DateTime.Now.Millisecond);
 
-    public string GenerateCode(int size = 4, int lifetimeSec = 600)
+    public ConfirmationCode GenerateCode(int size = 4, TimeSpan lifetime = default)
     {
         var code = new StringBuilder(size);
 
-        for (var i = 0; i < size; ++i)
-            code.Append(_rand.Next(0, 9));
+        code.Append(Enumerable.Range(0, size).Select(x => _rand.Next(0, 9)));
 
-        return code.ToString();
+        return new ConfirmationCode()
+        {
+            Code = code.ToString(),
+            Lifetime = lifetime == default ? TimeSpan.FromMinutes(10) : lifetime
+        };
     }
+
 }
