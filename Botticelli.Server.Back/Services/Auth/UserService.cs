@@ -239,7 +239,7 @@ public class UserService : IUserService
         var user = await _context.ApplicationUsers.FirstOrDefaultAsync(
             u => u.NormalizedEmail == GetNormalized(requestEmail), token);
 
-        return await _confirmationService.ConfirmCodeAsync(requestToken, user, token);
+        return await _confirmationService.ConfirmCodeAsync(requestToken, user!, token);
     }
 
     private static string GetNormalized(string input)

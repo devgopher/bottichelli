@@ -177,7 +177,6 @@ public class UserController : Controller
     {
         try
         {
-            var user = GetCurrentUserName();
             request.NotNull();
             request.Email.NotNull();
             request.Token.NotNull();

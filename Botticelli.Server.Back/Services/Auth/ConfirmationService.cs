@@ -42,7 +42,7 @@ public class ConfirmationService : IConfirmationService
     public async Task<bool> ConfirmCodeAsync(string srcToken, IdentityUser<string> user, CancellationToken ct)
     {
         var token = Encoding.UTF8.GetString(Convert.FromBase64String(srcToken));
-
+        
         var result = await _userManager.ConfirmEmailAsync(user, token);
 
         return result.Succeeded;
