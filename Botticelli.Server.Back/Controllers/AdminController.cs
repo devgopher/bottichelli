@@ -1,5 +1,4 @@
-﻿using Botticelli.Server.Data.Entities;
-using Botticelli.Server.Data.Entities.Bot;
+﻿using Botticelli.Server.Data.Entities.Bot;
 using Botticelli.Server.Services;
 using Botticelli.Shared.API.Admin.Responses;
 using Botticelli.Shared.API.Client.Requests;
@@ -7,7 +6,7 @@ using Botticelli.Shared.API.Client.Responses;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
-namespace Botticelli.Server.Controllers;
+namespace Botticelli.Server.Back.Controllers;
 
 /// <summary>
 ///     Admin controller getting/adding/removing bots

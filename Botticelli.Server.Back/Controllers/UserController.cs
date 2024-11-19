@@ -1,11 +1,12 @@
 ﻿using Botticelli.Server.Back.Services.Auth;
 using Botticelli.Server.Data.Entities.Auth;
+using Botticelli.Shared.Utils;
 using MapsterMapper;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using PasswordGenerator;
 
-namespace Botticelli.Server.Controllers;
+namespace Botticelli.Server.Back.Controllers;
 
 /// <summary>
 ///     Admin controller getting/adding/removing bots
@@ -39,13 +40,17 @@ public class UserController : Controller
     public async Task<IActionResult> AddDefaultUserAsync(DefaultUserAddRequest request, CancellationToken token)
     {
         try
-        {
+        {   
+            request.NotNull();
+            request.UserName.NotNull();
+            request.Email.NotNull();
+            
             var password = _password.Next();
             var mapped = _mapper.Map<UserAddRequest>(request);
             mapped.Password = password;
 
             if (await _userService.CheckAndAddAsync(mapped, token))
-                await _passwordSender.SendPassword(request.Email, password, token);
+                await _passwordSender.SendPassword(request.Email!, password, token);
         }
         catch (Exception ex)
         {
@@ -62,11 +67,15 @@ public class UserController : Controller
     {
         try
         {
+            passwordRequest.NotNull();
+            passwordRequest.UserName.NotNull();
+            passwordRequest.Email.NotNull();
+            
             var mapped = _mapper.Map<UserUpdateRequest>(passwordRequest);
             mapped.Password = _password.Next();
 
             await _userService.UpdateAsync(mapped, token);
-            await _passwordSender.SendPassword(passwordRequest.Email, mapped.Password, token);
+            await _passwordSender.SendPassword(passwordRequest.Email!, mapped.Password, token);
         }
         catch (Exception ex)
         {
@@ -106,7 +115,7 @@ public class UserController : Controller
     }
 
     private string GetCurrentUserName() =>
-        HttpContext.User.Claims.FirstOrDefault(c => c.Type == "applicationUserName")?.Value;
+        HttpContext.User.Claims.FirstOrDefault(c => c.Type == "applicationUserName")?.Value ?? throw new NullReferenceException();
 
     [HttpGet]
     public async Task<ActionResult<UserGetResponse>> GetUserAsync(UserGetRequest request, CancellationToken token)
@@ -114,7 +123,6 @@ public class UserController : Controller
         try
         {
             return new ActionResult<UserGetResponse>(await _userService.GetAsync(request, token));
-            ;
         }
         catch (Exception ex)
         {
@@ -170,8 +178,11 @@ public class UserController : Controller
         try
         {
             var user = GetCurrentUserName();
+            request.NotNull();
+            request.Email.NotNull();
+            request.Token.NotNull();
 
-            await _userService.ConfirmCodeAsync(request.Email, request.Token, token);
+            await _userService.ConfirmCodeAsync(request.Email!, request.Token!, token);
             return Ok();
         }
         catch (Exception ex)

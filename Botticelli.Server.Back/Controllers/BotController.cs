@@ -5,7 +5,7 @@ using Botticelli.Shared.ValueObjects;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
-namespace Botticelli.Server.Controllers;
+namespace Botticelli.Server.Back.Controllers;
 
 /// <summary>
 ///     Bot status controller

@@ -3,7 +3,7 @@ using Botticelli.Server.Data.Entities.Auth;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
-namespace Botticelli.Server.Controllers;
+namespace Botticelli.Server.Back.Controllers;
 
 /// <summary>
 ///     Login controller for login/logoff/registration and access checking functions
