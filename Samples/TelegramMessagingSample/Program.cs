@@ -8,7 +8,6 @@ using MessagingSample.Common.Commands;
 using MessagingSample.Common.Commands.Processors;
 using NLog.Extensions.Logging;
 using Telegram.Bot.Types.ReplyMarkups;
-using TelegramMessagingSample;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -16,7 +15,6 @@ builder.Services
     .AddTelegramBot(builder.Configuration)
     .AddLogging(cfg => cfg.AddNLog())
     .AddQuartzScheduler(builder.Configuration)
-    .AddHostedService<TestBotHostedService>()
     .AddScoped<ILayoutParser, JsonLayoutParser>();
 
 builder.Services.AddBotCommand<InfoCommand>()

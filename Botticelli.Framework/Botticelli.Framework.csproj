@@ -25,11 +25,8 @@
     </ItemGroup>
     <ItemGroup>
         <Compile Remove="Handlers\**"/>
-        <Compile Remove="HostedService\**"/>
         <EmbeddedResource Remove="Handlers\**"/>
-        <EmbeddedResource Remove="HostedService\**"/>
         <None Remove="Handlers\**"/>
-        <None Remove="HostedService\**"/>
     </ItemGroup>
 
     <ItemGroup>

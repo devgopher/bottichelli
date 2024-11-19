@@ -19,7 +19,6 @@ builder.Services
        .AddTelegramBot(builder.Configuration)
        .AddLogging(cfg => cfg.AddNLog())
        .AddQuartzScheduler(builder.Configuration)
-       .AddHostedService<TestBotHostedService>()
        .AddScoped<StartCommandProcessor<ReplyMarkupBase>>()
        .AddScoped<StopCommandProcessor<ReplyMarkupBase>>()
        .AddScoped<InfoCommandProcessor<ReplyMarkupBase>>()

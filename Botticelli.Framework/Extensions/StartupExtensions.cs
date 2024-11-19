@@ -4,6 +4,7 @@ using Botticelli.Bot.Interfaces.Processors;
 using Botticelli.Framework.Commands;
 using Botticelli.Framework.Commands.Processors;
 using Botticelli.Framework.Commands.Validators;
+using Botticelli.Framework.HostedService;
 using Botticelli.Framework.Options;
 using Botticelli.Interfaces;
 using Botticelli.Shared.Extensions;
@@ -17,6 +18,7 @@ public static class StartupExtensions
     public static IServiceCollection AddBotticelliFramework(this IServiceCollection services) =>
         services.AddSingleton<ClientProcessorFactory>()
             .AddSharedValidation()
+            .AddHostedService<BotHostedService>()
             .AddEasyCaching(options =>
             {
                 options.UseInMemory(config =>
