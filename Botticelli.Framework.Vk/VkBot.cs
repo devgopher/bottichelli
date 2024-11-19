@@ -110,7 +110,7 @@ public class VkBot : BaseBot<VkBot>
         return StartBotResponse.GetInstance(AdminCommandStatus.Fail, "error");
     }
 
-    public override async Task SetBotContext(BotData context, CancellationToken token)
+    public override async Task SetBotContext(BotData? context, CancellationToken token)
     {
         if (context == default) return;
         var currentContext = _data.GetData();
@@ -135,7 +135,7 @@ public class VkBot : BaseBot<VkBot>
         }
     }
 
-    private void SetApiKey(BotData context)
+    private void SetApiKey(BotData? context)
     {
         _messagesProvider.SetApiKey(context.BotKey);
         _messagePublisher.SetApiKey(context.BotKey);

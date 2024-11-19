@@ -82,7 +82,7 @@ public abstract class BaseBot<T> : BaseBot, IBot<T>
         return result;
     }
 
-    public abstract Task SetBotContext(BotData botData, CancellationToken token);
+    public abstract Task SetBotContext(BotData? botData, CancellationToken token);
 
     /// <summary>
     ///     Sends a message

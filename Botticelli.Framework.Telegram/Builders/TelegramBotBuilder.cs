@@ -94,7 +94,7 @@ public class TelegramBotBuilder : BotBuilder<TelegramBotBuilder, TelegramBot>
         _client = _builder.Build();
         _client.Timeout = TimeSpan.FromMilliseconds(BotSettings.Timeout);
 
-        Services!.AddScoped<ILayoutSupplier<ReplyMarkupBase>, ReplyTelegramLayoutSupplier>()
+        Services!.AddScoped<ILayoutSupplier<IReplyMarkup>, ReplyTelegramLayoutSupplier>()
             .AddBotticelliFramework()
             .AddSingleton<IBotUpdateHandler, BotUpdateHandler>();
 
