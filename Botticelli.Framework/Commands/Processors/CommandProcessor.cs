@@ -3,6 +3,7 @@ using Botticelli.Analytics.Shared.Metrics;
 using Botticelli.Bot.Interfaces.Processors;
 using Botticelli.Bot.Utils;
 using Botticelli.Client.Analytics;
+using Botticelli.Framework.Commands.Utils;
 using Botticelli.Framework.Commands.Validators;
 using Botticelli.Interfaces;
 using Botticelli.Shared.API.Client.Requests;
@@ -38,9 +39,9 @@ public abstract partial class CommandProcessor<TCommand> : ICommandProcessor
     {
         var body = GetBody(message);
         
-        if (SimpleCommandRegex().IsMatch(body))
+        if (CommandUtils.SimpleCommandRegex.IsMatch(body))
             message.Type = Message.MessageType.Command;
-        else if (ArgsCommandRegex().IsMatch(body))
+        else if (CommandUtils.ArgsCommandRegex.IsMatch(body))
             message.Type = Message.MessageType.Command;
         else message.Type = Message.MessageType.Messaging;
     }
@@ -82,10 +83,10 @@ public abstract partial class CommandProcessor<TCommand> : ICommandProcessor
             // if we've any callback data, lets assume , that it is a command, if not - see in a message body
             var body = GetBody(message);
 
-            if (SimpleCommandRegex().IsMatch(body))
+            if (CommandUtils.SimpleCommandRegex.IsMatch(body))
             {
-                var match = SimpleCommandRegex().Matches(body)
-                    .FirstOrDefault();
+                var match = CommandUtils.SimpleCommandRegex.Matches(body)
+                                        .FirstOrDefault();
 
                 if (match == default) return;
 
@@ -94,26 +95,22 @@ public abstract partial class CommandProcessor<TCommand> : ICommandProcessor
                 if (commandName != _command) return;
 
                 await ValidateAndProcess(message,
-                    string.Empty,
                     token);
 
                 SendMetric(MetricNames.CommandReceived);
             }
-            else if (ArgsCommandRegex().IsMatch(body))
+            else if (CommandUtils.ArgsCommandRegex.IsMatch(body))
             {
-                var match = ArgsCommandRegex().Matches(body)
-                    .FirstOrDefault();
+                var match = CommandUtils.ArgsCommandRegex.Matches(body)
+                                        .FirstOrDefault();
 
                 if (match == default) return;
-
-                var argsString = match.Groups[2].Value;
 
                 var commandName = GetOldFashionedCommandName(match.Groups[1].Value);
 
                 if (commandName != _command) return;
 
                 await ValidateAndProcess(message,
-                    argsString,
                     token);
 
                 SendMetric(MetricNames.CommandReceived);
@@ -122,13 +119,12 @@ public abstract partial class CommandProcessor<TCommand> : ICommandProcessor
             {
                 if (GetType().IsAssignableTo(typeof(CommandChainProcessor<TCommand>)))
                     await ValidateAndProcess(message,
-                                             string.Empty,
                                              token);
             }
 
-            if (message.Location != default) await InnerProcessLocation(message, string.Empty, token);
-            if (message.Poll != default) await InnerProcessPoll(message, string.Empty, token);
-            if (message.Contact != default) await InnerProcessContact(message, string.Empty, token);
+            if (message.Location != default) await InnerProcessLocation(message, token);
+            if (message.Poll != default) await InnerProcessPoll(message,  token);
+            if (message.Contact != default) await InnerProcessContact(message, token);
         }
         catch (Exception ex)
         {
@@ -136,6 +132,7 @@ public abstract partial class CommandProcessor<TCommand> : ICommandProcessor
             Logger.LogError(ex, $"Error in {GetType().Name}: {ex.Message}");
         }
     }
+
 
     public virtual void SetBot(IBot bot)
         => Bot = bot;
@@ -153,22 +150,21 @@ public abstract partial class CommandProcessor<TCommand> : ICommandProcessor
         => fullCommand.ToLowerInvariant().Replace("command", "");
 
     private async Task ValidateAndProcess(Message message,
-        string args,
-        CancellationToken token)
+                                          CancellationToken token)
     {
         if (message.Type == Message.MessageType.Messaging)
         {
             SendMetric();
 
-            await InnerProcess(message, args, token);
+            await InnerProcess(message, token);
 
             return;
         }
         
-        if (await _commandValidator.Validate(message.ChatIds, message.Body))
+        if (await _commandValidator.Validate(message))
         {
             SendMetric();
-            await InnerProcess(message, args, token);
+            await InnerProcess(message, token);
         }
         else
         {
@@ -184,13 +180,9 @@ public abstract partial class CommandProcessor<TCommand> : ICommandProcessor
         }
     }
 
-    protected virtual Task InnerProcessContact(Message message, string args, CancellationToken token) => Task.CompletedTask;
-    protected virtual Task InnerProcessPoll(Message message, string args, CancellationToken token) => Task.CompletedTask;
-    protected virtual Task InnerProcessLocation(Message message, string args, CancellationToken token) => Task.CompletedTask;
-    protected abstract Task InnerProcess(Message message, string args, CancellationToken token);
-   
-    [GeneratedRegex("\\/([a-zA-Z0-9]*)$")]
-    private static partial Regex SimpleCommandRegex();
-    [GeneratedRegex("\\/([a-zA-Z0-9]*) (.*)")]
-    private static partial Regex ArgsCommandRegex();
+    protected virtual Task InnerProcessContact(Message message, CancellationToken token) => Task.CompletedTask;
+    protected virtual Task InnerProcessPoll(Message message, CancellationToken token) => Task.CompletedTask;
+    protected virtual Task InnerProcessLocation(Message message, CancellationToken token) => Task.CompletedTask;
+    protected abstract Task InnerProcess(Message message, CancellationToken token);
+
 }

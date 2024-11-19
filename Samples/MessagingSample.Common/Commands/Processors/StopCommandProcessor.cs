@@ -35,14 +35,14 @@ public class StopCommandProcessor<TReplyMarkup> : CommandProcessor<StopCommand>
         _options = SendOptionsBuilder<TReplyMarkup>.CreateBuilder(responseMarkup);
     }
 
-    protected override Task InnerProcessContact(Message message, string argsString, CancellationToken token) => Task.CompletedTask;
+    protected override Task InnerProcessContact(Message message, CancellationToken token) => Task.CompletedTask;
 
-    protected override Task InnerProcessPoll(Message message, string argsString, CancellationToken token) => Task.CompletedTask;
+    protected override Task InnerProcessPoll(Message message, CancellationToken token) => Task.CompletedTask;
 
-    protected override Task InnerProcessLocation(Message message, string argsString, CancellationToken token) => Task.CompletedTask;
+    protected override Task InnerProcessLocation(Message message, CancellationToken token) => Task.CompletedTask;
 
 
-    protected override async Task InnerProcess(Message message, string args, CancellationToken token)
+    protected override async Task InnerProcess(Message message, CancellationToken token)
     {
         _jobManager.RemoveAllJobs();
 

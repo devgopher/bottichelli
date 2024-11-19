@@ -28,6 +28,6 @@ public class CommandChainFirstElementProcessor<TInputCommand> : CommandChainProc
         if (Next != default) await Next.ProcessAsync(message, token)!;
     }
 
-    protected override Task InnerProcess(Message message, string args, CancellationToken token)
+    protected override Task InnerProcess(Message message, CancellationToken token)
         => Task.CompletedTask;
 }

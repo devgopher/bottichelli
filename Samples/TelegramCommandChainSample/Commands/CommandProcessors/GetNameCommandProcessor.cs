@@ -16,7 +16,7 @@ public class GetNameCommandProcessor : WaitForClientResponseCommandChainProcesso
     {
     }
 
-    protected override async Task InnerProcess(Message message, string args, CancellationToken token)
+    protected override async Task InnerProcess(Message message, CancellationToken token)
     {
         var responseMessage = new Message
         {

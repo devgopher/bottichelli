@@ -39,7 +39,7 @@ public class GetCalendarCommandProcessor : CommandProcessor<GetCalendarCommand>
         _options = SendOptionsBuilder<InlineKeyboardMarkup>.CreateBuilder(markup);
     }
 
-    protected override async Task InnerProcess(Message message, string args, CancellationToken token)
+    protected override async Task InnerProcess(Message message, CancellationToken token)
     {
         var request = new SendMessageRequest
         {
