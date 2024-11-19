@@ -14,30 +14,31 @@ var builder = WebApplication.CreateBuilder(args);
 
 builder.Services
     .AddTelegramBot(builder.Configuration)
+    .AddTelegramLayoutsSupport()
     .AddLogging(cfg => cfg.AddNLog())
     .AddQuartzScheduler(builder.Configuration)
     .AddHostedService<TestBotHostedService>()
     .AddScoped<ILayoutParser, JsonLayoutParser>();
 
 builder.Services.AddBotCommand<InfoCommand>()
-    .AddProcessor<InfoCommandProcessor<ReplyMarkupBase>>()
+    .AddProcessor<InfoCommandProcessor<ReplyKeyboardMarkup>>()
     .AddValidator<PassValidator<InfoCommand>>();
 
 builder.Services.AddBotCommand<StartCommand>()
-    .AddProcessor<StartCommandProcessor<ReplyMarkupBase>>()
+    .AddProcessor<StartCommandProcessor<ReplyKeyboardMarkup>>()
     .AddValidator<PassValidator<StartCommand>>();
 
 builder.Services.AddBotCommand<StopCommand>()
-    .AddProcessor<StopCommandProcessor<ReplyMarkupBase>>()
+    .AddProcessor<StopCommandProcessor<ReplyKeyboardMarkup>>()
     .AddValidator<PassValidator<StopCommand>>();
 
 builder.Services.AddEndpointsApiExplorer()
     .AddSwaggerGen();
 
 var app = builder.Build();
-app.Services.RegisterBotCommand<StartCommand, StartCommandProcessor<ReplyMarkupBase>, TelegramBot>()
-    .RegisterProcessor<StopCommandProcessor<ReplyMarkupBase>>()
-    .RegisterProcessor<InfoCommandProcessor<ReplyMarkupBase>>();
+app.Services.RegisterBotCommand<StartCommand, StartCommandProcessor<ReplyKeyboardMarkup>, TelegramBot>()
+    .RegisterProcessor<StopCommandProcessor<ReplyKeyboardMarkup>>()
+    .RegisterProcessor<InfoCommandProcessor<ReplyKeyboardMarkup>>();
 
 if (app.Environment.IsDevelopment())
 {

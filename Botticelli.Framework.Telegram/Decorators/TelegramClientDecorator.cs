@@ -13,19 +13,31 @@ namespace Botticelli.Framework.Telegram.Decorators;
 /// </summary>
 public class TelegramClientDecorator : ITelegramBotClient
 {
-    private readonly TelegramBotClient _bot;
+    private TelegramBotClient? _bot;
 
     private readonly RetryPolicy _policy = Policy
                                            .Handle<ApiRequestException>(e => e.ErrorCode == (int) HttpStatusCode.TooManyRequests)
                                            .WaitAndRetry(10, (i, _) => TimeSpan.FromSeconds(10 * Math.Exp(i)));
 
     private readonly IThrottler? _throttler;
-
+    private TelegramBotClientOptions _options;
+    private readonly HttpClient? _httpClient;
+    
     internal TelegramClientDecorator(TelegramBotClientOptions options, IThrottler? throttler, HttpClient? httpClient = null)
     {
         _throttler = throttler;
-        _bot = new TelegramBotClient(options, httpClient);
+        _options = options;
+        _httpClient = httpClient;
+        _bot = !string.IsNullOrWhiteSpace(options.Token)  ? new TelegramBotClient(options, httpClient)  : null;
     }
+    
+    
+    public void ChangeBotKey(string botKey)
+    {
+        _options = new TelegramBotClientOptions(botKey, _options.BaseUrl, _options.UseTestEnvironment);
+        _bot = new TelegramBotClient(_options, _httpClient);
+    }
+
 
     public async Task<TResponse> SendRequest<TResponse>(IRequest<TResponse> request,
                                                              CancellationToken cancellationToken = new())
@@ -35,11 +47,10 @@ public class TelegramClientDecorator : ITelegramBotClient
             return await _policy.Execute(async () =>
                                 {
                                     if (_throttler != null)
-                                        return await _throttler.Throttle(async () => await _bot.
-                                                                                 SendRequest(request, cancellationToken),
+                                        return await _throttler.Throttle(async () => await _bot?.SendRequest(request, cancellationToken)!,
                                                                          cancellationToken);
 
-                                    return await _bot.SendRequest(request, cancellationToken);
+                                    return await _bot?.SendRequest(request, cancellationToken)!;
                                 })
                                 .ConfigureAwait(false);
         }
@@ -70,7 +81,11 @@ public class TelegramClientDecorator : ITelegramBotClient
     {
         try
         {
-            await _policy.Execute(async () => await _bot.DownloadFile(filePath, destination, cancellationToken)).ConfigureAwait(false);
+            await _policy.Execute(async () =>
+            {
+                if (_bot != null)
+                    await _bot?.DownloadFile(filePath, destination, cancellationToken)!;
+            }).ConfigureAwait(false);
         }
         catch (ApiRequestException ex)
         {

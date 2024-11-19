@@ -20,14 +20,14 @@ builder.Services
        .AddLogging(cfg => cfg.AddNLog())
        .AddQuartzScheduler(builder.Configuration)
        .AddHostedService<TestBotHostedService>()
-       .AddScoped<StartCommandProcessor<ReplyMarkupBase>>()
-       .AddScoped<StopCommandProcessor<ReplyMarkupBase>>()
-       .AddScoped<InfoCommandProcessor<ReplyMarkupBase>>()
+       .AddScoped<StartCommandProcessor<ReplyKeyboardMarkup>>()
+       .AddScoped<StopCommandProcessor<ReplyKeyboardMarkup>>()
+       .AddScoped<InfoCommandProcessor<ReplyKeyboardMarkup>>()
        .AddOpenTtsTalks(builder.Configuration)
        .AddScoped<ILayoutParser, JsonLayoutParser>()
-       .AddBotCommand<InfoCommand, InfoCommandProcessor<ReplyMarkupBase>, PassValidator<InfoCommand>>()
-       .AddBotCommand<StartCommand, StartCommandProcessor<ReplyMarkupBase>, PassValidator<StartCommand>>()
-       .AddBotCommand<StopCommand, StopCommandProcessor<ReplyMarkupBase>, PassValidator<StopCommand>>();
+       .AddBotCommand<InfoCommand, InfoCommandProcessor<ReplyKeyboardMarkup>, PassValidator<InfoCommand>>()
+       .AddBotCommand<StartCommand, StartCommandProcessor<ReplyKeyboardMarkup>, PassValidator<StartCommand>>()
+       .AddBotCommand<StopCommand, StopCommandProcessor<ReplyKeyboardMarkup>, PassValidator<StopCommand>>();
 
 
 // Command processing chain is being initialized here...

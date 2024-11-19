@@ -1,5 +1,6 @@
 using Botticelli.Framework.Options;
 using Botticelli.Framework.Telegram.Options;
+using Botticelli.Shared.Utils;
 using Microsoft.Extensions.DependencyInjection;
 using Telegram.Bot;
 
@@ -12,7 +13,7 @@ public class TelegramClientDecoratorBuilder
     private HttpClient? _httpClient;
     private readonly BotSettingsBuilder<TelegramBotSettings> _settingsBuilder;
     private readonly IServiceCollection _services;
-    private string? _token;
+    private string _token;
 
     public static TelegramClientDecoratorBuilder Instance(IServiceCollection services, BotSettingsBuilder<TelegramBotSettings> settingsBuilder) 
         => new(services, settingsBuilder);
@@ -46,7 +47,7 @@ public class TelegramClientDecoratorBuilder
     
     public TelegramClientDecorator Build()
     {
-        _token ??= string.Empty;
+         _token ??= "11111111:AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA";
 
         if (_telegramClient != null) return _telegramClient;
         

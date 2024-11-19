@@ -21,7 +21,7 @@ builder.Services
     .AddTelegramLayoutsSupport();
 
 builder.Services.AddBotCommand<MathCommand>()
-    .AddMonadsChain<MathCommand, PassValidator<MathCommand>, ReplyMarkupBase, ReplyTelegramLayoutSupplier>(
+    .AddMonadsChain<MathCommand, PassValidator<MathCommand>, ReplyKeyboardMarkup, ReplyTelegramLayoutSupplier>(
         builder.Services,
         cb => cb.Next<InputCommandProcessor<MathCommand>>()
             .Next<TransformArgumentsProcessor<MathCommand, double>>(tp => tp.SuccessFunc = Math.Sqrt)
@@ -29,7 +29,7 @@ builder.Services.AddBotCommand<MathCommand>()
             .Next<TransformArgumentsProcessor<MathCommand, double>>(tp => tp.SuccessFunc = Math.Cos)
             .Next<TransformArgumentsProcessor<MathCommand, double>>(tp => tp.SuccessFunc = Math.Abs)
             .Next<TransformArgumentsProcessor<MathCommand, double>>(tp => tp.SuccessFunc = Math.Sqrt)
-            .Next<OutputCommandProcessor<ReplyMarkupBase, MathCommand>>());
+            .Next<OutputCommandProcessor<ReplyKeyboardMarkup, MathCommand>>());
 
 var app = builder.Build();
 app.Services.UseMonadsChain<MathCommand, TelegramBot>();
