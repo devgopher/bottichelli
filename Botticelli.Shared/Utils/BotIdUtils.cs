@@ -4,13 +4,13 @@ namespace Botticelli.Shared.Utils;
 
 public static partial class BotIdUtils
 {
-    private static readonly Random Rand = new(DateTime.Now.Nanosecond);
+    private static readonly Random Random = new((int)(DateTime.Now.Ticks % int.MaxValue));
 
     private static byte[] GenerateSalt(int size)
     {
         var salt = new byte[size];
 
-        for (var i = 0; i < size; i++) salt[i] = (byte)(Rand.Next() % (byte.MaxValue + 1));
+        for (var i = 0; i < size; i++) salt[i] = (byte)(Random.Next() % (byte.MaxValue + 1));
 
         return salt;
     }
