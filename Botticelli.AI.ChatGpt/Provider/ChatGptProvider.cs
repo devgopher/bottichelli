@@ -18,10 +18,10 @@ namespace Botticelli.AI.ChatGpt.Provider;
 public class ChatGptProvider : ChatGptProvider<GptSettings>
 {
     public ChatGptProvider(IOptions<GptSettings> gptSettings,
-        IHttpClientFactory factory,
+        IHttpClientFactory? factory,
         ILogger<ChatGptProvider> logger,
-        IBusClient bus, 
-        IValidator<AiMessage> messageValidator) : base(gptSettings,
+        IBusClient? bus, 
+        IValidator<AiMessage>? messageValidator) : base(gptSettings,
         factory,
         logger,
         bus,

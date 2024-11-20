@@ -17,10 +17,10 @@ namespace Botticelli.AI.GptJ.Provider;
 public class GptJProvider : ChatGptProvider<AiGptSettings>
 {
     public GptJProvider(IOptionsSnapshot<AiGptSettings> gptSettings,
-        IHttpClientFactory factory,
+        IHttpClientFactory? factory,
         ILogger<GptJProvider> logger,
-        IBusClient bus, 
-        IValidator<AiMessage> messageValidator) : base(gptSettings,
+        IBusClient? bus, 
+        IValidator<AiMessage>? messageValidator) : base(gptSettings,
         factory,
         logger,
         bus,

@@ -82,7 +82,7 @@ public abstract class BaseBot<T> : BaseBot, IBot<T>
         return result;
     }
 
-    public abstract Task SetBotContext(BotData botData, CancellationToken token);
+    public abstract Task SetBotContext(BotData? botData, CancellationToken token);
 
     /// <summary>
     ///     Sends a message
@@ -102,7 +102,7 @@ public abstract class BaseBot<T> : BaseBot, IBot<T>
     /// <param name="token"></param>
     /// <returns></returns>
     public virtual async Task<SendMessageResponse> SendMessageAsync<TSendOptions>(SendMessageRequest request,
-                                                                                  ISendOptionsBuilder<TSendOptions> optionsBuilder,
+                                                                                  ISendOptionsBuilder<TSendOptions>? optionsBuilder,
                                                                                   CancellationToken token)
             where TSendOptions : class
     {
@@ -117,7 +117,7 @@ public abstract class BaseBot<T> : BaseBot, IBot<T>
     public Task<SendMessageResponse> UpdateMessageAsync(SendMessageRequest request, CancellationToken token)
         => SendMessageAsync<object>(request, null, token);
 
-    public async Task<SendMessageResponse> UpdateMessageAsync<TSendOptions>(SendMessageRequest request, ISendOptionsBuilder<TSendOptions> optionsBuilder, CancellationToken token)
+    public async Task<SendMessageResponse> UpdateMessageAsync<TSendOptions>(SendMessageRequest request, ISendOptionsBuilder<TSendOptions>? optionsBuilder, CancellationToken token)
             where TSendOptions : class
     {
         _metrics.Process(MetricNames.MessageSent, BotDataUtils.GetBotId());
@@ -144,7 +144,7 @@ public abstract class BaseBot<T> : BaseBot, IBot<T>
     protected abstract Task<StopBotResponse> InnerStopBotAsync(StopBotRequest request, CancellationToken token);
 
     protected abstract Task<SendMessageResponse> InnerSendMessageAsync<TSendOptions>(SendMessageRequest request,
-                                                                                     ISendOptionsBuilder<TSendOptions> optionsBuilder,
+                                                                                     ISendOptionsBuilder<TSendOptions>? optionsBuilder,
                                                                                      bool isUpdate,
                                                                                      CancellationToken token)
             where TSendOptions : class;

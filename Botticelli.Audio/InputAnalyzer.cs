@@ -1,4 +1,5 @@
-﻿using FileSignatures;
+﻿using Botticelli.Shared.Utils;
+using FileSignatures;
 using FileSignatures.Formats;
 using NAudio.Vorbis;
 using NAudio.Wave;
@@ -45,9 +46,11 @@ public class InputAnalyzer : IAnalyzer
     public AudioInfo Analyze(Stream input)
     {
         var fileFormat = _fileFormatInspector.DetermineFileFormat(input);
+      
         AudioFormat format;
         WaveStream reader;
 
+        fileFormat.NotNull();
         switch (fileFormat.Extension.ToLowerInvariant())
         {
             case "wav":
@@ -60,9 +63,7 @@ public class InputAnalyzer : IAnalyzer
                 break;
             case "m4a":
             case "aac":
-                //format = AudioFormat.M4a;
-                //reader = new (input);
-                reader = default;
+                reader = default!;
                 format = default;
                 break;
             case "ogg":
@@ -71,7 +72,7 @@ public class InputAnalyzer : IAnalyzer
                 break;
             default:
                 format = AudioFormat.Unknown;
-                reader = default;
+                reader = default!;
                 break;
         }
 

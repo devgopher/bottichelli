@@ -12,7 +12,7 @@ public class OutputCommandProcessor<TReplyMarkup, TCommand> : ChainProcessor<TCo
     where TReplyMarkup : class
     where TCommand : IChainCommand
 {
-    private readonly SendOptionsBuilder<TReplyMarkup> _options;
+    private readonly SendOptionsBuilder<TReplyMarkup>? _options;
 
     public OutputCommandProcessor(ILogger<OutputCommandProcessor<TReplyMarkup, TCommand>> logger,
         ILayoutSupplier<TReplyMarkup> layoutSupplier,

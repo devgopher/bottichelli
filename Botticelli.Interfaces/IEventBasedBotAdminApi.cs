@@ -32,5 +32,5 @@ public interface IEventBasedBotAdminApi
     /// <param name="context"></param>
     /// <param name="token"></param>
     /// <returns></returns>
-    public Task SetBotContext(BotData context, CancellationToken token);
+    public Task SetBotContext(BotData? context, CancellationToken token);
 }

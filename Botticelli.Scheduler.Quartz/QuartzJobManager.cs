@@ -29,10 +29,10 @@ public class QuartzJobManager(ISchedulerFactory schedulerFactory) : IJobManager,
         Reliability reliability,
         Message message,
         Scheduler.Schedule schedule,
-        Action<Message> preprocessFunc = default)
+        Action<Message>? preprocessFunc = default)
     {
         if (!CronExpression.IsValidExpression(schedule.Cron))
-            throw new InvalidDataException($"Cron {schedule?.Cron ?? "null"} is invalid!");
+            throw new InvalidDataException($"Cron {schedule.Cron ?? "null"} is invalid!");
         
         _scheduler ??= schedulerFactory.GetScheduler().Result;
 

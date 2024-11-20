@@ -8,7 +8,7 @@ public interface IBotDataAccess
     /// Sets or updates bot data
     /// </summary>
     /// <param name="context"></param>
-    public void SetData(BotData context);
+    public void SetData(BotData? context);
     
     
     /// <summary>

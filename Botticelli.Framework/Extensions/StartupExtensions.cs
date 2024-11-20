@@ -8,6 +8,7 @@ using Botticelli.Framework.HostedService;
 using Botticelli.Framework.Options;
 using Botticelli.Interfaces;
 using Botticelli.Shared.Extensions;
+using Botticelli.Shared.Utils;
 using EasyCaching.InMemory;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -78,11 +79,11 @@ public static class StartupExtensions
     {
         var commandChainProcessorBuilder = sp.GetRequiredService<CommandChainProcessorBuilder<TCommand>>();
         var processor = commandChainProcessorBuilder.Build();
-
         var clientProcessorFactory = sp.GetRequiredService<ClientProcessorFactory>();
 
+        processor.NotNull();
         clientProcessorFactory.AddSingleProcessor<TBot>(sp, processor);
-        var nextProcessor = processor.Next;
+        var nextProcessor = processor?.Next;
 
         while (nextProcessor != default)
         {
@@ -136,7 +137,7 @@ public static class StartupExtensions
         return new CommandRegisterServices<TCommand, TBot>(sp);
     }
 
-    public static IHttpClientBuilder AddCertificates(this IHttpClientBuilder builder, BotSettings settings) =>
+    public static IHttpClientBuilder AddCertificates(this IHttpClientBuilder builder, BotSettings? settings) =>
         builder.ConfigurePrimaryHttpMessageHandler(() =>
         {
             var store = new X509Store(StoreName.My, StoreLocation.LocalMachine);

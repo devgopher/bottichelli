@@ -9,7 +9,7 @@ public class BotDataAccess : IBotDataAccess
 
     public BotDataAccess(BotInfoContext context) => _context = context;
 
-    public void SetData(BotData data) => _context.BotInfos.Upsert(data).Run();
+    public void SetData(BotData? data) => _context.BotInfos.Upsert(data).Run();
 
     public BotData? GetData() => _context.BotInfos.FirstOrDefault(); 
 }

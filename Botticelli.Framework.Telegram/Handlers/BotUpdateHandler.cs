@@ -1,5 +1,6 @@
 ﻿using Botticelli.Framework.Commands.Processors;
 using Botticelli.Framework.Events;
+using Botticelli.Shared.Utils;
 using Botticelli.Shared.ValueObjects;
 using Microsoft.Extensions.Logging;
 using Telegram.Bot;
@@ -44,12 +45,17 @@ public class BotUpdateHandler : IBotUpdateHandler
             {
                 if (update.CallbackQuery != null)
                 {
+                    update.CallbackQuery.Message.NotNull();
+                    update.CallbackQuery.Message.Chat.NotNull();
                     botMessage = update.CallbackQuery?.Message;
+                    botMessage.NotNull();
+                    
                     botticelliMessage = new Message()
                     {
                         ChatIdInnerIdLinks = new Dictionary<string, List<string>>
-                                {{update.CallbackQuery?.Message.Chat?.Id.ToString(), [update.CallbackQuery.Message?.MessageId.ToString()]}},
-                        ChatIds = [update.CallbackQuery?.Message.Chat?.Id.ToString()],
+                                {{update.CallbackQuery?.Message.Chat.Id.ToString() ?? string.Empty,
+                                    [update.CallbackQuery?.Message?.MessageId.ToString() ?? string.Empty]}},
+                        ChatIds = [update.CallbackQuery?.Message?.Chat?.Id.ToString() ?? string.Empty],
                         CallbackData = update.CallbackQuery?.Data ?? string.Empty,
                         CreatedAt = update.Message?.Date ?? DateTime.Now,
                         LastModifiedAt = update.Message?.Date ?? DateTime.Now,

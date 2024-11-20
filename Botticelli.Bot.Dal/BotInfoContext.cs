@@ -15,7 +15,7 @@ public class BotInfoContext : DbContext
     {
     }
 
-    public DbSet<BotData> BotInfos { get; set; }
+    public DbSet<BotData?> BotInfos { get; set; }
     public DbSet<BotAdditionalInfo> BotAdditionalInfos { get; set; }
 
 

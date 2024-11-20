@@ -12,17 +12,17 @@ namespace Botticelli.AI.AIProvider;
 public abstract class ChatGptProvider<TSettings> : IAiProvider
     where TSettings : AiSettings
 {
-    protected readonly IBusClient Bus;
-    private readonly IHttpClientFactory _factory;
+    protected readonly IBusClient? Bus;
+    private readonly IHttpClientFactory? _factory;
     protected readonly ILogger Logger;
     protected readonly IOptions<TSettings> Settings;
-    private readonly IValidator<AiMessage> _messageValidator;
+    private readonly IValidator<AiMessage>? _messageValidator;
 
     protected ChatGptProvider(IOptions<TSettings> settings,
-        IHttpClientFactory factory,
+        IHttpClientFactory? factory,
         ILogger logger,
-        IBusClient bus,
-        IValidator<AiMessage> messageValidator)
+        IBusClient? bus,
+        IValidator<AiMessage>? messageValidator)
     {
         Settings = settings;
         _factory = factory;

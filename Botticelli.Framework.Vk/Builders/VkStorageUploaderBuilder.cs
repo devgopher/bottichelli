@@ -40,5 +40,5 @@ public class VkStorageUploaderBuilder
         return this;
     }
     
-    public VkStorageUploader Build() => new(_httpClientFactory, _audioConvertor, _logger);
+    public VkStorageUploader? Build() => new(_httpClientFactory, _audioConvertor, _logger);
 }

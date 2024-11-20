@@ -28,7 +28,7 @@ using Poll = Botticelli.Shared.ValueObjects.Poll;
 
 namespace Botticelli.Framework.Telegram;
 
-public class TelegramBot : BaseBot<TelegramBot>
+public sealed class TelegramBot : BaseBot<TelegramBot>
 {
     private readonly IBotUpdateHandler _handler;
     private readonly ITextTransformer _textTransformer;
@@ -51,10 +51,10 @@ public class TelegramBot : BaseBot<TelegramBot>
     }
 
     public override BotType Type => BotType.Telegram;
-    public override event MsgSentEventHandler MessageSent;
-    public override event MsgReceivedEventHandler MessageReceived;
-    public override event MsgRemovedEventHandler MessageRemoved;
-    public override event MessengerSpecificEventHandler MessengerSpecificEvent;
+    public override event MsgSentEventHandler? MessageSent;
+    public override event MsgReceivedEventHandler? MessageReceived;
+    public override event MsgRemovedEventHandler? MessageRemoved;
+    public override event MessengerSpecificEventHandler? MessengerSpecificEvent;
 
     /// <summary>
     ///     Deletes a message
@@ -66,6 +66,10 @@ public class TelegramBot : BaseBot<TelegramBot>
     protected override async Task<RemoveMessageResponse> InnerDeleteMessageAsync(RemoveMessageRequest request,
                                                                                  CancellationToken token)
     {
+        request.NotNull();
+        request.Uid.NotNull();
+        request.ChatId.NotNull();
+        
         if (!BotStatusKeeper.IsStarted)
         {
             Logger.LogInformation("Bot wasn't started!");
@@ -115,10 +119,13 @@ public class TelegramBot : BaseBot<TelegramBot>
     /// <exception cref="BotException"></exception>
     /// <exception cref="ArgumentOutOfRangeException"></exception>
     protected override async Task<SendMessageResponse> InnerSendMessageAsync<TSendOptions>(SendMessageRequest request,
-                                                                                           ISendOptionsBuilder<TSendOptions> optionsBuilder,
+                                                                                           ISendOptionsBuilder<TSendOptions>? optionsBuilder,
                                                                                            bool isUpdate,
                                                                                            CancellationToken token)
     {
+        request.NotNull();
+        request.Message.NotNull();
+        
         if (!BotStatusKeeper.IsStarted)
         {
             Logger.LogInformation("Bot wasn't started!");
@@ -131,7 +138,7 @@ public class TelegramBot : BaseBot<TelegramBot>
 
         SendMessageResponse response = new(request.Uid, string.Empty);
 
-        IReplyMarkup replyMarkup;
+        IReplyMarkup? replyMarkup;
 
         if (optionsBuilder == default)
             replyMarkup = null;
@@ -159,7 +166,7 @@ public class TelegramBot : BaseBot<TelegramBot>
             for (var i = 0; i < pairs.Count; i++)
             {
                 var link = pairs[i];
-                Message message = null;
+                Message? message = null;
 
                 if (!string.IsNullOrWhiteSpace(retText))
                 {
@@ -181,7 +188,7 @@ public class TelegramBot : BaseBot<TelegramBot>
                             var sentMessage = await _client.SendTextMessageAsync(link.chatId,
                                 sendText,
                                 parseMode: ParseMode.MarkdownV2,
-                                replyToMessageId: request.Message.ReplyToMessageUid != default
+                                replyToMessageId: request.Message?.ReplyToMessageUid != default
                                     ? int.Parse(request.Message.ReplyToMessageUid)
                                     : default,
                                 replyMarkup: replyMarkup,
@@ -203,6 +210,9 @@ public class TelegramBot : BaseBot<TelegramBot>
 
                 if (request.Message?.Poll != default)
                 {
+                    request.Message.Poll.Question.NotNull();
+                    request.Message.Poll.Variants.NotNull();
+                    
                     var type = request.Message.Poll?.Type switch
                     {
                         Poll.PollType.Quiz => PollType.Quiz,
@@ -211,9 +221,9 @@ public class TelegramBot : BaseBot<TelegramBot>
                     };
 
                     message = await _client.SendPollAsync(link.chatId,
-                        request.Message.Poll?.Question,
-                        request.Message.Poll?.Variants,
-                        isAnonymous: request.Message.Poll?.IsAnonymous,
+                        request.Message.Poll.Question,
+                        request.Message.Poll.Variants,
+                        isAnonymous: request.Message.Poll.IsAnonymous,
                         type: type,
                         correctOptionId: request.Message.Poll?.CorrectAnswerId,
                         replyToMessageId: request.Message.ReplyToMessageUid != default
@@ -338,7 +348,8 @@ public class TelegramBot : BaseBot<TelegramBot>
             }
 
             response.MessageSentStatus = MessageSentStatus.Ok;
-
+            request.Message.NotNull();
+            
             var eventArgs = new MessageSentBotEventArgs
             {
                 Message = request.Message
@@ -366,17 +377,22 @@ public class TelegramBot : BaseBot<TelegramBot>
     private async Task SendContact(SendMessageRequest request,
         SendMessageResponse response,
         CancellationToken token,
-        IReplyMarkup replyMarkup)
+        IReplyMarkup? replyMarkup)
     {
-        foreach (var chatId in request.Message?.ChatIds)
+        request.Message.NotNull();
+        request.Message.Contact.NotNull();
+        request.Message.Contact.Phone.NotNull();
+        request.Message.Contact.Name.NotNull();
+        
+        foreach (var chatId in request.Message.ChatIds.EmptyIfNull())
         {
             try
             {
                 var message = await _client.SendContactAsync(chatId,
-                                                             request.Message.Contact?.Phone,
-                                                             request.Message?.Contact?.Name,
+                                                             request.Message.Contact!.Phone,
+                                                             request.Message.Contact.Name,
                                                              lastName: request.Message?.Contact?.Surname,
-                                                             replyToMessageId: request.Message.ReplyToMessageUid != default ? int.Parse(request.Message.ReplyToMessageUid) : default,
+                                                             replyToMessageId: request.Message!.ReplyToMessageUid != default ? int.Parse(request.Message.ReplyToMessageUid) : default,
                                                              replyMarkup: replyMarkup,
                                                              cancellationToken: token);
 
@@ -477,7 +493,7 @@ public class TelegramBot : BaseBot<TelegramBot>
         await StopBotAsync(stopRequest, token);
     }
 
-    public override async Task SetBotContext(BotData context, CancellationToken token)
+    public override async Task SetBotContext(BotData? context, CancellationToken token)
     {
         if (context == default) return;
 

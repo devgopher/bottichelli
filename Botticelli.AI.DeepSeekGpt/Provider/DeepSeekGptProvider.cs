@@ -20,10 +20,10 @@ public class DeepSeekGptProvider : ChatGptProvider<DeepSeekGptSettings>
     private const string Completion = "completions";
 
     public DeepSeekGptProvider(IOptions<DeepSeekGptSettings> gptSettings,
-        IHttpClientFactory factory,
+        IHttpClientFactory? factory,
         ILogger<DeepSeekGptProvider> logger,
-        IBusClient bus,
-        IValidator<AiMessage> messageValidator) : base(gptSettings,
+        IBusClient? bus,
+        IValidator<AiMessage>? messageValidator) : base(gptSettings,
         factory,
         logger,
         bus,
