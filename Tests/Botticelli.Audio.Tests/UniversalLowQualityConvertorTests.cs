@@ -6,7 +6,7 @@ namespace Botticelli.Audio.Tests;
 [TestFixture]
 public class UniversalLowQualityConvertorTests
 {
-    private readonly IConvertor _convertor;
+    private readonly IConvertor? _convertor;
 
     public UniversalLowQualityConvertorTests()
     {
@@ -32,8 +32,7 @@ public class UniversalLowQualityConvertorTests
     private byte[] GetOutcome(AudioInfo audioInfo)
     {
         using var stream = File.OpenRead("voice.mp3");
-        var outcome = _convertor.Convert(stream, audioInfo);
-        return outcome;
+        return _convertor.Convert(stream, audioInfo);
     }
 
     private static void Check()
