@@ -9,7 +9,6 @@ using MessagingSample.Common.Commands;
 using MessagingSample.Common.Commands.Processors;
 using NLog.Extensions.Logging;
 using Telegram.Bot.Types.ReplyMarkups;
-using TelegramCommandChainSample;
 using TelegramCommandChainSample.Commands;
 using TelegramCommandChainSample.Commands.CommandProcessors;
 
