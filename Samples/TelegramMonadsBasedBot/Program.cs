@@ -8,7 +8,6 @@ using Botticelli.Framework.Telegram.Extensions;
 using Botticelli.Framework.Telegram.Layout;
 using NLog.Extensions.Logging;
 using Telegram.Bot.Types.ReplyMarkups;
-using TelegramMonadsBasedBot;
 using TelegramMonadsBasedBot.Commands;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -16,7 +15,6 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services
     .AddTelegramBot(builder.Configuration)
     .AddLogging(cfg => cfg.AddNLog())
-    .AddScoped<ILayoutParser, JsonLayoutParser>()
     .AddTelegramLayoutsSupport();
 
 builder.Services.AddBotCommand<MathCommand>()

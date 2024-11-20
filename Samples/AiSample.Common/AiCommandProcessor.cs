@@ -37,16 +37,15 @@ public class AiCommandProcessor<TReplyMarkup> : CommandProcessor<AiCommand> wher
         
         _bus.OnReceived += async (sender, response) =>
         {
-            if (response != null)
-                await Bot.SendMessageAsync(new SendMessageRequest(response.Uid)
-                    {
-                        Message = response.Message,
-                        ExpectPartialResponse = response.IsPartial,
-                        SequenceNumber = response.SequenceNumber,
-                        IsFinal = response.IsFinal
-                    },
-                    options,
-                    CancellationToken.None);
+            await Bot.SendMessageAsync(new SendMessageRequest(response.Uid)
+                {
+                    Message = response.Message,
+                    ExpectPartialResponse = response.IsPartial,
+                    SequenceNumber = response.SequenceNumber,
+                    IsFinal = response.IsFinal
+                },
+                options,
+                CancellationToken.None);
         };
     }
 
