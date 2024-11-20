@@ -1,6 +1,5 @@
 ﻿using Botticelli.Framework.Vk.Messages;
 using Botticelli.Framework.Vk.Messages.Options;
-using Botticelli.Framework.Vk.Tests.Settings;
 using Botticelli.Shared.Utils;
 using Microsoft.Extensions.Configuration;
 using Shared;
