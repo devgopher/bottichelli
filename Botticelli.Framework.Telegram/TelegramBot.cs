@@ -234,13 +234,13 @@ public sealed class TelegramBot : BaseBot<TelegramBot>
                     AddChatIdInnerIdLink(response, link.chatId, message);
                 }
 
-                if (request.Message?.Contact != default)
+                if (request.Message.Contact != default)
                     await SendContact(request,
                         response,
                         token,
                         replyMarkup);
 
-                if (request.Message?.Attachments == null) continue;
+                if (request.Message.Attachments == null) continue;
 
                 foreach (var attachment in request.Message
                              .Attachments
@@ -344,6 +344,7 @@ public sealed class TelegramBot : BaseBot<TelegramBot>
                     }
                 }
 
+                message.NotNull();
                 AddChatIdInnerIdLink(response, link.chatId, message);
             }
 
