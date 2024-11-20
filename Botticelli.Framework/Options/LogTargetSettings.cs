@@ -8,10 +8,10 @@ public class LogTargetSettings
     /// <summary>
     /// Target URI
     /// </summary>
-    public string TargetUri { get; set; }
+    public string? TargetUri { get; set; }
 
     /// <summary>
     /// Target filepath
     /// </summary>
-    public string Filepath { get; set; }
+    public string? Filepath { get; set; }
 }

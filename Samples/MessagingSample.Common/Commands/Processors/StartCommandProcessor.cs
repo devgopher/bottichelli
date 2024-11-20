@@ -18,7 +18,7 @@ namespace MessagingSample.Common.Commands.Processors;
 public class StartCommandProcessor<TReplyMarkup> : CommandProcessor<StartCommand> where TReplyMarkup : class
 {
     private readonly IJobManager _jobManager;
-    private readonly SendOptionsBuilder<TReplyMarkup>? _options;
+    private readonly SendOptionsBuilder<TReplyMarkup> _options;
     
     public StartCommandProcessor(ILogger<StartCommandProcessor<TReplyMarkup>> logger,
                                  ICommandValidator<StartCommand> commandValidator,

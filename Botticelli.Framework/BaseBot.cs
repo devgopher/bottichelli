@@ -11,7 +11,6 @@ using Botticelli.Shared.API.Admin.Responses;
 using Botticelli.Shared.API.Client.Requests;
 using Botticelli.Shared.API.Client.Responses;
 using Botticelli.Shared.Constants;
-using Botticelli.Shared.ValueObjects;
 using Microsoft.Extensions.Logging;
 
 namespace Botticelli.Framework;
@@ -31,9 +30,9 @@ public abstract class BaseBot
 
     public delegate void StoppedEventHandler(object sender, StoppedBotEventArgs e);
 
-    public virtual event MsgSentEventHandler MessageSent;
-    public virtual event MsgReceivedEventHandler MessageReceived;
-    public virtual event MsgRemovedEventHandler MessageRemoved;
+    public virtual event MsgSentEventHandler? MessageSent;
+    public virtual event MsgReceivedEventHandler? MessageReceived;
+    public virtual event MsgRemovedEventHandler? MessageRemoved;
 }
 
 /// <summary>
@@ -102,7 +101,7 @@ public abstract class BaseBot<T> : BaseBot, IBot<T>
     /// <param name="token"></param>
     /// <returns></returns>
     public virtual async Task<SendMessageResponse> SendMessageAsync<TSendOptions>(SendMessageRequest request,
-                                                                                  ISendOptionsBuilder<TSendOptions>? optionsBuilder,
+                                                                                  ISendOptionsBuilder<TSendOptions> optionsBuilder,
                                                                                   CancellationToken token)
             where TSendOptions : class
     {
@@ -117,7 +116,7 @@ public abstract class BaseBot<T> : BaseBot, IBot<T>
     public Task<SendMessageResponse> UpdateMessageAsync(SendMessageRequest request, CancellationToken token)
         => SendMessageAsync<object>(request, null, token);
 
-    public async Task<SendMessageResponse> UpdateMessageAsync<TSendOptions>(SendMessageRequest request, ISendOptionsBuilder<TSendOptions>? optionsBuilder, CancellationToken token)
+    public async Task<SendMessageResponse> UpdateMessageAsync<TSendOptions>(SendMessageRequest request, ISendOptionsBuilder<TSendOptions> optionsBuilder, CancellationToken token)
             where TSendOptions : class
     {
         _metrics.Process(MetricNames.MessageSent, BotDataUtils.GetBotId());
@@ -144,7 +143,7 @@ public abstract class BaseBot<T> : BaseBot, IBot<T>
     protected abstract Task<StopBotResponse> InnerStopBotAsync(StopBotRequest request, CancellationToken token);
 
     protected abstract Task<SendMessageResponse> InnerSendMessageAsync<TSendOptions>(SendMessageRequest request,
-                                                                                     ISendOptionsBuilder<TSendOptions>? optionsBuilder,
+                                                                                     ISendOptionsBuilder<TSendOptions> optionsBuilder,
                                                                                      bool isUpdate,
                                                                                      CancellationToken token)
             where TSendOptions : class;
@@ -152,7 +151,6 @@ public abstract class BaseBot<T> : BaseBot, IBot<T>
     protected abstract Task<RemoveMessageResponse> InnerDeleteMessageAsync(RemoveMessageRequest request,
                                                                            CancellationToken token);
 
-    public virtual event MessengerSpecificEventHandler MessengerSpecificEvent;
     public event StartedEventHandler Started;
     public event StoppedEventHandler Stopped;
 }

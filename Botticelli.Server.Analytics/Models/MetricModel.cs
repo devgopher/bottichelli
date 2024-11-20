@@ -9,7 +9,7 @@ public class MetricModel : IMetricModel, INotifyPropertyChanging, INotifyPropert
 
     [Key] public string Id { get; set; }
 
-    public string BotId { get; set; }
+    public string? BotId { get; set; }
     public DateTime Timestamp { get; set; }
     public string InternalValue { get; set; }
     public Dictionary<string, string> AdditionalParameters { get; set; }

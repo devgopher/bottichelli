@@ -21,7 +21,7 @@ public interface IEventBasedBotClientApi
     /// <param name="token">Cancellation token</param>
     /// <returns></returns>
     public Task<SendMessageResponse> SendMessageAsync<TSendOptions>(SendMessageRequest request,
-        ISendOptionsBuilder<TSendOptions>? optionsBuilder,
+        ISendOptionsBuilder<TSendOptions> optionsBuilder,
         CancellationToken token)
         where TSendOptions : class;
 
@@ -41,7 +41,7 @@ public interface IEventBasedBotClientApi
     /// <param name="token">Cancellation token</param>
     /// <returns></returns>
     public Task<SendMessageResponse> UpdateMessageAsync<TSendOptions>(SendMessageRequest request,
-                                                                      ISendOptionsBuilder<TSendOptions>? optionsBuilder,
+                                                                      ISendOptionsBuilder<TSendOptions> optionsBuilder,
                                                                       CancellationToken token)
             where TSendOptions : class;
     

@@ -16,7 +16,7 @@ public class StopCommandProcessor<TReplyMarkup> : CommandProcessor<StopCommand>
     where TReplyMarkup : class
 {
     private readonly IJobManager _jobManager;
-    private readonly SendOptionsBuilder<TReplyMarkup>? _options;
+    private readonly SendOptionsBuilder<TReplyMarkup> _options;
     
     public StopCommandProcessor(ILogger<StopCommandProcessor<TReplyMarkup>> logger,
         ICommandValidator<StopCommand> commandValidator,

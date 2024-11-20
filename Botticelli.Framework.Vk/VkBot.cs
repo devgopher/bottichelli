@@ -167,7 +167,7 @@ public class VkBot : BaseBot<VkBot>
 
 
     protected override async Task<SendMessageResponse> InnerSendMessageAsync<TSendOptions>(SendMessageRequest request,
-        ISendOptionsBuilder<TSendOptions>? optionsBuilder,
+        ISendOptionsBuilder<TSendOptions> optionsBuilder,
         bool isUpdate,
         CancellationToken token)
     {
@@ -181,7 +181,7 @@ public class VkBot : BaseBot<VkBot>
                 foreach (var vkRequest in requests)
                     await _messagePublisher.SendAsync(vkRequest, token);
             }
-            catch (Exception ex)
+            catch (Exception? ex)
             {
                 throw new BotException("Can't send a message!", ex);
             }
@@ -312,5 +312,5 @@ public class VkBot : BaseBot<VkBot>
     public override event MsgSentEventHandler MessageSent;
     public override event MsgReceivedEventHandler MessageReceived;
     public override event MsgRemovedEventHandler MessageRemoved;
-    public override event MessengerSpecificEventHandler MessengerSpecificEvent;
+    public virtual event MessengerSpecificEventHandler MessengerSpecificEvent;
 }

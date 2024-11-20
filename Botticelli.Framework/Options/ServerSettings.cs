@@ -3,5 +3,5 @@
 public class ServerSettings
 {
     public static string Section => "Server";
-    public string ServerUri { get; set; }
+    public string? ServerUri { get; set; }
 }

@@ -18,7 +18,7 @@ namespace TelegramInlineLayoutsSample.Handlers;
 public class GetCalendarCommandProcessor : CommandProcessor<GetCalendarCommand>
 {
     private readonly IBot _bot;
-    private SendOptionsBuilder<InlineKeyboardMarkup>? _options;
+    private SendOptionsBuilder<InlineKeyboardMarkup> _options;
 
     public GetCalendarCommandProcessor(IBot bot,
                                        ICommandValidator<GetCalendarCommand> commandValidator,
