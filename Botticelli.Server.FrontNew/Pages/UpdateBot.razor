@@ -70,7 +70,7 @@
         _model.BotKey = botStatus.BotContext.BotKey;
     }
 
-    private async Task<GetRequiredStatusFromServerResponse> GetBotStatus(BotInfo bot, string sessionToken)
+    private async Task<GetRequiredStatusFromServerResponse?> GetBotStatus(BotInfo? bot, string sessionToken)
     {
         using var http = HttpClientFactory.Create();
         http.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", sessionToken);
@@ -81,16 +81,15 @@
                 BotId = BotId
             });
 
-        var botStatus = await botStatusResponse.Content.ReadFromJsonAsync<GetRequiredStatusFromServerResponse>();
-        return botStatus;
+        return await botStatusResponse.Content.ReadFromJsonAsync<GetRequiredStatusFromServerResponse>();
     }
 
-    private async Task<BotInfo> GetBot(string sessionToken)
+    private async Task<BotInfo?> GetBot(string sessionToken)
     {
         using var http = HttpClientFactory.Create();
         http.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", sessionToken);
         var bots = await http.GetFromJsonAsync<BotInfo[]>(Url.Combine(BackSettings.CurrentValue.BackUrl, "/admin/GetBots"));
-        var bot = bots.FirstOrDefault(b => b.BotId == BotId);
+        var bot = bots?.FirstOrDefault(b => b.BotId == BotId);
 
         return bot;
     }

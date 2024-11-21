@@ -37,6 +37,7 @@
 
     <ItemGroup>
         <ProjectReference Include="..\3dParty\FileSignatures\FileSignatures.csproj"/>
+        <ProjectReference Include="..\Botticelli.Shared\Botticelli.Shared.csproj" />
     </ItemGroup>
 
 </Project>

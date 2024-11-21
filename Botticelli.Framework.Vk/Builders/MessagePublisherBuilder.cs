@@ -32,5 +32,5 @@ public class MessagePublisherBuilder
         return this;
     }
     
-    public MessagePublisher Build() => new(_httpClientFactory, _logger);
+    public MessagePublisher? Build() => new(_httpClientFactory, _logger);
 }

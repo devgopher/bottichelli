@@ -6,5 +6,5 @@ namespace Botticelli.Bot.Data.Settings;
 public class DataAccessSettings : IDataAccessSettings
 {
     public static string Section => "DataAccess";
-    public string ConnectionString { get; set; }
+    public string? ConnectionString { get; set; }
 }

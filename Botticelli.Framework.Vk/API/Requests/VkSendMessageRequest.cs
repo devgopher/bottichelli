@@ -15,9 +15,9 @@ public class VkSendMessageRequest
 
     [JsonPropertyName("random_id")] public int RandomId { get; }
 
-    [JsonPropertyName("message")] public string Body { get; set; }
+    [JsonPropertyName("message")] public string? Body { get; set; }
 
-    [JsonPropertyName("reply_to")] public string ReplyTo { get; set; }
+    [JsonPropertyName("reply_to")] public string? ReplyTo { get; set; }
 
     [JsonPropertyName("lat")] public decimal? Lat { get; set; }
 
@@ -25,7 +25,7 @@ public class VkSendMessageRequest
 
     [JsonPropertyName("access_token")] public string AccessToken { get; set; }
 
-    [JsonPropertyName("attachment")] public string Attachment { get; set; }
+    [JsonPropertyName("attachment")] public string? Attachment { get; set; }
 
     [JsonPropertyName("v")] public string ApiVersion => "5.131";
 }

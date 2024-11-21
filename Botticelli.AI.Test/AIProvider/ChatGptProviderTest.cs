@@ -57,7 +57,7 @@ public class ChatGptProviderTest : BaseAiProviderTest
             ]
         };
 
-        Server.Given(Request.Create().WithPath("/completions").UsingPost())
+        Server?.Given(Request.Create().WithPath("/completions").UsingPost())
                .RespondWith(
                             Response.Create()
                                     .WithStatusCode(200)

@@ -66,6 +66,7 @@ public static class ServiceCollectionExtensions
     /// <param name="optionsBuilderFunc"></param>
     /// <param name="analyticsOptionsBuilderFunc"></param>
     /// <param name="serverSettingsBuilderFunc"></param>
+    /// <param name="dataAccessSettingsBuilderFunc"></param>
     /// <returns></returns>
     public static IServiceCollection AddTelegramBot(this IServiceCollection services,
                                                     Action<BotSettingsBuilder<TelegramBotSettings>> optionsBuilderFunc,
@@ -88,7 +89,8 @@ public static class ServiceCollectionExtensions
                                            .AddClient(clientBuilder);
         var bot = botBuilder.Build();
         return services.AddSingleton<IBot<TelegramBot>>(bot)
-                       .AddSingleton<IBot>(bot);
+                       .AddSingleton<IBot>(bot)
+                       .AddTelegramLayoutsSupport();
     }
 
     public static IServiceCollection AddTelegramLayoutsSupport(this IServiceCollection services) =>

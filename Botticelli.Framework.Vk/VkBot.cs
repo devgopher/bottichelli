@@ -16,6 +16,7 @@ using Botticelli.Shared.API.Admin.Responses;
 using Botticelli.Shared.API.Client.Requests;
 using Botticelli.Shared.API.Client.Responses;
 using Botticelli.Shared.Constants;
+using Botticelli.Shared.Utils;
 using Botticelli.Shared.ValueObjects;
 using Microsoft.Extensions.Logging;
 
@@ -24,15 +25,15 @@ namespace Botticelli.Framework.Vk.Messages;
 public class VkBot : BaseBot<VkBot>
 {
     private readonly IBotUpdateHandler _handler;
-    private readonly MessagePublisher _messagePublisher;
+    private readonly MessagePublisher? _messagePublisher;
     private readonly IBotDataAccess _data;
     private readonly LongPollMessagesProvider _messagesProvider;
-    private readonly VkStorageUploader _vkUploader;
+    private readonly VkStorageUploader? _vkUploader;
     private bool _eventsAttached;
 
     public VkBot(LongPollMessagesProvider messagesProvider,
-                 MessagePublisher messagePublisher,
-                 VkStorageUploader vkUploader,
+                 MessagePublisher? messagePublisher,
+                 VkStorageUploader? vkUploader,
                  IBotDataAccess data,
                  IBotUpdateHandler handler,
                  MetricsProcessor metrics,
@@ -142,7 +143,7 @@ public class VkBot : BaseBot<VkBot>
         _vkUploader.SetApiKey(context.BotKey);
     }
 
-    private string CreateVkAttach(VkSendPhotoResponse fk, string type)
+    private string? CreateVkAttach(VkSendPhotoResponse fk, string type)
         => $"{type}" +
            $"{fk.Response?.FirstOrDefault()?.OwnerId.ToString()}" +
            $"_{fk.Response?.FirstOrDefault()?.Id.ToString()}";
@@ -154,19 +155,19 @@ public class VkBot : BaseBot<VkBot>
            $"_{fk.Response?.VideoId.ToString()}";
 
 
-    private string CreateVkAttach(VkSendAudioResponse fk, string type)
+    private string? CreateVkAttach(VkSendAudioResponse fk, string type)
         => $"{type}" +
            $"{fk.AudioResponseData.AudioMessage.OwnerId}" +
            $"_{fk.AudioResponseData.AudioMessage.Id}";
 
-    private string CreateVkAttach(VkSendDocumentResponse fk, string type)
+    private string? CreateVkAttach(VkSendDocumentResponse fk, string type)
         => $"{type}" +
            $"{fk.DocumentResponseData.Document.OwnerId}" +
            $"_{fk.DocumentResponseData.Document.Id}";
 
 
     protected override async Task<SendMessageResponse> InnerSendMessageAsync<TSendOptions>(SendMessageRequest request,
-        ISendOptionsBuilder<TSendOptions>? optionsBuilder,
+        ISendOptionsBuilder<TSendOptions> optionsBuilder,
         bool isUpdate,
         CancellationToken token)
     {
@@ -180,21 +181,21 @@ public class VkBot : BaseBot<VkBot>
                 foreach (var vkRequest in requests)
                     await _messagePublisher.SendAsync(vkRequest, token);
             }
-            catch (Exception ex)
+            catch (Exception? ex)
             {
                 throw new BotException("Can't send a message!", ex);
             }
 
-        MessageSent?.Invoke(this, new MessageSentBotEventArgs
+        MessageSent.Invoke(this, new MessageSentBotEventArgs
         {
             Message = request.Message
         });
 
         return new SendMessageResponse(request.Uid, string.Empty);
     }
-    
-    protected override async Task<RemoveMessageResponse> InnerDeleteMessageAsync(RemoveMessageRequest request,
-                                                                                 CancellationToken token) => throw new NotImplementedException();
+
+    protected override Task<RemoveMessageResponse> InnerDeleteMessageAsync(RemoveMessageRequest request,
+        CancellationToken token) => throw new NotImplementedException();
 
     private async Task<IEnumerable<VkSendMessageRequest>> CreateRequestsWithAttachments(SendMessageRequest request,
         string peerId,
@@ -204,6 +205,9 @@ public class VkBot : BaseBot<VkBot>
         var result = new List<VkSendMessageRequest>(100);
         var first = true;
 
+        currentContext.NotNull();
+        currentContext.BotKey.NotNull();
+        
         if (request.Message.Attachments == default)
         {
             var vkRequest = new VkSendMessageRequest
@@ -211,9 +215,9 @@ public class VkBot : BaseBot<VkBot>
                 AccessToken = currentContext.BotKey,
                 PeerId = peerId,
                 Body = first ? request.Message.Body : string.Empty,
-                Lat = request?.Message.Location?.Latitude,
-                Long = request?.Message.Location?.Longitude,
-                ReplyTo = request?.Message.ReplyToMessageUid,
+                Lat = request.Message.Location.Latitude,
+                Long = request.Message.Location.Longitude,
+                ReplyTo = request.Message.ReplyToMessageUid,
                 Attachment = null
             };
             result.Add(vkRequest);
@@ -221,14 +225,14 @@ public class VkBot : BaseBot<VkBot>
             return result;
         }
 
-        foreach (var attach in request.Message?.Attachments)
+        foreach (var attach in request.Message.Attachments)
             try
             {
                 var vkRequest = new VkSendMessageRequest
                 {
                     AccessToken = currentContext.BotKey,
                     //UserId = peerId,
-                    Body = first ? request.Message.Body : string.Empty,
+                    Body = first ? request?.Message.Body : string.Empty,
                     Lat = request?.Message.Location?.Latitude,
                     Long = request?.Message.Location?.Longitude,
                     ReplyTo = request?.Message.ReplyToMessageUid,
@@ -302,7 +306,7 @@ public class VkBot : BaseBot<VkBot>
         return result;
     }
 
-    public override async Task<RemoveMessageResponse> DeleteMessageAsync(RemoveMessageRequest request,
+    public override Task<RemoveMessageResponse> DeleteMessageAsync(RemoveMessageRequest request,
         CancellationToken token) => throw new NotImplementedException();
 
     public override event MsgSentEventHandler MessageSent;

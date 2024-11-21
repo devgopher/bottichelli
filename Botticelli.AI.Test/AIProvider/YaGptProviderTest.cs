@@ -36,8 +36,8 @@ public class YaGptProviderTest : BaseAiProviderTest
         {
             Result = new Result
             {
-                Alternatives = new List<Alternative>()
-                {
+                Alternatives =
+                [
                     new()
                     {
                         Message = new YaGpt.Message.YaGpt.Message
@@ -47,11 +47,11 @@ public class YaGptProviderTest : BaseAiProviderTest
                         },
                         Status = "ALTERNATIVE_STATUS_TRUNCATED_FINAL"
                     }
-                }
+                ]
             }
         };
 
-        Server.Given(Request.Create().WithPath("/completion").UsingPost())
+        Server?.Given(Request.Create().WithPath("/completion").UsingPost())
               .RespondWith(
                            Response.Create()
                                    .WithStatusCode(200)

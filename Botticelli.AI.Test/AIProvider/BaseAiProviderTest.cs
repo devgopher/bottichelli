@@ -10,6 +10,7 @@ using Botticelli.AI.Validation;
 using Botticelli.Bot.Interfaces.Client;
 using Botticelli.Bus.None.Bus;
 using Botticelli.Bus.None.Client;
+using Botticelli.Shared.Utils;
 using FluentAssertions;
 using FluentValidation;
 using NUnit.Framework;
@@ -20,10 +21,10 @@ namespace Botticelli.AI.Test.AIProvider;
 
 public abstract class BaseAiProviderTest 
 {
-    protected WireMockServer Server;
-    protected IAiProvider AiProvider;
-    protected AbstractValidator<AiMessage> Validator;
-    protected IBusClient BusClient;
+    protected WireMockServer? Server;
+    protected IAiProvider? AiProvider;
+    protected AbstractValidator<AiMessage>? Validator;
+    protected IBusClient? BusClient;
     protected readonly AiSettings AiSettings = new()
     {
         AiName = "mock_gpt_ai",
@@ -31,15 +32,15 @@ public abstract class BaseAiProviderTest
         ApiKey = "API9767432",
     };
 
-    protected HttpClientFactoryMock ClientFactory;
+    protected HttpClientFactoryMock? ClientFactory;
 
 
     protected const string ResponseString = "\"Wololo\" is the battle cry of the Priest unit featured in the 1997 historical real-time strategy " +
                                             "game Age of Empires. Due to its association with the Priest's mystical ability to assume control of an opponent's unit" +
                                             " through conversion, the sound effect has gained notoriety among the fans as one of the most dreaded stock lines " +
                                             "from the game.";
-    
-    public async Task InnerSendAsyncTest(string query)
+
+    protected async Task InnerSendAsyncTest(string query)
     {
         var message = new AiMessage
         {
@@ -49,6 +50,8 @@ public abstract class BaseAiProviderTest
             Body = query
         };
 
+        AiProvider.NotNull();
+        
         await AiProvider.SendAsync(message, new CancellationToken());
         
         Thread.Sleep(5000);
@@ -66,9 +69,15 @@ public abstract class BaseAiProviderTest
         BusClient = new PassClient();
         
         ClientFactory = new HttpClientFactoryMock();
+        
+        Server.Url.NotNull();
         AiSettings.Url = Server.Url;
     }
     
     [TearDown]
-    public void TearDown() => Server.Stop();
+    public void TearDown()
+    {
+        Server.NotNull();
+        Server.Stop();
+    }
 }

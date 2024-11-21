@@ -21,10 +21,10 @@ public class YaGptProvider : ChatGptProvider<YaGptSettings>
     private const string Completion = "completion";
 
     public YaGptProvider(IOptions<YaGptSettings> gptSettings,
-        IHttpClientFactory factory,
+        IHttpClientFactory? factory,
         ILogger<YaGptProvider> logger,
-        IBusClient bus, 
-        IValidator<AiMessage> messageValidator) : base(gptSettings,
+        IBusClient? bus, 
+        IValidator<AiMessage>? messageValidator) : base(gptSettings,
                                       factory,
                                       logger,
                                       bus,

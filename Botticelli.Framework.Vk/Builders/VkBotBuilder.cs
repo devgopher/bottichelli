@@ -22,14 +22,14 @@ namespace Botticelli.Framework.Vk.Messages.Builders;
 
 public class VkBotBuilder : BotBuilder<VkBotBuilder, VkBot>
 {
-    private LongPollMessagesProviderBuilder _longPollMessagesProviderBuilder;
-    private LongPollMessagesProvider _longPollMessagesProvider;
-    private MessagePublisherBuilder _messagePublisherBuilder;
-    private MessagePublisher _messagePublisher;
-    private VkStorageUploaderBuilder _vkStorageUploaderBuilder;
-    private VkStorageUploader _vkStorageUploader;
+    private LongPollMessagesProviderBuilder? _longPollMessagesProviderBuilder;
+    private LongPollMessagesProvider? _longPollMessagesProvider;
+    private MessagePublisherBuilder? _messagePublisherBuilder;
+    private MessagePublisher? _messagePublisher;
+    private VkStorageUploaderBuilder? _vkStorageUploaderBuilder;
+    private VkStorageUploader? _vkStorageUploader;
     
-    private VkBotSettings BotSettings { get; set; }
+    private VkBotSettings? BotSettings { get; set; }
     
     protected override VkBot InnerBuild()
     {

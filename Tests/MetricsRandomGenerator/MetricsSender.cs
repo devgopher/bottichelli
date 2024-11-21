@@ -19,17 +19,24 @@ public class MetricsSender : IHostedService
     }
 
 
-    public async Task StartAsync(CancellationToken cancellationToken)
+    public Task StartAsync(CancellationToken cancellationToken)
     {
         for (var i = 0; i < _threadsCount; i++)
         {
             var thread = new Thread(ThreadProc);
             thread.Start();
         }
+
+        return Task.CompletedTask;
     }
 
 
-    public async Task StopAsync(CancellationToken cancellationToken) => _tokenSource.Cancel();
+    public Task StopAsync(CancellationToken cancellationToken)
+    {
+        _tokenSource.Cancel();
+        
+        return Task.CompletedTask;
+    }
 
     private void ThreadProc()
     {
@@ -53,7 +60,7 @@ public class MetricsSender : IHostedService
                 Console.WriteLine($"Publishing: {metric.BotId}, {metric.Name}, {metric.Timestamp}");
 
                 var task = _publisher.Publish(metric, token);
-                task.Wait();
+                task.Wait(token);
 
                 Thread.Sleep(500);
             }

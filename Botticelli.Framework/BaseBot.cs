@@ -11,7 +11,6 @@ using Botticelli.Shared.API.Admin.Responses;
 using Botticelli.Shared.API.Client.Requests;
 using Botticelli.Shared.API.Client.Responses;
 using Botticelli.Shared.Constants;
-using Botticelli.Shared.ValueObjects;
 using Microsoft.Extensions.Logging;
 
 namespace Botticelli.Framework;
@@ -31,9 +30,9 @@ public abstract class BaseBot
 
     public delegate void StoppedEventHandler(object sender, StoppedBotEventArgs e);
 
-    public virtual event MsgSentEventHandler MessageSent;
-    public virtual event MsgReceivedEventHandler MessageReceived;
-    public virtual event MsgRemovedEventHandler MessageRemoved;
+    public virtual event MsgSentEventHandler? MessageSent;
+    public virtual event MsgReceivedEventHandler? MessageReceived;
+    public virtual event MsgRemovedEventHandler? MessageRemoved;
 }
 
 /// <summary>
@@ -152,7 +151,6 @@ public abstract class BaseBot<T> : BaseBot, IBot<T>
     protected abstract Task<RemoveMessageResponse> InnerDeleteMessageAsync(RemoveMessageRequest request,
                                                                            CancellationToken token);
 
-    public virtual event MessengerSpecificEventHandler MessengerSpecificEvent;
     public event StartedEventHandler Started;
     public event StoppedEventHandler Stopped;
 }

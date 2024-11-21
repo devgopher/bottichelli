@@ -9,7 +9,7 @@ public class MetricsProcessor
 
     public MetricsProcessor(MetricsPublisher publisher) => _publisher = publisher;
 
-    public void Process(string name, string botId)
+    public void Process(string name, string? botId)
         => Task.Run(() => _publisher.Publish(new MetricObject
         {
             Name = name,

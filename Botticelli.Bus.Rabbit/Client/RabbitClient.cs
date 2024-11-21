@@ -6,6 +6,7 @@ using Botticelli.Bus.Rabbit.Settings;
 using Botticelli.Interfaces;
 using Botticelli.Shared.API.Client.Requests;
 using Botticelli.Shared.API.Client.Responses;
+using Botticelli.Shared.Utils;
 using Microsoft.Extensions.Logging;
 using Polly;
 using Polly.Timeout;
@@ -77,14 +78,19 @@ public class RabbitClient<TBot> : BasicFunctions<TBot>, IBusClient
 
             var combined = Policy.WrapAsync(timeoutPolicy, resultPolicy);
 
-            var result = await combined.ExecuteAndCaptureAsync(async () =>
-                !_responses.TryGetValue(request.Message.Uid, out var value) ? default : value);
+            var result = await combined.ExecuteAndCaptureAsync(() =>
+            {
+                request.Message.NotNull();
+                request.Message.Uid.NotNull();
+                
+                return Task.FromResult(_responses.GetValueOrDefault(request.Message.Uid))!;
+            });
 
             if (result.FinalHandledResult != default)
                 throw new RabbitBusException($"Error getting a response: {result.FinalException.Message}",
-                    result.FinalException?.InnerException);
+                    result.FinalException);
 
-            return result?.Result;
+            return result.Result;
         }
         catch (Exception ex)
         {
@@ -136,13 +142,23 @@ public class RabbitClient<TBot> : BasicFunctions<TBot>, IBusClient
 
         _consumer.Received += (sender, args) =>
         {
-            if (args?.Body == null) return;
+            try
+            {
+                if (args?.Body == null) return;
 
-            var response = JsonSerializer.Deserialize<SendMessageResponse>(args.Body.ToArray());
+                var response = JsonSerializer.Deserialize<SendMessageResponse>(args.Body.ToArray());
 
-            if (response == null) return;
+                if (response == null) return;
 
-            _responses.Add(response?.Message.Uid, response);
+                response.Message.NotNull();
+                response.Message.Uid.NotNull();
+
+                _responses.Add(response.Message.Uid, response);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, ex.Message);
+            }
         };
     }
 

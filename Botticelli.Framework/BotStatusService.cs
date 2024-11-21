@@ -77,7 +77,7 @@ public class BotStatusService<TBot> : BotActualizationService<TBot> where TBot :
         if (taskResult == default)
             throw new BotException("No result from server!");
         
-        var botContext = taskResult?.BotContext;
+        var botContext = taskResult.BotContext;
         if (botContext == default)
             throw new BotException("No bot context from server!");
         
@@ -88,7 +88,7 @@ public class BotStatusService<TBot> : BotActualizationService<TBot> where TBot :
             BotKey = botContext.BotKey,
             AdditionalInfo = botContext.Items?.Select(it => new BotAdditionalInfo
                 {
-                    BotId = taskResult.BotId,
+                    BotId = taskResult!.BotId,
                     ItemName = it.Key,
                     ItemValue = it.Value
                 })

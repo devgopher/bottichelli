@@ -28,7 +28,7 @@ public class TelegramBotBuilder : BotBuilder<TelegramBotBuilder, TelegramBot>
     private TelegramClientDecoratorBuilder _builder = null!;
     private TelegramClientDecorator _client = null!;
 
-    private TelegramBotSettings BotSettings { get; set; }
+    private TelegramBotSettings? BotSettings { get; set; }
 
     public static TelegramBotBuilder Instance(IServiceCollection services,
         ServerSettingsBuilder<ServerSettings> serverSettingsBuilder,
