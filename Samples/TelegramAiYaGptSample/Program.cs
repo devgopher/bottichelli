@@ -24,9 +24,9 @@ builder.Services
        .UsePassBusAgent<IBot<TelegramBot>, AiHandler>()
        .UsePassBusClient<IBot<TelegramBot>>()
        .UsePassEventBusClient<IBot<TelegramBot>>()
-       .AddBotCommand<AiCommand, AiCommandProcessor<ReplyMarkupBase>, PassValidator<AiCommand>>();
+       .AddBotCommand<AiCommand, AiCommandProcessor<ReplyKeyboardMarkup>, PassValidator<AiCommand>>();
 
 var app = builder.Build();
-app.Services.RegisterBotCommand<AiCommandProcessor<ReplyMarkupBase>, TelegramBot>();
+app.Services.RegisterBotCommand<AiCommandProcessor<ReplyKeyboardMarkup>, TelegramBot>();
 
 app.Run();

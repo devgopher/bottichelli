@@ -3,8 +3,6 @@ using Botticelli.Framework.Controls.Parsers;
 using Botticelli.Framework.Extensions;
 using Botticelli.Framework.Telegram;
 using Botticelli.Framework.Telegram.Extensions;
-using Botticelli.Schedule.Quartz.Extensions;
-using Botticelli.Talks.Extensions;
 using MessagingSample.Common.Commands;
 using MessagingSample.Common.Commands.Processors;
 using NLog.Extensions.Logging;
@@ -17,11 +15,9 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services
        .AddTelegramBot(builder.Configuration)
        .AddLogging(cfg => cfg.AddNLog())
-       .AddQuartzScheduler(builder.Configuration)
        .AddScoped<StartCommandProcessor<ReplyKeyboardMarkup>>()
        .AddScoped<StopCommandProcessor<ReplyKeyboardMarkup>>()
        .AddScoped<InfoCommandProcessor<ReplyKeyboardMarkup>>()
-       .AddOpenTtsTalks(builder.Configuration)
        .AddScoped<ILayoutParser, JsonLayoutParser>()
        .AddBotCommand<InfoCommand, InfoCommandProcessor<ReplyKeyboardMarkup>, PassValidator<InfoCommand>>()
        .AddBotCommand<StartCommand, StartCommandProcessor<ReplyKeyboardMarkup>, PassValidator<StartCommand>>()

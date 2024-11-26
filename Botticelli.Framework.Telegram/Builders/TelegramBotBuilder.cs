@@ -9,6 +9,7 @@ using Botticelli.Framework.Builders;
 using Botticelli.Framework.Controls.Parsers;
 using Botticelli.Framework.Extensions;
 using Botticelli.Framework.Options;
+using Botticelli.Framework.Security;
 using Botticelli.Framework.Telegram.Decorators;
 using Botticelli.Framework.Telegram.Handlers;
 using Botticelli.Framework.Telegram.HostedService;
@@ -54,11 +55,11 @@ public class TelegramBotBuilder : BotBuilder<TelegramBotBuilder, TelegramBot>
         Services!.AddSingleton(ServerSettingsBuilder.Build());
 
         Services!.AddHttpClient<BotStatusService<TelegramBot>>()
-            .AddCertificates(BotSettings);
+            .AddServerCertificates(BotSettings);
         Services!.AddHostedService<BotStatusService<IBot<TelegramBot>>>();
 
         Services!.AddHttpClient<BotKeepAliveService<TelegramBot>>()
-            .AddCertificates(BotSettings);
+            .AddServerCertificates(BotSettings);
 
         Services!.AddHostedService<BotKeepAliveService<IBot<TelegramBot>>>();
 
@@ -90,7 +91,7 @@ public class TelegramBotBuilder : BotBuilder<TelegramBotBuilder, TelegramBot>
 
         #endregion
 
-        if (BotSettings.UseThrottling is true) _builder.AddThrottler(new Throttler());
+        if (BotSettings?.UseThrottling is true) _builder.AddThrottler(new Throttler());
         _client = _builder.Build();
         _client.Timeout = TimeSpan.FromMilliseconds(BotSettings.Timeout);
 

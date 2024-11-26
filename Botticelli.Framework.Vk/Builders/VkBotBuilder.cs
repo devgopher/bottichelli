@@ -9,6 +9,7 @@ using Botticelli.Client.Analytics.Settings;
 using Botticelli.Framework.Builders;
 using Botticelli.Framework.Extensions;
 using Botticelli.Framework.Options;
+using Botticelli.Framework.Security;
 using Botticelli.Framework.Vk.Messages.Handlers;
 using Botticelli.Framework.Vk.Messages.HostedService;
 using Botticelli.Framework.Vk.Messages.Options;
@@ -34,10 +35,10 @@ public class VkBotBuilder : BotBuilder<VkBotBuilder, VkBot>
     protected override VkBot InnerBuild()
     {
         Services!.AddHttpClient<BotStatusService<VkBot>>()
-                 .AddCertificates(BotSettings);
+                 .AddServerCertificates(BotSettings);
         Services!.AddHostedService<BotStatusService<IBot<VkBot>>>();
         Services!.AddHttpClient<BotKeepAliveService<VkBot>>()
-                 .AddCertificates(BotSettings);
+                 .AddServerCertificates(BotSettings);
         Services!.AddHostedService<BotKeepAliveService<IBot<VkBot>>>();
 
         Services!.AddHostedService<VkBotHostedService>();

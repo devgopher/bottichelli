@@ -9,6 +9,6 @@ public abstract class BotSettings : IBotSettings
     ///     Bot name
     /// </summary>
     public string? Name { get; set; }
-    
-    public string BotCertificateName { get; set; } = "BotticelliBotsBot";
+
+    public SecuritySettings? SecuritySettings { get; set; }
 }

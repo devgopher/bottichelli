@@ -29,18 +29,9 @@ builder.Services.AddBotCommand<StopCommand>()
     .AddProcessor<StopCommandProcessor<ReplyKeyboardMarkup>>()
     .AddValidator<PassValidator<StopCommand>>();
 
-builder.Services.AddEndpointsApiExplorer()
-    .AddSwaggerGen();
-
 var app = builder.Build();
 app.Services.RegisterBotCommand<StartCommand, StartCommandProcessor<ReplyKeyboardMarkup>, TelegramBot>()
     .RegisterProcessor<StopCommandProcessor<ReplyKeyboardMarkup>>()
     .RegisterProcessor<InfoCommandProcessor<ReplyKeyboardMarkup>>();
-
-if (app.Environment.IsDevelopment())
-{
-    app.UseSwagger();
-    app.UseSwaggerUI();
-}
 
 app.Run();

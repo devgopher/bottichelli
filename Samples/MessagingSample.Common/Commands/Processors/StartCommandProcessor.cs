@@ -46,7 +46,7 @@ public class StartCommandProcessor<TReplyMarkup> : CommandProcessor<StartCommand
 
     protected override async Task InnerProcess(Message message, CancellationToken token)
     {
-        var chatId = message.ChatIds.FirstOrDefault();
+        var chatId = message.ChatIds.First();
         var greetingMessageRequest = new SendMessageRequest
         {
             Message = new Message
@@ -59,7 +59,7 @@ public class StartCommandProcessor<TReplyMarkup> : CommandProcessor<StartCommand
 
         await Bot.SendMessageAsync(greetingMessageRequest, _options, token);
 
-        var assemblyPath = Path.GetDirectoryName(typeof(StartCommandProcessor<TReplyMarkup>).Assembly.Location);
+        var assemblyPath = Path.GetDirectoryName(typeof(StartCommandProcessor<TReplyMarkup>).Assembly.Location)!;
         _jobManager.AddJob(Bot,
             new Reliability
             {
@@ -81,11 +81,11 @@ public class StartCommandProcessor<TReplyMarkup> : CommandProcessor<StartCommand
                 Poll = new Poll
                 {
                     Question = "To be or not to be?",
-                    Variants = new []
-                    {
+                    Variants =
+                    [
                         "To be!",
                         "Not to be!"
-                    },
+                    ],
                     CorrectAnswerId = 0,
                     IsAnonymous = false,
                     Type = Poll.PollType.Quiz

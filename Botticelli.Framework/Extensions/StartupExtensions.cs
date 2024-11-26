@@ -136,30 +136,4 @@ public static class StartupExtensions
 
         return new CommandRegisterServices<TCommand, TBot>(sp);
     }
-
-    public static IHttpClientBuilder AddCertificates(this IHttpClientBuilder builder, BotSettings? settings) =>
-        builder.ConfigurePrimaryHttpMessageHandler(() =>
-        {
-            var store = new X509Store(StoreName.My, StoreLocation.LocalMachine);
-            store.Open(OpenFlags.ReadOnly);
-
-            var certificate = store.Certificates
-                .FirstOrDefault(c => c.FriendlyName == settings.BotCertificateName);
-
-            if (certificate == null) throw new NullReferenceException("Can't find a client certificate!");
-
-            return new HttpClientHandler
-            {
-                ClientCertificates = { certificate },
-                ServerCertificateCustomValidationCallback =
-                    (_, _, _, policyErrors) =>
-                    {
-#if DEBUG
-                        return true;
-#endif
-                        return policyErrors == SslPolicyErrors.None;
-                        // TODO: cert checking
-                    }
-            };
-        });
 }
