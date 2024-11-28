@@ -1,4 +1,4 @@
-﻿using Botticelli.Bot.Data.Entities.Bot;
+﻿using Botticelli.BotData.Entities.Bot;
 using Botticelli.Framework.Exceptions;
 using Botticelli.Framework.Options;
 using Botticelli.Interfaces;
@@ -81,7 +81,7 @@ public class BotStatusService<TBot> : BotActualizationService<TBot> where TBot :
         if (botContext == default)
             throw new BotException("No bot context from server!");
         
-        var botData = new BotData
+        var botData = new BotData.Entities.Bot.BotData
         {
             BotId = botContext.BotId,
             Status = task.Result?.Status,

@@ -3,7 +3,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 using Botticelli.Shared.API.Admin.Responses;
 using Botticelli.Shared.Constants;
 
-namespace Botticelli.Bot.Data.Entities.Bot;
+namespace Botticelli.BotData.Entities.Bot;
 
 [Table("BotData")]
 public class BotData

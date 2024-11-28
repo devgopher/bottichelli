@@ -16,7 +16,7 @@ namespace Botticelli.Bot.Data.Migrations
 #pragma warning disable 612, 618
             modelBuilder.HasAnnotation("ProductVersion", "8.0.10");
 
-            modelBuilder.Entity("Botticelli.Bot.Data.Entities.Bot.BotAdditionalInfo", b =>
+            modelBuilder.Entity("Botticelli.BotData.Entities.Bot.BotAdditionalInfo", b =>
                 {
                     b.Property<string>("BotId")
                         .HasColumnType("TEXT");
@@ -38,7 +38,7 @@ namespace Botticelli.Bot.Data.Migrations
                     b.ToTable("BotAdditionalInfos");
                 });
 
-            modelBuilder.Entity("Botticelli.Bot.Data.Entities.Bot.BotData", b =>
+            modelBuilder.Entity("Botticelli.BotData.Entities.Bot.BotData", b =>
                 {
                     b.Property<string>("BotId")
                         .HasColumnType("TEXT");
@@ -57,14 +57,27 @@ namespace Botticelli.Bot.Data.Migrations
                     b.ToTable("BotData");
                 });
 
-            modelBuilder.Entity("Botticelli.Bot.Data.Entities.Bot.BotAdditionalInfo", b =>
+            modelBuilder.Entity("Botticelli.BotData.Entities.Bot.Broadcasting.Chat", b =>
                 {
-                    b.HasOne("Botticelli.Bot.Data.Entities.Bot.BotData", null)
+                    b.Property<string>("ChatId")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("BotId")
+                        .HasColumnType("TEXT");
+
+                    b.HasKey("ChatId", "BotId");
+
+                    b.ToTable("Chat");
+                });
+
+            modelBuilder.Entity("Botticelli.BotData.Entities.Bot.BotAdditionalInfo", b =>
+                {
+                    b.HasOne("Botticelli.BotData.Entities.Bot.BotData", null)
                         .WithMany("AdditionalInfo")
                         .HasForeignKey("BotDataBotId");
                 });
 
-            modelBuilder.Entity("Botticelli.Bot.Data.Entities.Bot.BotData", b =>
+            modelBuilder.Entity("Botticelli.BotData.Entities.Bot.BotData", b =>
                 {
                     b.Navigation("AdditionalInfo");
                 });

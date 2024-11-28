@@ -1,6 +1,6 @@
 using System.ComponentModel.DataAnnotations;
 
-namespace Botticelli.Bot.Data.Entities.Bot;
+namespace Botticelli.BotData.Entities.Bot;
 
 public class BotAdditionalInfo
 {

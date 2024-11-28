@@ -1,5 +1,3 @@
-using Botticelli.Bot.Data.Entities.Bot;
-
 namespace Botticelli.Bot.Data.Repositories;
 
 public interface IBotDataAccess
@@ -8,12 +6,12 @@ public interface IBotDataAccess
     /// Sets or updates bot data
     /// </summary>
     /// <param name="context"></param>
-    public void SetData(BotData? context);
+    public void SetData(BotData.Entities.Bot.BotData? context);
     
     
     /// <summary>
     /// Gets bot data
     /// </summary>
     /// <returns></returns>
-    public BotData? GetData();
+    public BotData.Entities.Bot.BotData? GetData();
 }

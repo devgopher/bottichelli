@@ -1,5 +1,4 @@
 ﻿using System.Text;
-using Botticelli.Bot.Data.Entities.Bot;
 using Botticelli.Bot.Data.Repositories;
 using Botticelli.Bot.Utils;
 using Botticelli.Bot.Utils.TextUtils;
@@ -497,7 +496,7 @@ public class TelegramBot : BaseBot<TelegramBot>
         await StopBotAsync(stopRequest, token);
     }
 
-    public override async Task SetBotContext(BotData? context, CancellationToken token)
+    public override async Task SetBotContext(BotData.Entities.Bot.BotData? context, CancellationToken token)
     {
         if (context is null) return;
 

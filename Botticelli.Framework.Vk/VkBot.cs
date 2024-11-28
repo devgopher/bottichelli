@@ -1,5 +1,4 @@
 ﻿using Botticelli.Bot.Data;
-using Botticelli.Bot.Data.Entities.Bot;
 using Botticelli.Bot.Data.Repositories;
 using Botticelli.Bot.Utils;
 using Botticelli.Client.Analytics;
@@ -111,7 +110,7 @@ public class VkBot : BaseBot<VkBot>
         return StartBotResponse.GetInstance(AdminCommandStatus.Fail, "error");
     }
 
-    public override async Task SetBotContext(BotData? context, CancellationToken token)
+    public override async Task SetBotContext(BotData.Entities.Bot.BotData? context, CancellationToken token)
     {
         if (context == default) return;
         var currentContext = _data.GetData();
@@ -136,7 +135,7 @@ public class VkBot : BaseBot<VkBot>
         }
     }
 
-    private void SetApiKey(BotData? context)
+    private void SetApiKey(BotData.Entities.Bot.BotData? context)
     {
         _messagesProvider.SetApiKey(context.BotKey);
         _messagePublisher.SetApiKey(context.BotKey);
