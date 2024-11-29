@@ -6,7 +6,6 @@ using Botticelli.Interfaces;
 using Flurl;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.Options;
 
 namespace Botticelli.Framework;
 
@@ -14,26 +13,17 @@ namespace Botticelli.Framework;
 ///     This service is intended for sending keepalive/hello messages
 ///     to Botticelli Admin server and receiving status messages from it
 /// </summary>
-public abstract class BotActualizationService<TBot> : IHostedService
-        where TBot : IBot
+public abstract class BotActualizationService<TBot>(
+    IHttpClientFactory httpClientFactory,
+    ServerSettings serverSettings,
+    TBot bot,
+    ILogger logger)
+    : IHostedService
+    where TBot : IBot
 {
-    private readonly IHttpClientFactory _httpClientFactory;
-    private readonly ServerSettings _serverSettings;
-    protected readonly string? BotId;
-    protected readonly ILogger Logger;
-    protected readonly TBot Bot;
-
-    protected BotActualizationService(IHttpClientFactory httpClientFactory,
-                                      ServerSettings serverSettings,
-                                      TBot bot,
-                                      ILogger logger)
-    {
-        _httpClientFactory = httpClientFactory;
-        _serverSettings = serverSettings;
-        Bot = bot;
-        Logger = logger;
-        BotId = BotDataUtils.GetBotId();
-    }
+    protected readonly TBot Bot = bot;
+    protected readonly string? BotId = BotDataUtils.GetBotId();
+    protected readonly ILogger Logger = logger;
 
     public abstract Task StartAsync(CancellationToken cancellationToken);
 
@@ -50,22 +40,22 @@ public abstract class BotActualizationService<TBot> : IHostedService
     /// <param name="cancellationToken">Cancellation token</param>
     /// <returns></returns>
     protected async Task<TResp?> InnerSend<TReq, TResp>(TReq request,
-                                                       string funcName,
-                                                       CancellationToken cancellationToken)
+        string funcName,
+        CancellationToken cancellationToken)
     {
         try
         {
-            using var httpClient = _httpClientFactory.CreateClient();
+            using var httpClient = httpClientFactory.CreateClient();
 
             var content = JsonContent.Create(request);
 
             Logger.LogDebug($"InnerSend request: {JsonSerializer.Serialize(request)}");
 
-            var response = await httpClient.PostAsync(Url.Combine(_serverSettings.ServerUri, funcName),
-                                                      content,
-                                                      cancellationToken);
+            var response = await httpClient.PostAsync(Url.Combine(serverSettings.ServerUri, funcName),
+                content,
+                cancellationToken);
 
-            return await response.Content.ReadFromJsonAsync<TResp>(cancellationToken: cancellationToken);
+            return await response.Content.ReadFromJsonAsync<TResp>(cancellationToken);
         }
         catch (Exception ex)
         {
