@@ -73,8 +73,6 @@ public class TelegramClientDecorator : ITelegramBotClient
     public Task<bool> TestApi(CancellationToken cancellationToken = new()) => throw new NotImplementedException();
 
 
-    public Task<bool> TestApiAsync(CancellationToken cancellationToken = new()) => throw new NotImplementedException();
-
     public async Task DownloadFile(string filePath,
                                         Stream destination,
                                         CancellationToken cancellationToken = new())

@@ -1,10 +1,5 @@
 ﻿namespace Botticelli.Framework.Telegram.Decorators;
 
-public interface IThrottler
-{
-    ValueTask<T> Throttle<T>(Func<Task<T>> action, CancellationToken ct);
-}
-
 public class Throttler : IThrottler
 {
     private static readonly TimeSpan Delay = TimeSpan.FromSeconds(5);

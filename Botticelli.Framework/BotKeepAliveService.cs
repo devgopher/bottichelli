@@ -14,7 +14,7 @@ public class BotKeepAliveService<TBot> : BotActualizationService<TBot> where TBo
     private const short KeepAlivePeriod = 5000;
     private readonly ManualResetEventSlim _getRequiredStatusEvent = new(false);
     private readonly ManualResetEventSlim _keepAliveEvent = new(false);
-    private Task _keepAliveTask;
+    private Task? _keepAliveTask;
 
     public BotKeepAliveService(IHttpClientFactory httpClientFactory,
                                ServerSettings serverSettings,
@@ -79,7 +79,7 @@ public class BotKeepAliveService<TBot> : BotActualizationService<TBot> where TBo
                                _keepAliveTask.Exception);
     }
 
-    private async Task<KeepAliveNotificationResponse?> Process(KeepAliveNotificationRequest request, CancellationToken ct)
+    private async Task<KeepAliveNotificationResponse> Process(KeepAliveNotificationRequest request, CancellationToken ct)
     {
         try
         {
@@ -87,9 +87,9 @@ public class BotKeepAliveService<TBot> : BotActualizationService<TBot> where TBo
                 "/bot/client/KeepAlive",
                 ct);
 
-            Logger.LogDebug($"KeepAlive botId: {BotId} response: {response.BotId}, {response.IsSuccess}");
+            Logger.LogDebug($"KeepAlive botId: {BotId} response: {response?.BotId}, {response?.IsSuccess ?? false}");
 
-            return response;
+            return response!;
         }
         catch (Exception ex)
         {

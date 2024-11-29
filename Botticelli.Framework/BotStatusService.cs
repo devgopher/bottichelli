@@ -7,26 +7,24 @@ using Botticelli.Shared.API.Admin.Responses;
 using Botticelli.Shared.API.Client.Requests;
 using Botticelli.Shared.API.Client.Responses;
 using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.Options;
 using Polly;
 
 namespace Botticelli.Framework;
 
-public class BotStatusService<TBot> : BotActualizationService<TBot> where TBot : IBot
+public class BotStatusService<TBot>(
+    IHttpClientFactory httpClientFactory,
+    ServerSettings serverSettings,
+    TBot bot,
+    ILogger<BotStatusService<TBot>> logger)
+    : BotActualizationService<TBot>(httpClientFactory,
+        serverSettings,
+        bot,
+        logger)
+    where TBot : IBot
 {
     private const short GetStatusPeriod = 5000;
     private readonly ManualResetEventSlim _getRequiredStatusEvent = new(false);
-    private Task _getRequiredStatusEventTask;
-
-    public BotStatusService(IHttpClientFactory httpClientFactory,
-                            ServerSettings serverSettings,
-                            TBot bot,
-                            ILogger<BotStatusService<TBot>> logger) : base(httpClientFactory,
-                                                                                  serverSettings,
-                                                                                  bot,
-                                                                                  logger)
-    {
-    }
+    private Task? _getRequiredStatusEventTask;
 
     public override Task StartAsync(CancellationToken cancellationToken)
     {

@@ -13,7 +13,7 @@ public class TelegramClientDecoratorBuilder
     private HttpClient? _httpClient;
     private readonly BotSettingsBuilder<TelegramBotSettings> _settingsBuilder;
     private readonly IServiceCollection _services;
-    private string _token;
+    private string? _token;
 
     public static TelegramClientDecoratorBuilder Instance(IServiceCollection services, BotSettingsBuilder<TelegramBotSettings> settingsBuilder) 
         => new(services, settingsBuilder);
@@ -24,13 +24,6 @@ public class TelegramClientDecoratorBuilder
         _settingsBuilder = settingsBuilder;
     }
 
-    public TelegramClientDecoratorBuilder AddHttpClient(HttpClient client)
-    {
-        _httpClient = client;
-
-        return this;
-    }
-
     public TelegramClientDecoratorBuilder AddThrottler(IThrottler throttler)
     {
         _throttler = throttler;
@@ -38,7 +31,7 @@ public class TelegramClientDecoratorBuilder
         return this;
     }
 
-    public TelegramClientDecoratorBuilder AddToken(string token)
+    public TelegramClientDecoratorBuilder AddToken(string? token)
     {
         _token = token;
 

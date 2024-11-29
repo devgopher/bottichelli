@@ -375,7 +375,7 @@ public class TelegramBot : BaseBot<TelegramBot>
     {
         request.Message.NotNull();
         request.Message.Contact.NotNull();
-        request.Message.Contact.Phone.NotNull();
+        request.Message.Contact!.Phone.NotNull();
         request.Message.Contact.Name.NotNull();
         
         foreach (var chatId in request.Message.ChatIds.EmptyIfNull())
@@ -383,8 +383,8 @@ public class TelegramBot : BaseBot<TelegramBot>
             try
             {
                 var message = await _client.SendContact(chatId,
-                    request.Message.Contact?.Phone,
-                    request.Message?.Contact?.Name,
+                    request.Message?.Contact?.Phone!,
+                    request.Message?.Contact?.Name!,
                     request.Message?.Contact?.Surname,
                     replyParameters: GetReplyParameters(request, chatId), 
                     replyMarkup: replyMarkup,

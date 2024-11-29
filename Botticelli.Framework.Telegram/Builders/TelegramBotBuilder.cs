@@ -93,7 +93,7 @@ public class TelegramBotBuilder : BotBuilder<TelegramBotBuilder, TelegramBot>
 
         if (BotSettings?.UseThrottling is true) _builder.AddThrottler(new Throttler());
         _client = _builder.Build();
-        _client.Timeout = TimeSpan.FromMilliseconds(BotSettings.Timeout);
+        _client.Timeout = TimeSpan.FromMilliseconds(BotSettings?.Timeout ?? 10000);
 
         Services!.AddScoped<ILayoutSupplier<IReplyMarkup>, ReplyTelegramLayoutSupplier>()
             .AddBotticelliFramework()
@@ -103,6 +103,7 @@ public class TelegramBotBuilder : BotBuilder<TelegramBotBuilder, TelegramBot>
 
         var sp = Services!.BuildServiceProvider();
         ApplyMigrations(sp);
+        
         return new TelegramBot(_client,
             sp.GetRequiredService<IBotUpdateHandler>(),
             sp.GetRequiredService<ILogger<TelegramBot>>(),
