@@ -33,7 +33,7 @@ public class TelegramBot : BaseBot<TelegramBot>
     private readonly IBotUpdateHandler _handler;
     private readonly ITextTransformer _textTransformer;
     private readonly IBotDataAccess _data;
-    private ITelegramBotClient _client;
+    private readonly ITelegramBotClient _client;
 
     public TelegramBot(ITelegramBotClient client,
         IBotUpdateHandler handler,
@@ -119,7 +119,7 @@ public class TelegramBot : BaseBot<TelegramBot>
     /// <exception cref="BotException"></exception>
     /// <exception cref="ArgumentOutOfRangeException"></exception>
     protected override async Task<SendMessageResponse> InnerSendMessageAsync<TSendOptions>(SendMessageRequest request,
-                                                                                           ISendOptionsBuilder<TSendOptions> optionsBuilder,
+                                                                                           ISendOptionsBuilder<TSendOptions>? optionsBuilder,
                                                                                            bool isUpdate,
                                                                                            CancellationToken token)
     {
@@ -482,7 +482,7 @@ public class TelegramBot : BaseBot<TelegramBot>
         return StopBotResponse.GetInstance(AdminCommandStatus.Fail, "error");
     }
     
-    private void RecreateClient(string key) => ((TelegramClientDecorator)_client).ChangeBotKey(key);
+    private void RecreateClient(string token) => ((TelegramClientDecorator)_client).ChangeBotToken(token);
 
     private async Task StartBot(CancellationToken token)
     {

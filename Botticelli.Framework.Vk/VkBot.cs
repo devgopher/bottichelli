@@ -166,7 +166,7 @@ public class VkBot : BaseBot<VkBot>
 
 
     protected override async Task<SendMessageResponse> InnerSendMessageAsync<TSendOptions>(SendMessageRequest request,
-        ISendOptionsBuilder<TSendOptions> optionsBuilder,
+        ISendOptionsBuilder<TSendOptions>? optionsBuilder,
         bool isUpdate,
         CancellationToken token)
     {

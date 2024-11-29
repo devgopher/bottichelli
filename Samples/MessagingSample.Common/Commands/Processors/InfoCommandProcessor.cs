@@ -13,7 +13,7 @@ namespace MessagingSample.Common.Commands.Processors;
 
 public class InfoCommandProcessor<TReplyMarkup> : CommandProcessor<InfoCommand> where TReplyMarkup : class
 {
-    private readonly SendOptionsBuilder<TReplyMarkup> _options;
+    private readonly SendOptionsBuilder<TReplyMarkup>? _options;
     
     public InfoCommandProcessor(ILogger<InfoCommandProcessor<TReplyMarkup>> logger, 
         ICommandValidator<InfoCommand> commandValidator, 

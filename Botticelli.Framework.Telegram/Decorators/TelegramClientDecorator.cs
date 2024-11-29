@@ -32,9 +32,9 @@ public class TelegramClientDecorator : ITelegramBotClient
     }
     
     
-    public void ChangeBotKey(string botKey)
+    public void ChangeBotToken(string token)
     {
-        _options = new TelegramBotClientOptions(botKey, _options.BaseUrl, _options.UseTestEnvironment);
+        _options = new TelegramBotClientOptions(token, _options.BaseUrl, _options.UseTestEnvironment);
         _bot = new TelegramBotClient(_options, _httpClient);
     }
 
