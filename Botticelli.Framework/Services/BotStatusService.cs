@@ -23,19 +23,11 @@ public class BotStatusService<TBot>(
     where TBot : IBot
 {
     private const short GetStatusPeriod = 5000;
-    private readonly ManualResetEventSlim _getRequiredStatusEvent = new(false);
     private Task? _getRequiredStatusEventTask;
 
     public override Task StartAsync(CancellationToken cancellationToken)
     {
         GetRequiredStatus(cancellationToken);
-
-        return Task.CompletedTask;
-    }
-
-    public override Task StopAsync(CancellationToken cancellationToken)
-    {
-        _getRequiredStatusEvent.Reset();
 
         return Task.CompletedTask;
     }
@@ -50,7 +42,7 @@ public class BotStatusService<TBot>(
     {
         if (_getRequiredStatusEventTask != default) return;
 
-        _getRequiredStatusEvent.Set();
+        ActualizationEvent.Set();
         var request = new GetRequiredStatusFromServerRequest
         {
             BotId = BotId

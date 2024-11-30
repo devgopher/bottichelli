@@ -3,7 +3,7 @@
 /// <summary>
 ///     Requests a needed status from a server (started/stopped)
 /// </summary>
-public class GetRequiredStatusFromServerRequest
+public class GetRequiredStatusFromServerRequest : IBotRequest
 {
     public string? BotId { get; set; }
 }

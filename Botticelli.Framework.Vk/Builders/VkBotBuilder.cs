@@ -40,7 +40,10 @@ public class VkBotBuilder : BotBuilder<VkBotBuilder, VkBot>
         Services!.AddHostedService<BotStatusService<IBot<VkBot>>>();
         Services!.AddHttpClient<BotKeepAliveService<VkBot>>()
                  .AddServerCertificates(BotSettings);
+        Services!.AddHttpClient<GetBroadCastMessagesService<VkBot>>()
+            .AddServerCertificates(BotSettings);
         Services!.AddHostedService<BotKeepAliveService<IBot<VkBot>>>();
+        Services!.AddHostedService<GetBroadCastMessagesService<IBot<VkBot>>>();
 
         Services!.AddHostedService<VkBotHostedService>();
         var botId = BotDataUtils.GetBotId();

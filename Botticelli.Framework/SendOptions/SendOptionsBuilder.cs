@@ -34,13 +34,6 @@ public class SendOptionsBuilder<T> : ISendOptionsBuilder<T> where T : class
         _innerObject = Activator.CreateInstance<T>();
 
         return this;
-
-        // // Let's see if we can process parameter set and put it to a constructor|initializer
-        // foreach (var c in constructors)
-        // {
-        //     // c.CallingConvention = 
-        // }
-
     }
 
     public ISendOptionsBuilder<T> Set(Func<T?, T>? func)

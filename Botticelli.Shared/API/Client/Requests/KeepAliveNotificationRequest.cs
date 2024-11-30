@@ -3,7 +3,7 @@
 /// <summary>
 ///     Keep alive notification to an admin server from a bot
 /// </summary>
-public class KeepAliveNotificationRequest
+public class KeepAliveNotificationRequest : IBotRequest
 {
     public string? BotId { get; set; }
 }

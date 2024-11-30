@@ -61,8 +61,11 @@ public class TelegramBotBuilder : BotBuilder<TelegramBotBuilder, TelegramBot>
 
         Services!.AddHttpClient<BotKeepAliveService<TelegramBot>>()
             .AddServerCertificates(BotSettings);
-
         Services!.AddHostedService<BotKeepAliveService<IBot<TelegramBot>>>();
+        
+        Services!.AddHttpClient<GetBroadCastMessagesService<TelegramBot>>()
+            .AddServerCertificates(BotSettings);
+        Services!.AddHostedService<GetBroadCastMessagesService<IBot<TelegramBot>>>();
 
         Services!.AddHostedService<TelegramBotHostedService>();
         var botId = BotDataUtils.GetBotId();

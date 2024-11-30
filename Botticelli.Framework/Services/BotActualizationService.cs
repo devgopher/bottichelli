@@ -13,22 +13,41 @@ namespace Botticelli.Framework.Services;
 ///     This service is intended for sending keepalive/hello messages
 ///     to Botticelli Admin server and receiving status messages from it
 /// </summary>
-public abstract class BotActualizationService<TBot>(
-    IHttpClientFactory httpClientFactory,
-    ServerSettings serverSettings,
-    TBot bot,
-    ILogger logger)
-    : IHostedService
+public abstract class BotActualizationService<TBot> : IHostedService
     where TBot : IBot
 {
-    protected readonly TBot Bot = bot;
+    protected readonly TBot Bot;
     protected readonly string? BotId = BotDataUtils.GetBotId();
-    protected readonly ILogger Logger = logger;
+    protected readonly ILogger Logger;
+    protected readonly ManualResetEventSlim ActualizationEvent = new(false);
+    protected readonly IHttpClientFactory HttpClientFactory;
+    protected readonly ServerSettings ServerSettings;
+
+    /// <summary>
+    ///     This service is intended for sending keepalive/hello messages
+    ///     to Botticelli Admin server and receiving status messages from it
+    /// </summary>
+    protected BotActualizationService(IHttpClientFactory httpClientFactory,
+        ServerSettings serverSettings,
+        TBot bot,
+        ILogger logger)
+    {
+        HttpClientFactory = httpClientFactory;
+        ServerSettings = serverSettings;
+        Bot = bot;
+        Logger = logger;
+        
+        ActualizationEvent.Reset();
+    }
 
     public abstract Task StartAsync(CancellationToken cancellationToken);
 
-    public abstract Task StopAsync(CancellationToken cancellationToken);
+    public virtual Task StopAsync(CancellationToken cancellationToken)
+    {
+        ActualizationEvent.Reset();
 
+        return Task.CompletedTask;
+    }
 
     /// <summary>
     ///     Inner send
@@ -39,19 +58,19 @@ public abstract class BotActualizationService<TBot>(
     /// <param name="funcName">Response</param>
     /// <param name="cancellationToken">Cancellation token</param>
     /// <returns></returns>
-    protected async Task<TResp?> InnerSend<TReq, TResp>(TReq request,
+    protected  virtual async Task<TResp?> InnerSend<TReq, TResp>(TReq request,
         string funcName,
         CancellationToken cancellationToken)
     {
         try
         {
-            using var httpClient = httpClientFactory.CreateClient();
+            using var httpClient = HttpClientFactory.CreateClient();
 
             var content = JsonContent.Create(request);
 
             Logger.LogDebug($"InnerSend request: {JsonSerializer.Serialize(request)}");
 
-            var response = await httpClient.PostAsync(Url.Combine(serverSettings.ServerUri, funcName),
+            var response = await httpClient.PostAsync(Url.Combine(ServerSettings.ServerUri, funcName),
                 content,
                 cancellationToken);
 
