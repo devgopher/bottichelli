@@ -7,7 +7,7 @@ using Flurl;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 
-namespace Botticelli.Framework;
+namespace Botticelli.Framework.Services;
 
 /// <summary>
 ///     This service is intended for sending keepalive/hello messages

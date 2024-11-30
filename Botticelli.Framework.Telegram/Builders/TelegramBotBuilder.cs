@@ -10,6 +10,7 @@ using Botticelli.Framework.Controls.Parsers;
 using Botticelli.Framework.Extensions;
 using Botticelli.Framework.Options;
 using Botticelli.Framework.Security;
+using Botticelli.Framework.Services;
 using Botticelli.Framework.Telegram.Decorators;
 using Botticelli.Framework.Telegram.Handlers;
 using Botticelli.Framework.Telegram.HostedService;

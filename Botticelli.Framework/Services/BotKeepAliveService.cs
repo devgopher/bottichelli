@@ -4,10 +4,9 @@ using Botticelli.Interfaces;
 using Botticelli.Shared.API.Client.Requests;
 using Botticelli.Shared.API.Client.Responses;
 using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.Options;
 using Polly;
 
-namespace Botticelli.Framework;
+namespace Botticelli.Framework.Services;
 
 public class BotKeepAliveService<TBot> : BotActualizationService<TBot> where TBot : IBot
 {

@@ -9,7 +9,7 @@ using Botticelli.Shared.API.Client.Responses;
 using Microsoft.Extensions.Logging;
 using Polly;
 
-namespace Botticelli.Framework;
+namespace Botticelli.Framework.Services;
 
 public class BotStatusService<TBot>(
     IHttpClientFactory httpClientFactory,
@@ -56,7 +56,7 @@ public class BotStatusService<TBot>(
             BotId = BotId
         };
 
-        _getRequiredStatusEventTask = Policy.HandleResult<GetRequiredStatusFromServerResponse>(r => true)
+        _getRequiredStatusEventTask = Policy.HandleResult<GetRequiredStatusFromServerResponse>(_ => true)
                                             .WaitAndRetryForeverAsync(_ => TimeSpan.FromMilliseconds(GetStatusPeriod))
                                             .ExecuteAndCaptureAsync(ct => Process(request, ct)!,
                                                                     cancellationToken);

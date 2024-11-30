@@ -10,6 +10,7 @@ using Botticelli.Framework.Builders;
 using Botticelli.Framework.Extensions;
 using Botticelli.Framework.Options;
 using Botticelli.Framework.Security;
+using Botticelli.Framework.Services;
 using Botticelli.Framework.Vk.Messages.Handlers;
 using Botticelli.Framework.Vk.Messages.HostedService;
 using Botticelli.Framework.Vk.Messages.Options;
