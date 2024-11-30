@@ -16,7 +16,7 @@ public class PollActualizationService<TBot, TRequest, TResponse>(
     TBot bot,
     ILogger logger)
     : BotActualizationService<TBot>(httpClientFactory, serverSettings, bot, logger)
-    where TBot : IBot 
+    where TBot : IBot
     where TRequest : IBotRequest, new()
 {
     private const short ActionPeriod = 5000;
@@ -35,7 +35,7 @@ public class PollActualizationService<TBot, TRequest, TResponse>(
     /// <typeparam name="TReq">Request</typeparam>
     /// <typeparam name="TResp">Response</typeparam>
     /// <param name="request">Request</param>
-    /// <param name="funcName">Response</param>
+    /// <param name="funcName">Method on a server</param>
     /// <param name="cancellationToken">Cancellation token</param>
     /// <returns></returns>
     protected override async Task<TResp?> InnerSend<TReq, TResp>(TReq request,
@@ -63,7 +63,7 @@ public class PollActualizationService<TBot, TRequest, TResponse>(
 
         return default;
     }
-    
+
     /// <summary>
     ///     Sends messages to a server
     /// </summary>
@@ -71,7 +71,8 @@ public class PollActualizationService<TBot, TRequest, TResponse>(
     /// <exception cref="BotException" />
     private void ProcessRequest(CancellationToken cancellationToken)
     {
-        if (_periodicTask != default) return;
+        if (_periodicTask != default)
+            return;
 
         ActualizationEvent.Set();
         var request = new TRequest
@@ -86,16 +87,9 @@ public class PollActualizationService<TBot, TRequest, TResponse>(
             .ExecuteAndCaptureAsync(ct => Process(request, ct),
                 cancellationToken);
 
-        if (!_periodicTask.IsFaulted)
-        {
-            Logger.LogTrace("{where} sent for bot: {botId}", typeof(TRequest).Name, BotId);
-
+        if (_periodicTask.IsFaulted)
             return;
-        }
-
-        Logger.LogError("Poll error: {message}", _periodicTask.Exception?.Message);
-
-        throw new BotException("Polling exception", _periodicTask.Exception);
+        Logger.LogTrace("{where} sent for bot: {botId}", typeof(TRequest).Name, BotId);
     }
 
     private async Task<TResponse> Process(TRequest request, CancellationToken ct)
@@ -106,6 +100,11 @@ public class PollActualizationService<TBot, TRequest, TResponse>(
 
         Logger.LogDebug("Poll botId: {botId} response: {response}", BotId, response);
 
+        if (response != null)
+            await InnerProcess(response, ct);
+        
         return response!;
     }
+
+    protected virtual Task InnerProcess(TResponse response, CancellationToken ct) => Task.CompletedTask;
 }

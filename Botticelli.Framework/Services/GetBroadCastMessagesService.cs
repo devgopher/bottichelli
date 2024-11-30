@@ -2,6 +2,7 @@ using Botticelli.Framework.Options;
 using Botticelli.Interfaces;
 using Botticelli.Shared.API.Client.Requests;
 using Botticelli.Shared.API.Client.Responses;
+using Botticelli.Shared.Utils;
 using Microsoft.Extensions.Logging;
 
 
@@ -25,4 +26,20 @@ public class GetBroadCastMessagesService<TBot>(
         serverSettings,
         bot,
         logger)
-    where TBot : IBot;
+    where TBot : IBot
+{
+    private TBot _bot = bot;
+
+    protected override async Task InnerProcess(GetBroadCastMessagesResponse response, CancellationToken ct)
+    {
+        response.BotId.NotNull();
+        response.Messages.NotNull();
+
+        foreach (var message in response.Messages)
+        {
+            var sendMessageRequest = new SendMessageRequest { Message = message };
+
+            await _bot.SendMessageAsync(sendMessageRequest, ct);
+        }
+    }
+}

@@ -1,5 +1,4 @@
-﻿using Botticelli.Shared.Utils;
-using Botticelli.Shared.ValueObjects;
+﻿using Botticelli.Shared.ValueObjects;
 
 namespace Botticelli.Shared.API.Client.Requests;
 

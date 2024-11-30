@@ -68,7 +68,7 @@ public abstract class BotActualizationService<TBot> : IHostedService
 
             var content = JsonContent.Create(request);
 
-            Logger.LogDebug($"InnerSend request: {JsonSerializer.Serialize(request)}");
+            Logger.LogDebug("InnerSend request: {request}", request);
 
             var response = await httpClient.PostAsync(Url.Combine(ServerSettings.ServerUri, funcName),
                 content,
