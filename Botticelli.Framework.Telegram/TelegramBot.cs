@@ -149,7 +149,7 @@ public class TelegramBot : BaseBot<TelegramBot>
 
         try
         {
-            if (request?.Message == default) throw new BotException("request/message is null!");
+            if (request.Message == default) throw new BotException("request/message is null!");
 
             var text = new StringBuilder($"{request.Message.Subject} {request.Message.Body}");
             var retText = _textTransformer.Escape(text).ToString();
@@ -249,9 +249,9 @@ public class TelegramBot : BaseBot<TelegramBot>
                             var audio = new InputFileStream(attachment.Data.ToStream(), attachment.Name);
                             message = await _client.SendAudio(link.chatId,
                                 audio,
-                                caption: request.Message.Subject,
-                                parseMode: ParseMode.MarkdownV2,                                replyParameters: GetReplyParameters(request, link.chatId), 
-                                replyMarkup: replyMarkup,
+                                request.Message.Subject,
+                                ParseMode.MarkdownV2, GetReplyParameters(request, link.chatId),
+                                replyMarkup,
                                 cancellationToken: token);
                             AddChatIdInnerIdLink(response, link.chatId, message);
 
@@ -353,10 +353,11 @@ public class TelegramBot : BaseBot<TelegramBot>
     private static InputPollOption[] GetPollOptions(SendMessageRequest request)
     {
         return request.Message.Poll?.Variants?.Select( po =>
-            new InputPollOption()
+            new InputPollOption
             {
                 Text = po
-            })?.ToArray() ?? [];
+            })
+            .ToArray() ?? [];
     }
 
     private static void AddChatIdInnerIdLink(SendMessageResponse response, string chatId, Message message)

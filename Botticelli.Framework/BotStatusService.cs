@@ -40,7 +40,6 @@ public class BotStatusService<TBot>(
         return Task.CompletedTask;
     }
 
-
     /// <summary>
     ///     Get required status for a bot from server
     /// </summary>
@@ -59,15 +58,15 @@ public class BotStatusService<TBot>(
 
         _getRequiredStatusEventTask = Policy.HandleResult<GetRequiredStatusFromServerResponse>(r => true)
                                             .WaitAndRetryForeverAsync(_ => TimeSpan.FromMilliseconds(GetStatusPeriod))
-                                            .ExecuteAndCaptureAsync(ct => Process(cancellationToken, request, ct),
+                                            .ExecuteAndCaptureAsync(ct => Process(request, ct)!,
                                                                     cancellationToken);
     }
 
-    private Task<GetRequiredStatusFromServerResponse?> Process(CancellationToken cancellationToken, GetRequiredStatusFromServerRequest request, CancellationToken ct)
+    private Task<GetRequiredStatusFromServerResponse?> Process(GetRequiredStatusFromServerRequest request, CancellationToken cancellationToken)
     {
         var task = InnerSend<GetRequiredStatusFromServerRequest, GetRequiredStatusFromServerResponse>(request,
                                                                                                       "/bot/client/GetRequiredBotStatus",
-                                                                                                      ct);
+                                                                                                      cancellationToken);
 
         task.Wait(cancellationToken);
 
@@ -93,12 +92,12 @@ public class BotStatusService<TBot>(
                 .ToList()
         };
 
-        Bot.SetBotContext(botData, ct);
+        Bot.SetBotContext(botData, cancellationToken);
 
         if (task.Exception != default)
         {
             Logger.LogError($"GetRequiredStatus task error: {task.Exception?.Message}");
-            Bot.StopBotAsync(StopBotRequest.GetInstance(), ct);
+            Bot.StopBotAsync(StopBotRequest.GetInstance(), cancellationToken);
 
             return task;
         }
@@ -106,13 +105,13 @@ public class BotStatusService<TBot>(
         switch (task.Result?.Status)
         {
             case BotStatus.Unlocked:
-                Bot.StartBotAsync(StartBotRequest.GetInstance(), ct);
+                Bot.StartBotAsync(StartBotRequest.GetInstance(), cancellationToken);
 
                 break;
             case BotStatus.Locked:
             case BotStatus.Unknown:
             case null:
-                Bot.StopBotAsync(StopBotRequest.GetInstance(), ct);
+                Bot.StopBotAsync(StopBotRequest.GetInstance(), cancellationToken);
 
                 break;
             default: throw new ArgumentOutOfRangeException();
