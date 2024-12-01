@@ -65,6 +65,50 @@ namespace Botticelli.Server.Data.Migrations
                     b.ToTable("BotInfo");
                 });
 
+            modelBuilder.Entity("Botticelli.Server.Data.Entities.Bot.Broadcasting.Broadcast", b =>
+                {
+                    b.Property<string>("BotId")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("Body")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.Property<DateTime>("Timestamp")
+                        .HasColumnType("TEXT");
+
+                    b.HasKey("BotId");
+
+                    b.ToTable("Broadcasts");
+                });
+
+            modelBuilder.Entity("Botticelli.Server.Data.Entities.Bot.Broadcasting.BroadcastAttachment", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("BroadcastBotId")
+                        .HasColumnType("TEXT");
+
+                    b.Property<byte[]>("Content")
+                        .IsRequired()
+                        .HasColumnType("BLOB");
+
+                    b.Property<string>("Filename")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.Property<int>("MediaType")
+                        .HasColumnType("INTEGER");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("BroadcastBotId");
+
+                    b.ToTable("BroadcastAttachments");
+                });
+
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRole<string>", b =>
                 {
                     b.Property<string>("Id")
@@ -86,22 +130,22 @@ namespace Botticelli.Server.Data.Migrations
                     b.HasData(
                         new
                         {
-                            Id = "969600de-70d9-43e9-bc01-56415c57863b",
-                            ConcurrencyStamp = "10/14/2024 11:29:05",
+                            Id = "1027bf58-8ea4-4042-9651-690ef7eff777",
+                            ConcurrencyStamp = "12/01/2024 15:54:52",
                             Name = "admin",
                             NormalizedName = "ADMIN"
                         },
                         new
                         {
-                            Id = "b57f3fda-a6d3-4f93-8faa-ce99a06a476d",
-                            ConcurrencyStamp = "10/14/2024 11:29:05",
+                            Id = "19291d61-00bc-497c-8162-aa1ed022d1a7",
+                            ConcurrencyStamp = "12/01/2024 15:54:52",
                             Name = "bot_manager",
                             NormalizedName = "BOT_MANAGER"
                         },
                         new
                         {
-                            Id = "22c98256-7794-4d42-bdc8-4725445de3c9",
-                            ConcurrencyStamp = "10/14/2024 11:29:05",
+                            Id = "0704f04d-1faa-44ab-b0fa-3ec05a168255",
+                            ConcurrencyStamp = "12/01/2024 15:54:52",
                             Name = "viewer",
                             NormalizedName = "VIEWER"
                         });
@@ -179,9 +223,21 @@ namespace Botticelli.Server.Data.Migrations
                         .HasForeignKey("BotInfoBotId");
                 });
 
+            modelBuilder.Entity("Botticelli.Server.Data.Entities.Bot.Broadcasting.BroadcastAttachment", b =>
+                {
+                    b.HasOne("Botticelli.Server.Data.Entities.Bot.Broadcasting.Broadcast", null)
+                        .WithMany("Attachments")
+                        .HasForeignKey("BroadcastBotId");
+                });
+
             modelBuilder.Entity("Botticelli.Server.Data.Entities.Bot.BotInfo", b =>
                 {
                     b.Navigation("AdditionalInfo");
+                });
+
+            modelBuilder.Entity("Botticelli.Server.Data.Entities.Bot.Broadcasting.Broadcast", b =>
+                {
+                    b.Navigation("Attachments");
                 });
 #pragma warning restore 612, 618
         }

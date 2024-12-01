@@ -104,7 +104,6 @@ public class SessionClient
         var response = await _httpClient.GetFromJsonAsync<bool>(Url.Combine(_backSettings.CurrentValue.BackUrl,
             "/user/HasUsers"));
 
-
         return response;
     }
 
@@ -122,8 +121,8 @@ public class SessionClient
 
         var tokenResponse = await response.Content.ReadFromJsonAsync<GetTokenResponse>();
 
-        if (!tokenResponse.IsSuccess)
-            return new ValueTuple<Session, Error>(default,
+        if (tokenResponse is not { IsSuccess: true })
+            return new ValueTuple<Session, Error>(default!,
                 new Error
                 {
                     Code = 1,
