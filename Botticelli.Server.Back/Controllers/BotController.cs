@@ -1,10 +1,13 @@
 using Botticelli.Server.Back.Services;
+using Botticelli.Server.Back.Services.Broadcasting;
+using Botticelli.Server.Data.Entities.Bot.Broadcasting;
 using Botticelli.Shared.API.Client.Requests;
 using Botticelli.Shared.API.Client.Responses;
 using Botticelli.Shared.Utils;
 using Botticelli.Shared.ValueObjects;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using MediaType = Botticelli.Shared.Constants.MediaType;
 
 namespace Botticelli.Server.Back.Controllers;
 
@@ -17,6 +20,7 @@ namespace Botticelli.Server.Back.Controllers;
 public class BotController(
     IBotManagementService botManagementService,
     IBotStatusDataService botStatusDataService,
+    IBroadcastService broadcastService,
     ILogger<BotController> logger)
 {
     #region Client pane
@@ -84,6 +88,54 @@ public class BotController(
             {
                 BotId = request.BotId,
                 IsSuccess = false
+            };
+        }
+    }
+
+
+    /// <summary>
+    ///     Gets broadcast messages
+    /// </summary>
+    /// <param name="request"></param>
+    /// <returns></returns>
+    [AllowAnonymous]
+    [HttpPost("client/[action]")]
+    public async Task<GetBroadCastMessagesResponse> Broadcast([FromBody] GetBroadCastMessagesRequest request)
+    {
+        try
+        {
+            logger.LogTrace($"{nameof(KeepAlive)}({request.BotId})...");
+            request.BotId?.NotNullOrEmpty();
+
+            var broadcastMessages = await broadcastService.GetMessages(request.BotId!);
+
+            return new GetBroadCastMessagesResponse
+            {
+                BotId = request.BotId!,
+                IsSuccess = true,
+                Messages = broadcastMessages.Select(bm => new Message
+                {
+                    Type = Message.MessageType.Messaging,
+                    Subject = string.Empty,
+                    Body = bm.Body,
+                    Attachments = bm.Attachments?.Select<BroadcastAttachment, BaseAttachment>(a =>
+                        new BinaryBaseAttachment(Guid.NewGuid().ToString(),
+                            a.Filename,
+                            (MediaType)a.MediaType,
+                            string.Empty,
+                            a.Content)).ToList()
+                }).ToArray()
+            };
+        }
+        catch (Exception ex)
+        {
+            logger.LogError(ex, $"{nameof(KeepAlive)}({request.BotId}) error: {ex.Message}");
+
+            return new GetBroadCastMessagesResponse
+            {
+                BotId = request.BotId!,
+                IsSuccess = false,
+                Messages = []
             };
         }
     }
