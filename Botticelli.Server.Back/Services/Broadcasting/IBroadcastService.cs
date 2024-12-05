@@ -21,11 +21,12 @@ public interface IBroadcastService
     /// <param name="botId"></param>
     /// <returns></returns>
     public Task<IEnumerable<Broadcast>> GetMessages(string botId);
-    
+
     /// <summary>
     /// Sets message as received and deletes it from a table
     /// </summary>
     /// <param name="botId"></param>
+    /// <param name="messageId"></param>
     /// <returns></returns>
-    public Task DeleteReceived(string botId);
+    public Task DeleteReceived(string botId, string messageId);
 }

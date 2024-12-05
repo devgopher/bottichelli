@@ -18,5 +18,9 @@ public class BroadcastService(ServerDataContext context) : IBroadcastService
     public async Task<IEnumerable<Broadcast>> GetMessages(string botId) 
         => await context.BroadcastMessages.Where(m => m.BotId.Equals(botId)).ToArrayAsync();
 
-    public async Task DeleteReceived(string botId) => context.BroadcastMessages.RemoveRange(await GetMessages(botId));
+    public async Task DeleteReceived(string botId, string messageId)
+    {
+        context.BroadcastMessages.RemoveRange(context.BroadcastMessages.Where(bm => bm.BotId == botId && bm.Id == messageId));
+        await context.SaveChangesAsync();
+    }
 }

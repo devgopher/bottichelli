@@ -91,8 +91,7 @@ public class BotController(
             };
         }
     }
-
-
+    
     /// <summary>
     ///     Gets broadcast messages
     /// </summary>
@@ -136,6 +135,42 @@ public class BotController(
                 BotId = request.BotId!,
                 IsSuccess = false,
                 Messages = []
+            };
+        }
+    }
+    
+    
+    /// <summary>
+    ///     Gets broadcast messages received notifications
+    /// </summary>
+    /// <param name="request"></param>
+    /// <returns></returns>
+    [AllowAnonymous]
+    [HttpPost("client/[action]")]
+    public async Task<BroadCastMessagesReceivedResponse> BroadcastReceived([FromBody] BroadCastMessagesReceivedRequest request)
+    {
+        try
+        {
+            logger.LogTrace($"{nameof(Broadcast)}({request.BotId})...");
+            request.BotId?.NotNullOrEmpty();
+
+            foreach (var messageId in request.MessageIds)
+            {
+                await broadcastService.DeleteReceived(request.BotId!, messageId);
+            }
+
+            return new BroadCastMessagesReceivedResponse
+            {
+                IsSuccess = true
+            };
+        }
+        catch (Exception ex)
+        {
+            logger.LogError(ex, $"{nameof(BroadcastReceived)}({request.BotId}) error: {ex.Message}");
+
+            return new BroadCastMessagesReceivedResponse
+            {
+                IsSuccess = false
             };
         }
     }
