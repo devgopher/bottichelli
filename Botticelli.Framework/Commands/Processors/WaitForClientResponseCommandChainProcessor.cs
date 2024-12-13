@@ -12,13 +12,13 @@ namespace Botticelli.Framework.Commands.Processors;
 /// </summary>
 /// <typeparam name="TInputCommand"></typeparam>
 public abstract class WaitForClientResponseCommandChainProcessor<TInputCommand> : CommandProcessor<TInputCommand>,
-                                                                                  ICommandChainProcessor<TInputCommand>
-        where TInputCommand : class, ICommand
+    ICommandChainProcessor<TInputCommand>
+    where TInputCommand : class, ICommand
 {
     protected WaitForClientResponseCommandChainProcessor(ILogger<CommandChainProcessor<TInputCommand>> logger,
-                                                         ICommandValidator<TInputCommand> commandValidator,
-                                                         MetricsProcessor metricsProcessor,
-                                                         IValidator<Message> messageValidator)
+        ICommandValidator<TInputCommand> commandValidator,
+        MetricsProcessor metricsProcessor,
+        IValidator<Message> messageValidator)
         : base(logger, commandValidator, metricsProcessor, messageValidator)
     {
     }
@@ -32,23 +32,31 @@ public abstract class WaitForClientResponseCommandChainProcessor<TInputCommand> 
         // filters 'not our' chains
         if (message.ChainId != null && !ChainIds.Contains(message.ChainId.Value))
             return;
-            
+
+        message.ChainId ??= Guid.NewGuid();
         Classify(ref message);
-        message.ChainId = Guid.NewGuid();
         ChainIds.Add(message.ChainId.Value);
 
         if (message.Type != Message.MessageType.Messaging)
         {
+            // sets input state to true
+            ChainStateKeeper.SetState(message.ChatIds.Single(), true);
             await base.ProcessAsync(message, token);
-            
+
             return;
         }
 
         if (DateTime.UtcNow - message.LastModifiedAt > Timeout)
             return;
 
+        var chatId = message.ChatIds.Single();
+        
+        // checks if input state = true
+        if (!ChainStateKeeper.GetState(chatId))
+            return;
+        
         message.ProcessingArgs ??= new List<string>();
-        message.ProcessingArgs.Add(message.Body);
+        message.ProcessingArgs.Add(message.Body!);
 
         if (Next != null)
         {
@@ -56,7 +64,9 @@ public abstract class WaitForClientResponseCommandChainProcessor<TInputCommand> 
             await Next.ProcessAsync(message, token);
         }
         else
+        {
             Logger.LogInformation("No Next command for message {uid}", message.Uid);
+        }
     }
 
     public HashSet<Guid> ChainIds { get; } = new(1000);

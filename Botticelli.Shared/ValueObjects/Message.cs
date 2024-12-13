@@ -39,7 +39,7 @@ public class Message
     /// <summary>
     ///     Message type
     /// </summary>
-    public virtual MessageType Type { get; set; } = MessageType.Messaging;
+    public virtual MessageType Type { get; set; }
 
     /// <summary>
     ///     Message uid
