@@ -1,7 +1,7 @@
 namespace Botticelli.Bot.Data.Settings;
 
 public class DataAccessSettingsBuilder<T>
-        where T : IDataAccessSettings, new()
+    where T : IDataAccessSettings, new()
 {
     private T _settings = new();
 

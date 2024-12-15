@@ -1,4 +1,5 @@
-﻿using System.Net.Security;
+﻿using System.Net;
+using System.Net.Security;
 using System.Security.Cryptography.X509Certificates;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Server.Kestrel.Core;
@@ -21,7 +22,7 @@ public static class StartupExtensions
 
         if (pendingMigrations.Any()) db.Database.Migrate();
     }
-    
+
     public static IServiceCollection AddIdentity(this IServiceCollection services)
     {
         services.Configure<IdentityOptions>(options =>
@@ -41,7 +42,7 @@ public static class StartupExtensions
 
             // User settings.
             options.User.AllowedUserNameCharacters =
-                    "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789@";
+                "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789@";
             options.User.RequireUniqueEmail = true;
         });
 
@@ -63,40 +64,40 @@ public static class StartupExtensions
     {
         // in Linux put here: ~/.dotnet/corefx/cryptography/x509stores/
         if (!OperatingSystem.IsWindows()) return builder;
-        
+
         var store = new X509Store(StoreName.My, StoreLocation.LocalMachine);
         store.Open(OpenFlags.ReadOnly);
-        int port = int.Parse(config["ServerSettings:httpsPort"]!);
+        var port = int.Parse(config["ServerSettings:httpsPort"]!);
         var thumbprint = config["ServerSettings:thumbprint"]!;
-        
+
         var certificate = store.Certificates
-                               .FirstOrDefault(c => c.FriendlyName == "BotticelliBotsServerBack" && c.Thumbprint == thumbprint);
+            .FirstOrDefault(c => c.FriendlyName == "BotticelliBotsServerBack" && c.Thumbprint == thumbprint);
 
         if (certificate == null) throw new KeyNotFoundException("Can't find SSL certificate!");
-        
-        return builder
-                .UseKestrel(options =>
-                {
-                    options.Listen(System.Net.IPAddress.Loopback,
-                                   port,
-                                   listenOptions =>
-                                   {
-                                       var connectionOptions = new HttpsConnectionAdapterOptions
-                                       {
-                                           ServerCertificate = certificate,
-                                           ClientCertificateMode = ClientCertificateMode.AllowCertificate,
-                                           ClientCertificateValidation = (cert, chain, errors) =>
-                                           {
-                                               if (errors != SslPolicyErrors.None) return false;
-                                           
-                                       
-                                               return true;
-                                           }
-                                       };
 
-                                       listenOptions.Protocols = HttpProtocols.Http1AndHttp2;
-                                       listenOptions.UseHttps(connectionOptions);
-                                   });
-                });
+        return builder
+            .UseKestrel(options =>
+            {
+                options.Listen(IPAddress.Loopback,
+                    port,
+                    listenOptions =>
+                    {
+                        var connectionOptions = new HttpsConnectionAdapterOptions
+                        {
+                            ServerCertificate = certificate,
+                            ClientCertificateMode = ClientCertificateMode.AllowCertificate,
+                            ClientCertificateValidation = (cert, chain, errors) =>
+                            {
+                                if (errors != SslPolicyErrors.None) return false;
+
+
+                                return true;
+                            }
+                        };
+
+                        listenOptions.Protocols = HttpProtocols.Http1AndHttp2;
+                        listenOptions.UseHttps(connectionOptions);
+                    });
+            });
     }
 }

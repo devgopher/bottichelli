@@ -2,7 +2,6 @@
 using Botticelli.Client.Analytics;
 using Botticelli.Framework.Commands.Processors;
 using Botticelli.Framework.Commands.Validators;
-using Botticelli.Framework.Controls.Layouts.Commands.InlineCalendar;
 using Botticelli.Framework.Controls.Layouts.Inlines;
 using Botticelli.Framework.Controls.Parsers;
 using Botticelli.Framework.SendOptions;
@@ -21,14 +20,14 @@ public class GetCalendarCommandProcessor : CommandProcessor<GetCalendarCommand>
     private SendOptionsBuilder<InlineKeyboardMarkup>? _options;
 
     public GetCalendarCommandProcessor(IBot bot,
-                                       ICommandValidator<GetCalendarCommand> commandValidator,
-                                       MetricsProcessor metricsProcessor,
-                                       ILayoutSupplier<InlineKeyboardMarkup> supplier,
-                                       ILogger<GetCalendarCommandProcessor> logger,
-                                       IValidator<Message> messageValidator) 
+        ICommandValidator<GetCalendarCommand> commandValidator,
+        MetricsProcessor metricsProcessor,
+        ILayoutSupplier<InlineKeyboardMarkup> supplier,
+        ILogger<GetCalendarCommandProcessor> logger,
+        IValidator<Message> messageValidator)
         : base(logger, commandValidator, metricsProcessor, messageValidator)
     {
-        _bot = bot; 
+        _bot = bot;
 
         InitLayouts(supplier);
     }

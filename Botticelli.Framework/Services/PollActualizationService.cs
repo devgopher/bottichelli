@@ -102,7 +102,7 @@ public class PollActualizationService<TBot, TRequest, TResponse>(
 
         if (response != null)
             await InnerProcess(response, ct);
-        
+
         return response!;
     }
 

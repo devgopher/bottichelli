@@ -17,7 +17,7 @@ public class HangfireJobManager : IJobManager
     public string AddJob(IBot bot,
         Reliability reliability,
         Message message,
-        Scheduler.Schedule schedule,
+        Schedule schedule,
         Action<Message>? preprocessFunc = default)
     {
         var jobId = Convert.ToBase64String(Guid.NewGuid().ToByteArray());

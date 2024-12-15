@@ -8,7 +8,7 @@ using Microsoft.Extensions.Logging;
 
 namespace Botticelli.Framework.Monads.Commands.Processors;
 
-public class OutputCommandProcessor<TReplyMarkup, TCommand> : ChainProcessor<TCommand> 
+public class OutputCommandProcessor<TReplyMarkup, TCommand> : ChainProcessor<TCommand>
     where TReplyMarkup : class
     where TCommand : IChainCommand
 {
@@ -17,8 +17,10 @@ public class OutputCommandProcessor<TReplyMarkup, TCommand> : ChainProcessor<TCo
     public OutputCommandProcessor(ILogger<OutputCommandProcessor<TReplyMarkup, TCommand>> logger,
         ILayoutSupplier<TReplyMarkup> layoutSupplier,
         ILayoutParser layoutParser)
-        : base(logger) =>
+        : base(logger)
+    {
         _options = SendOptionsBuilder<TReplyMarkup>.CreateBuilder();
+    }
 
     protected override async Task InnerProcessAsync(IResult<TCommand> stepResult, CancellationToken token)
     {
@@ -36,5 +38,6 @@ public class OutputCommandProcessor<TReplyMarkup, TCommand> : ChainProcessor<TCo
         await Bot.SendMessageAsync(outputMessageRequest, _options, token);
     }
 
-    protected override Task InnerErrorProcessAsync(FailResult<TCommand> stepResult, CancellationToken token) => throw new NotImplementedException();
+    protected override Task InnerErrorProcessAsync(FailResult<TCommand> stepResult, CancellationToken token) =>
+        throw new NotImplementedException();
 }

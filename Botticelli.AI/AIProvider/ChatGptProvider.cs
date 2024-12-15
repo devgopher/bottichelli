@@ -12,11 +12,11 @@ namespace Botticelli.AI.AIProvider;
 public abstract class ChatGptProvider<TSettings> : IAiProvider
     where TSettings : AiSettings
 {
-    protected readonly IBusClient? Bus;
     private readonly IHttpClientFactory? _factory;
+    private readonly IValidator<AiMessage>? _messageValidator;
+    protected readonly IBusClient? Bus;
     protected readonly ILogger Logger;
     protected readonly IOptions<TSettings> Settings;
-    private readonly IValidator<AiMessage>? _messageValidator;
 
     protected ChatGptProvider(IOptions<TSettings> settings,
         IHttpClientFactory? factory,
@@ -60,6 +60,8 @@ public abstract class ChatGptProvider<TSettings> : IAiProvider
             await SendErrorResponse(message, token, ex);
         }
     }
+
+    public abstract string AiName { get; }
 
     private async Task SendErrorResponse(AiMessage message, CancellationToken token, Exception ex)
     {
@@ -121,6 +123,4 @@ public abstract class ChatGptProvider<TSettings> : IAiProvider
 
     protected abstract Task<HttpResponseMessage> GetGptResponse(AiMessage message, CancellationToken token,
         HttpClient client);
-
-    public abstract string AiName { get; }
 }

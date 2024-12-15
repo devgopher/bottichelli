@@ -27,17 +27,17 @@
             <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
         </None>
         <None Update="main_layout.json">
-          <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+            <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
         </None>
         <None Update="start_layout.json">
-          <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+            <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
         </None>
     </ItemGroup>
 
 
     <ItemGroup>
-      <ProjectReference Include="..\..\Botticelli.Framework\Botticelli.Framework.csproj" />
-      <ProjectReference Include="..\..\Botticelli.Scheduler\Botticelli.Scheduler.csproj" />
+        <ProjectReference Include="..\..\Botticelli.Framework\Botticelli.Framework.csproj"/>
+        <ProjectReference Include="..\..\Botticelli.Scheduler\Botticelli.Scheduler.csproj"/>
     </ItemGroup>
 
 </Project>

@@ -34,7 +34,7 @@ public class MetricsSender : IHostedService
     public Task StopAsync(CancellationToken cancellationToken)
     {
         _tokenSource.Cancel();
-        
+
         return Task.CompletedTask;
     }
 

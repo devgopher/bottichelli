@@ -14,6 +14,6 @@ public class BotInfo
     public DateTime? LastKeepAlive { get; set; }
     public BotStatus? Status { get; set; }
     public BotType? Type { get; init; }
-    public string? BotKey { get; set; } 
+    public string? BotKey { get; set; }
     public List<BotAdditionalInfo> AdditionalInfo { get; init; }
 }

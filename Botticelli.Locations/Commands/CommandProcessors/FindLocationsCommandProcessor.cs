@@ -26,16 +26,16 @@ public class FindLocationsCommandProcessor<TReplyMarkup>(
 {
     protected override async Task InnerProcess(Message message, CancellationToken token)
     {
-        var query = string.Join(" ", values: message.Body?.Split(" ").Skip(1) ?? Array.Empty<string>());
-        
+        var query = string.Join(" ", message.Body?.Split(" ").Skip(1) ?? Array.Empty<string>());
+
         var results = await locationProvider.Search(query, 10);
 
         var markup = new Table(2);
 
         foreach (var result in results)
         {
-            var cdata =  await locationProvider.GetMapLink(result);
-            
+            var cdata = await locationProvider.GetMapLink(result);
+
             markup.AddItem(new Item
             {
                 Control = new Button
@@ -46,20 +46,20 @@ public class FindLocationsCommandProcessor<TReplyMarkup>(
                 Params = new ItemParams()
             });
         }
-        
+
         var responseMarkup = layoutSupplier.GetMarkup(markup);
         var replyOptions = SendOptionsBuilder<TReplyMarkup>.CreateBuilder(responseMarkup);
-        
+
         var request = new SendMessageRequest
         {
             Message = new Message
             {
                 Uid = Guid.NewGuid().ToString(),
                 ChatIds = message.ChatIds,
-                Body = "Addresses",
+                Body = "Addresses"
             }
         };
 
-        await Bot.SendMessageAsync(request,  replyOptions, token);
+        await Bot.SendMessageAsync(request, replyOptions, token);
     }
 }

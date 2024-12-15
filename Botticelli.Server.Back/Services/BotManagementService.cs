@@ -159,11 +159,11 @@ public class BotManagementService : IBotManagementService
 
             botInfo.BotKey = botKey;
             botInfo.BotName = botName;
-           // botInfo.Items = additionalParams;
-           
+            // botInfo.Items = additionalParams;
+
             _context.BotInfos.Update(botInfo);
             await _context.SaveChangesAsync();
-            
+
             await SetRequiredBotStatus(botId, prevStatus.Value);
 
             _logger.LogInformation($"{nameof(UpdateBot)} successful");
@@ -197,10 +197,10 @@ public class BotManagementService : IBotManagementService
     /// <param name="botName"></param>
     /// <param name="lastKeepAliveUtc"></param>
     private void AddNewBotInfo(string botId,
-                               BotStatus status,
-                               BotType botType,
-                               string botName,
-                               DateTime? lastKeepAliveUtc = null)
+        BotStatus status,
+        BotType botType,
+        string botName,
+        DateTime? lastKeepAliveUtc = null)
     {
         try
         {

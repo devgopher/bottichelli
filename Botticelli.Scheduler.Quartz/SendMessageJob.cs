@@ -3,7 +3,6 @@ using System.Text.Json;
 using System.Threading.Tasks;
 using Botticelli.Interfaces;
 using Botticelli.Shared.API.Client.Requests;
-using Botticelli.Shared.ValueObjects;
 using Quartz;
 
 namespace Botticelli.Schedule.Quartz;
@@ -20,7 +19,7 @@ public class SendMessageJob(IBot bot) : IJob
 
             if (sendMessageRequest is null)
                 throw new NullReferenceException($"{nameof(sendMessageRequest)} is null!");
-        
+
             await bot.SendMessageAsync(sendMessageRequest, context.CancellationToken);
         }
     }

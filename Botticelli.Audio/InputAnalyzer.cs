@@ -46,7 +46,7 @@ public class InputAnalyzer : IAnalyzer
     public AudioInfo Analyze(Stream input)
     {
         var fileFormat = _fileFormatInspector.DetermineFileFormat(input);
-      
+
         AudioFormat format;
         WaveStream reader;
 

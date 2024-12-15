@@ -42,9 +42,9 @@ public class LocalCacheAccessor : ICacheAccessor
             From = f.dt1,
             To = f.dt2,
             Count = MemoryCache.Count(mm => mm.Value.BotId == request.BotId &&
-                                             mm.Value.Name == request.Name &&
-                                             mm.Value.Timestamp >= f.dt1.ToUniversalTime() &&
-                                             mm.Value.Timestamp <= f.dt2.ToUniversalTime())
+                                            mm.Value.Name == request.Name &&
+                                            mm.Value.Timestamp >= f.dt1.ToUniversalTime() &&
+                                            mm.Value.Timestamp <= f.dt2.ToUniversalTime())
         }).Where(f => f.Count > 0);
 
         return new GetMetricsIntervalsResponse
@@ -66,12 +66,12 @@ public class LocalCacheAccessor : ICacheAccessor
             .Select(kvp => kvp.Key).ToArray();
 
         foreach (var c in toRemove)
-            MemoryCache.TryRemove(c, out var _);
+            MemoryCache.TryRemove(c, out _);
     }
 
     public void Remove(MetricModel request)
     {
-        MemoryCache.TryRemove(request.Id, out var _);
+        MemoryCache.TryRemove(request.Id, out _);
     }
 
     private static void InitCacheCleaning()

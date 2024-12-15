@@ -10,13 +10,14 @@ public static class ServiceCollectionExtensions
     public static IServiceCollection AddAnalyticsClient(this IServiceCollection services,
         IConfiguration configuration)
         => services.AddAnalyticsClient<AnalyticsClientSettings>(configuration);
-    
+
     public static IServiceCollection AddAnalyticsClient(this IServiceCollection services,
         Action<AnalyticsClientSettingsBuilder<AnalyticsClientSettings>> func)
         => services.AddAnalyticsClient<AnalyticsClientSettings>(func);
-    
-    public static IServiceCollection AddAnalyticsClient<T>(this IServiceCollection services, Action<AnalyticsClientSettingsBuilder<T>> func)
-    where T: AnalyticsClientSettings, new()
+
+    public static IServiceCollection AddAnalyticsClient<T>(this IServiceCollection services,
+        Action<AnalyticsClientSettingsBuilder<T>> func)
+        where T : AnalyticsClientSettings, new()
     {
         var builder = new AnalyticsClientSettingsBuilder<T>();
         func(builder);
@@ -24,8 +25,9 @@ public static class ServiceCollectionExtensions
         return services.AddAnalyticsClient(builder.Build());
     }
 
-    public static IServiceCollection AddAnalyticsClient<T>(this IServiceCollection services, IConfiguration configuration)
-        where T: AnalyticsClientSettings, new()
+    public static IServiceCollection AddAnalyticsClient<T>(this IServiceCollection services,
+        IConfiguration configuration)
+        where T : AnalyticsClientSettings, new()
     {
         var analyticsSettings = configuration
             .GetSection(typeof(T).Name)
@@ -39,9 +41,9 @@ public static class ServiceCollectionExtensions
     public static IServiceCollection AddAnalyticsClient(this IServiceCollection services,
         AnalyticsClientSettings clientSettings)
         => services.AddAnalyticsClient<AnalyticsClientSettings>(clientSettings);
-    
+
     public static IServiceCollection AddAnalyticsClient<T>(this IServiceCollection services, T clientSettings)
-        where T: AnalyticsClientSettings, new()
+        where T : AnalyticsClientSettings, new()
     {
         return services.AddSingleton<MetricsPublisher>()
             .AddSingleton(clientSettings)

@@ -25,6 +25,6 @@ public class ReverseGeocoderMock : IReverseGeocoder
                 Pedestrian = "Sidewalk",
                 District = "NoDistrict",
                 Name = string.Empty
-            },
+            }
         };
 }

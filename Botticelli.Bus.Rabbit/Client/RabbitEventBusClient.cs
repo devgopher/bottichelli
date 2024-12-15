@@ -31,6 +31,29 @@ public class RabbitEventBusClient<TBot> : BasicFunctions<TBot>, IEventBusClient
 
     public event IEventBusClient.BusEventHandler OnReceived;
 
+    public Task Send(SendMessageRequest response, CancellationToken token)
+    {
+        try
+        {
+            using var connection = _rabbitConnectionFactory.CreateConnection();
+            using var channel = connection.CreateModel();
+
+            InnerSend(response, channel, GetResponseQueueName());
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, ex.Message);
+
+            throw;
+        }
+
+        return Task.CompletedTask;
+    }
+
+    public void Dispose()
+    {
+    }
+
     private void Init()
     {
         var connection = _rabbitConnectionFactory.CreateConnection();
@@ -63,29 +86,6 @@ public class RabbitEventBusClient<TBot> : BasicFunctions<TBot>, IEventBusClient
 
             OnReceived?.Invoke(this, response);
         };
-    }
-
-    public Task Send(SendMessageRequest response, CancellationToken token)
-    {
-        try
-        {
-            using var connection = _rabbitConnectionFactory.CreateConnection();
-            using var channel = connection.CreateModel();
-
-            InnerSend(response, channel, GetResponseQueueName());
-        }
-        catch (Exception ex)
-        {
-            _logger.LogError(ex, ex.Message);
-
-            throw;
-        }
-
-        return Task.CompletedTask;
-    }
-    
-    public void Dispose()
-    {
     }
 
     private void InnerSend(object input, IModel channel, string queue)

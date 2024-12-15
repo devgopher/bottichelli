@@ -25,19 +25,19 @@
     </ItemGroup>
 
     <ItemGroup>
-        <PackageReference Include="FFmpeg.Win64.Static" Version="4.1.1.1" />
+        <PackageReference Include="FFmpeg.Win64.Static" Version="4.1.1.1"/>
         <PackageReference Include="FFMpegCore" Version="5.1.0"/>
-        <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="8.0.2" />
+        <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="8.0.2"/>
         <PackageReference Include="NAudio" Version="2.2.1"/>
         <PackageReference Include="NAudio.Lame" Version="2.1.0"/>
         <PackageReference Include="NAudio.Vorbis" Version="1.5.0"/>
         <PackageReference Include="NAudio.WaveFormRenderer" Version="2.0.0"/>
-        <PackageReference Include="System.Text.Json" Version="8.0.5" />
+        <PackageReference Include="System.Text.Json" Version="8.0.5"/>
     </ItemGroup>
 
     <ItemGroup>
         <ProjectReference Include="..\3dParty\FileSignatures\FileSignatures.csproj"/>
-        <ProjectReference Include="..\Botticelli.Shared\Botticelli.Shared.csproj" />
+        <ProjectReference Include="..\Botticelli.Shared\Botticelli.Shared.csproj"/>
     </ItemGroup>
 
 </Project>

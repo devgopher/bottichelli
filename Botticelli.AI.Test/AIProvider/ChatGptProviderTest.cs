@@ -16,15 +16,6 @@ namespace Botticelli.AI.Test.AIProvider;
 [TestOf(typeof(ChatGptProvider))]
 public class ChatGptProviderTest : BaseAiProviderTest
 {
-    private GptSettings ChatGptSettings => new()
-    {
-        Url = AiSettings.Url,
-        AiName = AiSettings.AiName,
-        StreamGeneration = AiSettings.StreamGeneration,
-        ApiKey = AiSettings.ApiKey,
-        Model = "none"
-    };
-    
     [SetUp]
     public void StartMockServer()
     {
@@ -43,7 +34,7 @@ public class ChatGptProviderTest : BaseAiProviderTest
             },
             Choices =
             [
-                new()
+                new Choice
                 {
                     Message = new ChatGptMessage
                     {
@@ -58,18 +49,27 @@ public class ChatGptProviderTest : BaseAiProviderTest
         };
 
         Server?.Given(Request.Create().WithPath("/completions").UsingPost())
-               .RespondWith(
-                            Response.Create()
-                                    .WithStatusCode(200)
-                                    .WithBody(JsonSerializer.Serialize(responseMessage))
-                           );
+            .RespondWith(
+                Response.Create()
+                    .WithStatusCode(200)
+                    .WithBody(JsonSerializer.Serialize(responseMessage))
+            );
 
         AiProvider = new ChatGptProvider(new OptionsMock<GptSettings>(ChatGptSettings),
-                                               ClientFactory,
-                                               LoggerMocks.CreateConsoleLogger<ChatGptProvider>(),
-                                               BusClient,
-                                               Validator);
+            ClientFactory,
+            LoggerMocks.CreateConsoleLogger<ChatGptProvider>(),
+            BusClient,
+            Validator);
     }
+
+    private GptSettings ChatGptSettings => new()
+    {
+        Url = AiSettings.Url,
+        AiName = AiSettings.AiName,
+        StreamGeneration = AiSettings.StreamGeneration,
+        ApiKey = AiSettings.ApiKey,
+        Model = "none"
+    };
 
     [Test]
     [TestCase("test query")]

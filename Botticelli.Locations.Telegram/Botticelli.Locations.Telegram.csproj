@@ -11,16 +11,16 @@
 
     <ItemGroup>
         <PackageReference Include="coverlet.collector" Version="6.0.2">
-          <PrivateAssets>all</PrivateAssets>
-          <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+            <PrivateAssets>all</PrivateAssets>
+            <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
         </PackageReference>
-        <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.11.1" />
-        <PackageReference Include="NUnit" Version="4.2.2" />
+        <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.11.1"/>
+        <PackageReference Include="NUnit" Version="4.2.2"/>
         <PackageReference Include="NUnit.Analyzers" Version="4.3.0">
-          <PrivateAssets>all</PrivateAssets>
-          <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+            <PrivateAssets>all</PrivateAssets>
+            <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
         </PackageReference>
-        <PackageReference Include="NUnit3TestAdapter" Version="4.6.0" />
+        <PackageReference Include="NUnit3TestAdapter" Version="4.6.0"/>
     </ItemGroup>
 
     <ItemGroup>
@@ -28,16 +28,16 @@
     </ItemGroup>
 
     <ItemGroup>
-      <Reference Include="Microsoft.Extensions.Configuration.Abstractions">
-        <HintPath>..\..\..\..\Program Files\dotnet\shared\Microsoft.AspNetCore.App\8.0.4\Microsoft.Extensions.Configuration.Abstractions.dll</HintPath>
-      </Reference>
-      <Reference Include="Microsoft.Extensions.DependencyInjection.Abstractions">
-        <HintPath>..\..\..\..\Program Files\dotnet\shared\Microsoft.AspNetCore.App\8.0.4\Microsoft.Extensions.DependencyInjection.Abstractions.dll</HintPath>
-      </Reference>
+        <Reference Include="Microsoft.Extensions.Configuration.Abstractions">
+            <HintPath>..\..\..\..\Program Files\dotnet\shared\Microsoft.AspNetCore.App\8.0.4\Microsoft.Extensions.Configuration.Abstractions.dll</HintPath>
+        </Reference>
+        <Reference Include="Microsoft.Extensions.DependencyInjection.Abstractions">
+            <HintPath>..\..\..\..\Program Files\dotnet\shared\Microsoft.AspNetCore.App\8.0.4\Microsoft.Extensions.DependencyInjection.Abstractions.dll</HintPath>
+        </Reference>
     </ItemGroup>
 
     <ItemGroup>
-      <ProjectReference Include="..\Botticelli.Locations\Botticelli.Locations.csproj" />
+        <ProjectReference Include="..\Botticelli.Locations\Botticelli.Locations.csproj"/>
     </ItemGroup>
 
 </Project>

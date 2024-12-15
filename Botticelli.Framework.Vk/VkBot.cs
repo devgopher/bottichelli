@@ -1,6 +1,4 @@
-﻿using Botticelli.Bot.Data;
-using Botticelli.Bot.Data.Repositories;
-using Botticelli.Bot.Utils;
+﻿using Botticelli.Bot.Data.Repositories;
 using Botticelli.Client.Analytics;
 using Botticelli.Framework.Events;
 using Botticelli.Framework.Exceptions;
@@ -23,20 +21,20 @@ namespace Botticelli.Framework.Vk.Messages;
 
 public class VkBot : BaseBot<VkBot>
 {
+    private readonly IBotDataAccess _data;
     private readonly IBotUpdateHandler _handler;
     private readonly MessagePublisher? _messagePublisher;
-    private readonly IBotDataAccess _data;
     private readonly LongPollMessagesProvider _messagesProvider;
     private readonly VkStorageUploader? _vkUploader;
     private bool _eventsAttached;
 
     public VkBot(LongPollMessagesProvider messagesProvider,
-                 MessagePublisher? messagePublisher,
-                 VkStorageUploader? vkUploader,
-                 IBotDataAccess data,
-                 IBotUpdateHandler handler,
-                 MetricsProcessor metrics,
-                 ILogger<VkBot> logger) : base(logger, metrics)
+        MessagePublisher? messagePublisher,
+        VkStorageUploader? vkUploader,
+        IBotDataAccess data,
+        IBotUpdateHandler handler,
+        MetricsProcessor metrics,
+        ILogger<VkBot> logger) : base(logger, metrics)
     {
         _messagesProvider = messagesProvider;
         _messagePublisher = messagePublisher;
@@ -206,7 +204,7 @@ public class VkBot : BaseBot<VkBot>
 
         currentContext.NotNull();
         currentContext.BotKey.NotNull();
-        
+
         if (request.Message.Attachments == default)
         {
             var vkRequest = new VkSendMessageRequest

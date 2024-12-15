@@ -12,12 +12,12 @@ using Microsoft.Extensions.Logging;
 
 namespace MessagingSample.Common.Commands.Processors;
 
-public class StopCommandProcessor<TReplyMarkup> : CommandProcessor<StopCommand> 
+public class StopCommandProcessor<TReplyMarkup> : CommandProcessor<StopCommand>
     where TReplyMarkup : class
 {
     private readonly IJobManager _jobManager;
     private readonly SendOptionsBuilder<TReplyMarkup>? _options;
-    
+
     public StopCommandProcessor(ILogger<StopCommandProcessor<TReplyMarkup>> logger,
         ICommandValidator<StopCommand> commandValidator,
         MetricsProcessor metricsProcessor,
@@ -31,7 +31,7 @@ public class StopCommandProcessor<TReplyMarkup> : CommandProcessor<StopCommand>
         var location = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location) ?? string.Empty;
         var responseLayout = layoutParser.ParseFromFile(Path.Combine(location, "start_layout.json"));
         var responseMarkup = layoutSupplier.GetMarkup(responseLayout);
-        
+
         _options = SendOptionsBuilder<TReplyMarkup>.CreateBuilder(responseMarkup);
     }
 

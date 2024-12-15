@@ -20,14 +20,18 @@ public class CommandContext : ICommandContext
                 var chunk = parameter.Replace('.', ',');
 
                 if (type == typeof(double))
-                    return (T?)(object)(double.Parse(chunk));
+                    return (T?)(object)double.Parse(chunk);
                 if (type == typeof(float))
-                    return (T?)(object)(float.Parse(chunk));
+                    return (T?)(object)float.Parse(chunk);
                 if (type == typeof(decimal))
-                    return (T?)(object)(decimal.Parse(chunk));
-
-            } else  return JsonSerializer.Deserialize<T>(parameter);
+                    return (T?)(object)decimal.Parse(chunk);
+            }
+            else
+            {
+                return JsonSerializer.Deserialize<T>(parameter);
+            }
         }
+
         return default;
     }
 
@@ -36,13 +40,32 @@ public class CommandContext : ICommandContext
     public T Set<T>(string name, T value)
     {
         if (value is null) throw new ArgumentNullException(nameof(value));
-        
+
         if (name == Names.Args) // args are always string
             _parameters[name] = Stringify(value);
         else
             _parameters[name] = JsonSerializer.Serialize(value);
 
         return value;
+    }
+
+    public string Set(string name, string value)
+    {
+        _parameters[name] = Stringify(value);
+        return value;
+    }
+
+
+    public T Transform<T>(string name, Func<T, T> func)
+    {
+        if (!_parameters.TryGetValue(name, out var parameter))
+            throw new KeyNotFoundException(name);
+
+        var deserialized = JsonSerializer.Deserialize<T>(parameter);
+
+        _parameters[name] = JsonSerializer.Serialize(func(deserialized));
+
+        return deserialized;
     }
 
     private static string Stringify<T>([DisallowNull] T value) =>
@@ -53,23 +76,4 @@ public class CommandContext : ICommandContext
             decimal dcm => dcm.ToString("G").Replace(',', '.'),
             _ => value.ToString()!
         };
-
-    public string Set(string name, string value)
-    {
-        _parameters[name] = Stringify(value);
-        return value;
-    }
-
-    
-    public T Transform<T>(string name, Func<T, T> func)
-    {
-        if (!_parameters.TryGetValue(name, out var parameter)) 
-            throw new KeyNotFoundException(name);
-        
-        var deserialized = JsonSerializer.Deserialize<T>(parameter);
-        
-        _parameters[name] = JsonSerializer.Serialize(func(deserialized));
-
-        return deserialized;
-    }
 }

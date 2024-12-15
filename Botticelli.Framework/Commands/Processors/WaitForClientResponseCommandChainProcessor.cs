@@ -50,11 +50,11 @@ public abstract class WaitForClientResponseCommandChainProcessor<TInputCommand> 
             return;
 
         var chatId = message.ChatIds.Single();
-        
+
         // checks if input state = true
         if (!ChainStateKeeper.GetState(chatId))
             return;
-        
+
         message.ProcessingArgs ??= new List<string>();
         message.ProcessingArgs.Add(message.Body!);
 

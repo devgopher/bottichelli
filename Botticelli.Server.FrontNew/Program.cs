@@ -1,5 +1,3 @@
-using System.Net.Security;
-using System.Security.Cryptography.X509Certificates;
 using Botticelli.Server.FrontNew;
 using Botticelli.Server.FrontNew.Clients;
 using Botticelli.Server.FrontNew.Extensions;
@@ -12,8 +10,8 @@ using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
 var builder = WebAssemblyHostBuilder.CreateDefault(args);
 
 builder.Configuration
-       .AddJsonFile("appsettings.json", true)
-       .AddEnvironmentVariables();
+    .AddJsonFile("appsettings.json", true)
+    .AddEnvironmentVariables();
 
 builder.RootComponents.Add<App>("#app");
 builder.RootComponents.Add<HeadOutlet>("head::after");

@@ -8,7 +8,9 @@ public class InputCommandProcessor<TCommand>(ILogger<InputCommandProcessor<TComm
     : ChainProcessor<TCommand>(logger)
     where TCommand : IChainCommand
 {
-    protected override Task InnerProcessAsync(IResult<TCommand> stepResult, CancellationToken token) => Task.CompletedTask;
+    protected override Task InnerProcessAsync(IResult<TCommand> stepResult, CancellationToken token) =>
+        Task.CompletedTask;
 
-    protected override Task InnerErrorProcessAsync(FailResult<TCommand> stepResult, CancellationToken token) => Task.CompletedTask;
+    protected override Task InnerErrorProcessAsync(FailResult<TCommand> stepResult, CancellationToken token) =>
+        Task.CompletedTask;
 }

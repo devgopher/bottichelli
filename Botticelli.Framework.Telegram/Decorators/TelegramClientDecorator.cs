@@ -13,46 +13,41 @@ namespace Botticelli.Framework.Telegram.Decorators;
 /// </summary>
 public class TelegramClientDecorator : ITelegramBotClient
 {
-    private TelegramBotClient? _bot;
+    private readonly HttpClient? _httpClient;
 
     private readonly RetryPolicy _policy = Policy
-                                           .Handle<ApiRequestException>(e => e.ErrorCode == (int) HttpStatusCode.TooManyRequests)
-                                           .WaitAndRetry(10, (i, _) => TimeSpan.FromSeconds(10 * Math.Exp(i)));
+        .Handle<ApiRequestException>(e => e.ErrorCode == (int)HttpStatusCode.TooManyRequests)
+        .WaitAndRetry(10, (i, _) => TimeSpan.FromSeconds(10 * Math.Exp(i)));
 
     private readonly IThrottler? _throttler;
+    private TelegramBotClient? _bot;
     private TelegramBotClientOptions _options;
-    private readonly HttpClient? _httpClient;
-    
-    internal TelegramClientDecorator(TelegramBotClientOptions options, IThrottler? throttler, HttpClient? httpClient = null)
+
+    internal TelegramClientDecorator(TelegramBotClientOptions options, IThrottler? throttler,
+        HttpClient? httpClient = null)
     {
         _throttler = throttler;
         _options = options;
         _httpClient = httpClient;
-        _bot = !string.IsNullOrWhiteSpace(options.Token)  ? new TelegramBotClient(options, httpClient)  : null;
-    }
-    
-    
-    public void ChangeBotToken(string token)
-    {
-        _options = new TelegramBotClientOptions(token, _options.BaseUrl, _options.UseTestEnvironment);
-        _bot = new TelegramBotClient(_options, _httpClient);
+        _bot = !string.IsNullOrWhiteSpace(options.Token) ? new TelegramBotClient(options, httpClient) : null;
     }
 
 
     public async Task<TResponse> SendRequest<TResponse>(IRequest<TResponse> request,
-                                                             CancellationToken cancellationToken = new())
+        CancellationToken cancellationToken = new())
     {
         try
         {
             return await _policy.Execute(async () =>
-                                {
-                                    if (_throttler != null)
-                                        return await _throttler.Throttle(async () => await _bot?.SendRequest(request, cancellationToken)!,
-                                                                         cancellationToken);
+                {
+                    if (_throttler != null)
+                        return await _throttler.Throttle(
+                            async () => await _bot?.SendRequest(request, cancellationToken)!,
+                            cancellationToken);
 
-                                    return await _bot?.SendRequest(request, cancellationToken)!;
-                                })
-                                .ConfigureAwait(false);
+                    return await _bot?.SendRequest(request, cancellationToken)!;
+                })
+                .ConfigureAwait(false);
         }
         catch (ApiRequestException ex)
         {
@@ -63,19 +58,21 @@ public class TelegramClientDecorator : ITelegramBotClient
     }
 
     [Obsolete("Use SendRequest")]
-    public Task<TResponse> MakeRequest<TResponse>(IRequest<TResponse> request, CancellationToken cancellationToken = new())
+    public Task<TResponse> MakeRequest<TResponse>(IRequest<TResponse> request,
+        CancellationToken cancellationToken = new())
         => SendRequest(request, cancellationToken);
 
     [Obsolete("Use SendRequest")]
-    public async Task<TResponse> MakeRequestAsync<TResponse>(IRequest<TResponse> request, CancellationToken cancellationToken = new())
+    public async Task<TResponse> MakeRequestAsync<TResponse>(IRequest<TResponse> request,
+        CancellationToken cancellationToken = new())
         => await SendRequest(request, cancellationToken);
 
     public Task<bool> TestApi(CancellationToken cancellationToken = new()) => throw new NotImplementedException();
 
 
     public async Task DownloadFile(string filePath,
-                                        Stream destination,
-                                        CancellationToken cancellationToken = new())
+        Stream destination,
+        CancellationToken cancellationToken = new())
     {
         try
         {
@@ -99,4 +96,11 @@ public class TelegramClientDecorator : ITelegramBotClient
     public IExceptionParser? ExceptionsParser { get; set; }
     public event AsyncEventHandler<ApiRequestEventArgs>? OnMakingApiRequest;
     public event AsyncEventHandler<ApiResponseEventArgs>? OnApiResponseReceived;
+
+
+    public void ChangeBotToken(string token)
+    {
+        _options = new TelegramBotClientOptions(token, _options.BaseUrl, _options.UseTestEnvironment);
+        _bot = new TelegramBotClient(_options, _httpClient);
+    }
 }

@@ -144,7 +144,7 @@ public class BotUpdateHandler : IBotUpdateHandler
             return;
 
         var clientNonChainedTasks = _processorFactory
-            .GetProcessors(true)
+            .GetProcessors()
             .Select(p => p.ProcessAsync(request, token));
 
         var clientChainedTasks = _processorFactory

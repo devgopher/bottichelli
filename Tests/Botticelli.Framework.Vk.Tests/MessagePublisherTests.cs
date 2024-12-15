@@ -2,7 +2,6 @@
 using Botticelli.Framework.Vk.Messages;
 using Botticelli.Framework.Vk.Messages.API.Requests;
 using NUnit.Framework;
-using RichardSzalay.MockHttp;
 using Shared;
 
 namespace Botticelli.Framework.Vk.Tests;
@@ -10,13 +9,15 @@ namespace Botticelli.Framework.Vk.Tests;
 [TestFixture]
 public class MessagePublisherTests
 {
-    public MessagePublisherTests() {}
-    
     [SetUp]
     public void Setup()
     {
         _publisher = new MessagePublisher(new TestHttpClientFactory(),
             LoggerMocks.CreateConsoleLogger<MessagePublisher>());
+    }
+
+    public MessagePublisherTests()
+    {
     }
 
     private MessagePublisher _publisher;

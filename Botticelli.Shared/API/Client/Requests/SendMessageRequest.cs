@@ -8,7 +8,10 @@ public class SendMessageRequest : BaseRequest<SendMessageRequest>
     {
     }
 
-    public SendMessageRequest(string? uid) : base(uid) => Message = new Message(uid);
+    public SendMessageRequest(string? uid) : base(uid)
+    {
+        Message = new Message(uid);
+    }
 
     public bool? ExpectPartialResponse { get; set; }
     public int? SequenceNumber { get; set; }

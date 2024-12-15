@@ -1,4 +1,3 @@
-using Botticelli.Framework.Commands;
 using Botticelli.Framework.Monads.Commands.Context;
 using Botticelli.Framework.Monads.Commands.Result;
 using LanguageExt;
@@ -20,7 +19,7 @@ public class ChainRunner<TCommand>(List<IChainProcessor<TCommand>> chain, ILogge
             logger.LogInformation("Chain processor {tc} for {TCommand} start...", tc.GetType().Name,
                 typeof(TCommand).Name);
 
-            await output.BiIter((r) => tc.Process(r), 
+            await output.BiIter(r => tc.Process(r),
                 l => logger.LogInformation("Chain processor {tc}  for {TCommand} finished: fail!", tc.GetType().Name,
                     typeof(TCommand).Name));
 

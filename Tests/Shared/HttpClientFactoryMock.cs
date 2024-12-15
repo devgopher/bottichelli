@@ -6,7 +6,7 @@ public class HttpClientFactoryMock : IHttpClientFactory
     public Uri? BaseAddress { get; set; }
 
     public HttpClient CreateClient(string name)
-    { 
+    {
         _client ??= new HttpClient();
         _client.BaseAddress = BaseAddress;
 

@@ -6,6 +6,7 @@
 @inject CookieStorageAccessor Cookies;
 
 @code
+
 {
     private bool _hasAnyUsers;
 
@@ -42,6 +43,7 @@
         <RadzenLabel Text="@_error.UserMessage" Style="color: red; font-weight: bold; border: none"/>
 
         @code
+        
         {
             public async Task DoLogin(LoginArgs args)
             {

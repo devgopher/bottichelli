@@ -16,25 +16,25 @@
     </ItemGroup>
 
     <ItemGroup>
-        <PackageReference Include="Hangfire" Version="1.8.15" />
+        <PackageReference Include="Hangfire" Version="1.8.15"/>
         <PackageReference Include="Hangfire.LiteDB" Version="0.4.1"/>
-        <PackageReference Include="Hangfire.MemoryStorage" Version="1.8.1.1" />
+        <PackageReference Include="Hangfire.MemoryStorage" Version="1.8.1.1"/>
         <ProjectReference Include="..\Botticelli.Interfaces\Botticelli.Interfaces.csproj"/>
-        <ProjectReference Include="..\Botticelli.Scheduler\Botticelli.Scheduler.csproj" />
+        <ProjectReference Include="..\Botticelli.Scheduler\Botticelli.Scheduler.csproj"/>
         <ProjectReference Include="..\Botticelli.Shared\Botticelli.Shared.csproj"/>
     </ItemGroup>
 
     <ItemGroup>
-      <None Include="..\logo.jpg">
-        <Pack>True</Pack>
-        <PackagePath>/</PackagePath>
-        <Link>logo.jpg</Link>
-      </None>
-      <None Include="..\new_logo_compact.png">
-        <Pack>True</Pack>
-        <PackagePath/>
-        <Link>new_logo_compact.png</Link>
-      </None>
+        <None Include="..\logo.jpg">
+            <Pack>True</Pack>
+            <PackagePath>/</PackagePath>
+            <Link>logo.jpg</Link>
+        </None>
+        <None Include="..\new_logo_compact.png">
+            <Pack>True</Pack>
+            <PackagePath/>
+            <Link>new_logo_compact.png</Link>
+        </None>
     </ItemGroup>
 
 </Project>

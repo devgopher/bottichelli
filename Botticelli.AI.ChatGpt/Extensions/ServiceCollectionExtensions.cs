@@ -2,7 +2,6 @@
 using Botticelli.AI.ChatGpt.Provider;
 using Botticelli.AI.ChatGpt.Settings;
 using Botticelli.AI.Exceptions;
-using Botticelli.AI.Settings;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 

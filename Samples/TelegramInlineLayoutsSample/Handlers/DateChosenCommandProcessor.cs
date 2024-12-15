@@ -11,15 +11,15 @@ using FluentValidation;
 namespace TelegramInlineLayoutsSample.Handlers;
 
 public class DateChosenCommandProcessor(
-        IBot bot,
-        ICommandValidator<DateChosenCommand> commandValidator,
-        MetricsProcessor metricsProcessor,
-        ILogger<GetCalendarCommandProcessor> logger,
-        IValidator<Message> messageValidator)
-        : CommandProcessor<DateChosenCommand>(logger,
-                                              commandValidator,
-                                              metricsProcessor,
-                                              messageValidator)
+    IBot bot,
+    ICommandValidator<DateChosenCommand> commandValidator,
+    MetricsProcessor metricsProcessor,
+    ILogger<GetCalendarCommandProcessor> logger,
+    IValidator<Message> messageValidator)
+    : CommandProcessor<DateChosenCommand>(logger,
+        commandValidator,
+        metricsProcessor,
+        messageValidator)
 {
     protected override async Task InnerProcess(Message message, CancellationToken token)
     {

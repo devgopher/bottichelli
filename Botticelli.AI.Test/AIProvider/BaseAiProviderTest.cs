@@ -2,8 +2,6 @@ using System;
 using System.Threading;
 using System.Threading.Tasks;
 using Botticelli.AI.AIProvider;
-using Botticelli.AI.ChatGpt.Settings;
-using Botticelli.AI.DeepSeekGpt.Settings;
 using Botticelli.AI.Message;
 using Botticelli.AI.Settings;
 using Botticelli.AI.Validation;
@@ -19,26 +17,27 @@ using WireMock.Server;
 
 namespace Botticelli.AI.Test.AIProvider;
 
-public abstract class BaseAiProviderTest 
+public abstract class BaseAiProviderTest
 {
-    protected WireMockServer? Server;
-    protected IAiProvider? AiProvider;
-    protected AbstractValidator<AiMessage>? Validator;
-    protected IBusClient? BusClient;
+    protected const string ResponseString =
+        "\"Wololo\" is the battle cry of the Priest unit featured in the 1997 historical real-time strategy " +
+        "game Age of Empires. Due to its association with the Priest's mystical ability to assume control of an opponent's unit" +
+        " through conversion, the sound effect has gained notoriety among the fans as one of the most dreaded stock lines " +
+        "from the game.";
+
     protected readonly AiSettings AiSettings = new()
     {
         AiName = "mock_gpt_ai",
         StreamGeneration = false,
-        ApiKey = "API9767432",
+        ApiKey = "API9767432"
     };
 
+    protected IAiProvider? AiProvider;
+    protected IBusClient? BusClient;
+
     protected HttpClientFactoryMock? ClientFactory;
-
-
-    protected const string ResponseString = "\"Wololo\" is the battle cry of the Priest unit featured in the 1997 historical real-time strategy " +
-                                            "game Age of Empires. Due to its association with the Priest's mystical ability to assume control of an opponent's unit" +
-                                            " through conversion, the sound effect has gained notoriety among the fans as one of the most dreaded stock lines " +
-                                            "from the game.";
+    protected WireMockServer? Server;
+    protected AbstractValidator<AiMessage>? Validator;
 
     protected async Task InnerSendAsyncTest(string query)
     {
@@ -51,9 +50,9 @@ public abstract class BaseAiProviderTest
         };
 
         AiProvider.NotNull();
-        
+
         await AiProvider.SendAsync(message, new CancellationToken());
-        
+
         Thread.Sleep(5000);
         var result = NoneBus.SendMessageResponses.Dequeue();
 
@@ -61,19 +60,19 @@ public abstract class BaseAiProviderTest
         result.Message.Should().NotBeNull();
         result.Message.Body.Should().NotBeEmpty();
     }
-    
+
     protected void Setup()
     {
         Server = WireMockServer.Start();
         Validator = new AiMessageValidator();
         BusClient = new PassClient();
-        
+
         ClientFactory = new HttpClientFactoryMock();
-        
+
         Server.Url.NotNull();
         AiSettings.Url = Server.Url;
     }
-    
+
     [TearDown]
     public void TearDown()
     {

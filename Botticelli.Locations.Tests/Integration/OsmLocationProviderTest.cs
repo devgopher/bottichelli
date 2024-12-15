@@ -1,17 +1,12 @@
 using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Botticelli.Locations.Integration;
 using Botticelli.Locations.Options;
 using FluentAssertions;
 using Microsoft.Extensions.Options;
-using Microsoft.VisualBasic.CompilerServices;
 using Moq;
 using NUnit.Framework;
-using RichardSzalay.MockHttp;
-using Shared;
-using Telegram.Bot.Types;
 using Location = Botticelli.Locations.Models.Location;
 
 namespace Botticelli.Locations.Tests.Integration;
@@ -29,7 +24,7 @@ public class OsmLocationProviderTest
         var options = Mock.Of<IOptionsSnapshot<LocationsProcessorOptions>>();
         _locationProvider = new OsmLocationProvider(reverseGeocoder, forwardGeocoder, options);
     }
-    
+
     [Test]
     [TestCase("Test", 1000)]
     public async Task SearchTest(string query, int maxPoints)
@@ -39,13 +34,13 @@ public class OsmLocationProviderTest
         result.Should().NotBeNull();
         result.Should().NotBeEmpty();
     }
-    
+
     [Test]
     [TestCase(22, 44)]
     public async Task GetAddressTest(double lat, double lng)
     {
         var result = await _locationProvider.GetAddress(new Location(lat, lng));
-        
+
         result.Should().NotBeNull();
     }
 
@@ -54,7 +49,7 @@ public class OsmLocationProviderTest
     public async Task GetTimeZoneTest(double lat, double lng)
     {
         var result = await _locationProvider.GetTimeZone(new Location(lat, lng));
-        
+
         result.Should().NotBeNull();
         result?.BaseUtcOffset.Should().Be(TimeSpan.Zero);
     }

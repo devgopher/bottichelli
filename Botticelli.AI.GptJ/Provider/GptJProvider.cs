@@ -1,7 +1,6 @@
 ﻿using System.Net.Http.Headers;
 using System.Net.Http.Json;
 using Botticelli.AI.AIProvider;
-using Botticelli.AI.Exceptions;
 using Botticelli.AI.GptJ.Message.GptJ;
 using Botticelli.AI.GptJ.Settings;
 using Botticelli.AI.Message;
@@ -19,7 +18,7 @@ public class GptJProvider : ChatGptProvider<AiGptSettings>
     public GptJProvider(IOptionsSnapshot<AiGptSettings> gptSettings,
         IHttpClientFactory? factory,
         ILogger<GptJProvider> logger,
-        IBusClient? bus, 
+        IBusClient? bus,
         IValidator<AiMessage>? messageValidator) : base(gptSettings,
         factory,
         logger,
@@ -28,29 +27,32 @@ public class GptJProvider : ChatGptProvider<AiGptSettings>
     {
     }
 
+    public override string AiName => "gptj";
+
     protected override async Task ProcessGptResponse(AiMessage message, CancellationToken token,
         HttpResponseMessage response)
     {
-            var outMessage = await response.Content.ReadFromJsonAsync<GptJOutputMessage>(cancellationToken: token);
+        var outMessage = await response.Content.ReadFromJsonAsync<GptJOutputMessage>(token);
 
-            await Bus.SendResponse(new SendMessageResponse(message.Uid)
+        await Bus.SendResponse(new SendMessageResponse(message.Uid)
+            {
+                IsPartial = false,
+                Message = new Shared.ValueObjects.Message(message.Uid)
                 {
-                    IsPartial = false,
-                    Message = new Shared.ValueObjects.Message(message.Uid)
-                    {
-                        ChatIds = message.ChatIds,
-                        Subject = message.Subject,
-                        Body = outMessage?.Completion,
-                        Attachments = null,
-                        From = null,
-                        ForwardedFrom = null,
-                        ReplyToMessageUid = message.ReplyToMessageUid
-                    }
-                },
-                token);
+                    ChatIds = message.ChatIds,
+                    Subject = message.Subject,
+                    Body = outMessage?.Completion,
+                    Attachments = null,
+                    From = null,
+                    ForwardedFrom = null,
+                    ReplyToMessageUid = message.ReplyToMessageUid
+                }
+            },
+            token);
     }
 
-    protected override async Task<HttpResponseMessage> GetGptResponse(AiMessage message, CancellationToken token, HttpClient client)
+    protected override async Task<HttpResponseMessage> GetGptResponse(AiMessage message, CancellationToken token,
+        HttpClient client)
     {
         client.BaseAddress = new Uri(Settings.Value.Url);
 
@@ -73,6 +75,4 @@ public class GptJProvider : ChatGptProvider<AiGptSettings>
             content,
             token);
     }
-
-    public override string AiName => "gptj";
 }

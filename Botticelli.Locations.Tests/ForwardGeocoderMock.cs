@@ -6,7 +6,7 @@ namespace Botticelli.Locations.Tests;
 
 public class ForwardGeocoderMock : IForwardGeocoder
 {
-    public async Task<GeocodeResponse[]> Geocode(ForwardGeocodeRequest req) => new GeocodeResponse[] 
+    public async Task<GeocodeResponse[]> Geocode(ForwardGeocodeRequest req) => new GeocodeResponse[]
     {
         new()
         {

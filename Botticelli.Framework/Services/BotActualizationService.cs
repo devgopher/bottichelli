@@ -1,5 +1,4 @@
 ﻿using System.Net.Http.Json;
-using System.Text.Json;
 using Botticelli.Bot.Utils;
 using Botticelli.Framework.Options;
 using Botticelli.Interfaces;
@@ -16,11 +15,11 @@ namespace Botticelli.Framework.Services;
 public abstract class BotActualizationService<TBot> : IHostedService
     where TBot : IBot
 {
+    protected readonly ManualResetEventSlim ActualizationEvent = new(false);
     protected readonly TBot Bot;
     protected readonly string? BotId = BotDataUtils.GetBotId();
-    protected readonly ILogger Logger;
-    protected readonly ManualResetEventSlim ActualizationEvent = new(false);
     protected readonly IHttpClientFactory HttpClientFactory;
+    protected readonly ILogger Logger;
     protected readonly ServerSettings ServerSettings;
 
     /// <summary>
@@ -36,7 +35,7 @@ public abstract class BotActualizationService<TBot> : IHostedService
         ServerSettings = serverSettings;
         Bot = bot;
         Logger = logger;
-        
+
         ActualizationEvent.Reset();
     }
 
@@ -58,7 +57,7 @@ public abstract class BotActualizationService<TBot> : IHostedService
     /// <param name="funcName">Response</param>
     /// <param name="cancellationToken">Cancellation token</param>
     /// <returns></returns>
-    protected  virtual async Task<TResp?> InnerSend<TReq, TResp>(TReq request,
+    protected virtual async Task<TResp?> InnerSend<TReq, TResp>(TReq request,
         string funcName,
         CancellationToken cancellationToken)
     {

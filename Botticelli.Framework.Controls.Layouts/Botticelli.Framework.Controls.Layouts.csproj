@@ -7,29 +7,29 @@
     </PropertyGroup>
 
     <ItemGroup>
-      <Folder Include="Buttons\" />
-      <Folder Include="Dialogs\" />
-      <Folder Include="Resources\Images\Buttons\" />
-      <Folder Include="Resources\Images\Calendar\" />
-      <Folder Include="Resources\Images\Checkboxes\" />
-      <Folder Include="Resources\Images\Common\" />
-      <Folder Include="Tables\" />
+        <Folder Include="Buttons\"/>
+        <Folder Include="Dialogs\"/>
+        <Folder Include="Resources\Images\Buttons\"/>
+        <Folder Include="Resources\Images\Calendar\"/>
+        <Folder Include="Resources\Images\Checkboxes\"/>
+        <Folder Include="Resources\Images\Common\"/>
+        <Folder Include="Tables\"/>
     </ItemGroup>
 
     <ItemGroup>
-      <ProjectReference Include="..\Botticelli.Framework.Controls\Botticelli.Framework.Controls.csproj" />
-      <ProjectReference Include="..\Botticelli.Framework.Telegram\Botticelli.Framework.Telegram.csproj" />
-      <ProjectReference Include="..\Botticelli.Framework\Botticelli.Framework.csproj" />
-      <ProjectReference Include="..\Botticelli.Shared\Botticelli.Shared.csproj" />
+        <ProjectReference Include="..\Botticelli.Framework.Controls\Botticelli.Framework.Controls.csproj"/>
+        <ProjectReference Include="..\Botticelli.Framework.Telegram\Botticelli.Framework.Telegram.csproj"/>
+        <ProjectReference Include="..\Botticelli.Framework\Botticelli.Framework.csproj"/>
+        <ProjectReference Include="..\Botticelli.Shared\Botticelli.Shared.csproj"/>
     </ItemGroup>
 
     <ItemGroup>
-      <None Update="Resources\Images\Common\check_green.png">
-        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-      </None>
-      <None Update="Resources\Images\Common\check_black.png">
-        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-      </None>
+        <None Update="Resources\Images\Common\check_green.png">
+            <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+        </None>
+        <None Update="Resources\Images\Common\check_black.png">
+            <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+        </None>
     </ItemGroup>
 
 </Project>

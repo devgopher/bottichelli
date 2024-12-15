@@ -25,10 +25,10 @@ public class ClientProcessorFactory
         proc.SetServiceProvider(sp);
         ClientProcessors.Add(proc);
     }
-    
+
     public void AddSingleProcessor<TBot>(IServiceProvider sp, ICommandProcessor? proc)
-            where TBot : IBot<TBot>
-    { 
+        where TBot : IBot<TBot>
+    {
         var bot = sp.GetRequiredService<IBot<TBot>>();
         proc.SetBot(bot);
         proc.SetServiceProvider(sp);
@@ -38,14 +38,14 @@ public class ClientProcessorFactory
 
     public IEnumerable<IClientMessageProcessor> GetProcessors(bool excludeChain = true)
         => ClientProcessors.AsEnumerable()
-                           .Where(p => !excludeChain || !p.GetType().IsAssignableTo(typeof(ICommandChainProcessor)))
-                           .OrderBy(_ => _rnd.Next() % ClientProcessors.Count)
-                           .DistinctBy(p => p.GetType());
+            .Where(p => !excludeChain || !p.GetType().IsAssignableTo(typeof(ICommandChainProcessor)))
+            .OrderBy(_ => _rnd.Next() % ClientProcessors.Count)
+            .DistinctBy(p => p.GetType());
 
 
     public IEnumerable<ICommandChainProcessor> GetCommandChainProcessors() =>
-            ClientProcessors.AsEnumerable()
-                            .Where(p => p.GetType().IsAssignableTo(typeof(ICommandChainFirstElementProcessor)))
-                            .Cast<ICommandChainFirstElementProcessor>()
-                            .DistinctBy(p => p.GetType());
+        ClientProcessors.AsEnumerable()
+            .Where(p => p.GetType().IsAssignableTo(typeof(ICommandChainFirstElementProcessor)))
+            .Cast<ICommandChainFirstElementProcessor>()
+            .DistinctBy(p => p.GetType());
 }

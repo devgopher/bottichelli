@@ -26,19 +26,19 @@ public class InlineButtonMenu : ILayout
             var row = Rows.Any() ? Rows.First() : new Row();
             if (!Rows.Any()) Rows.Add(row);
 
-            var item = row.Items.Count != 0 ?
-                    row.Items.First() :
-                    new Item
+            var item = row.Items.Count != 0
+                ? row.Items.First()
+                : new Item
+                {
+                    Control = new Text
                     {
-                        Control = new Text
-                        {
-                            Content = value,
-                            CallbackData = string.Empty,
-                            Params = null,
-                            MessengerSpecificParams = null
-                        },
-                        Params = null
-                    };
+                        Content = value,
+                        CallbackData = string.Empty,
+                        Params = null,
+                        MessengerSpecificParams = null
+                    },
+                    Params = null
+                };
 
             if (Rows[0].Items.Count == 0) Rows[0].Items.Add(item);
 
@@ -62,7 +62,7 @@ public class InlineButtonMenu : ILayout
 
         var row = Rows?.Skip(Header != null ? 1 : 0).FirstOrDefault(r => r.Items.Count < _columns) ?? new Row();
         if (!Rows.Any()) Rows.Add(row);
-        
+
         row?.AddItem(new Item
         {
             Control = control,

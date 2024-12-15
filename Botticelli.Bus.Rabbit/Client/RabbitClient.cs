@@ -82,7 +82,7 @@ public class RabbitClient<TBot> : BasicFunctions<TBot>, IBusClient
             {
                 request.Message.NotNull();
                 request.Message.Uid.NotNull();
-                
+
                 return Task.FromResult(_responses.GetValueOrDefault(request.Message.Uid))!;
             });
 

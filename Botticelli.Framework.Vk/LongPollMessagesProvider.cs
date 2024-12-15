@@ -6,7 +6,6 @@ using Botticelli.Framework.Vk.Messages.Options;
 using Flurl;
 using Flurl.Http;
 using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.Options;
 using Polly;
 
 namespace Botticelli.Framework.Vk.Messages;
@@ -26,14 +25,14 @@ public class LongPollMessagesProvider : IDisposable
     private readonly IHttpClientFactory _httpClientFactory;
     private readonly ILogger<LongPollMessagesProvider> _logger;
     private readonly VkBotSettings _settings;
-    private readonly CancellationTokenSource _tokenSource;
     private readonly object _syncObj = new();
+    private readonly CancellationTokenSource _tokenSource;
     private string _apiKey;
     private HttpClient _client;
+    private bool _isStarted;
     private string _key;
     private int? _lastTs = 0;
     private string _server;
-    private bool _isStarted;
 
     public LongPollMessagesProvider(VkBotSettings settings,
         IHttpClientFactory httpClientFactory,

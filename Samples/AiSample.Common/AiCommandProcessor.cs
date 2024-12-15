@@ -6,14 +6,12 @@ using Botticelli.Client.Analytics;
 using Botticelli.Framework.Commands.Processors;
 using Botticelli.Framework.Commands.Utils;
 using Botticelli.Framework.Commands.Validators;
-using Botticelli.Framework.Controls.Layouts;
 using Botticelli.Framework.Controls.Parsers;
 using Botticelli.Framework.SendOptions;
 using Botticelli.Shared.API.Client.Requests;
 using Botticelli.Shared.ValueObjects;
 using FluentValidation;
 using Microsoft.Extensions.Logging;
-using Telegram.Bot.Types.ReplyMarkups;
 
 namespace AiSample.Common;
 
@@ -24,7 +22,7 @@ public class AiCommandProcessor<TReplyMarkup> : CommandProcessor<AiCommand> wher
     public AiCommandProcessor(ILogger<AiCommandProcessor<TReplyMarkup>> logger,
         ICommandValidator<AiCommand> commandValidator,
         MetricsProcessor metricsProcessor,
-        IEventBusClient bus, 
+        IEventBusClient bus,
         ILayoutSupplier<TReplyMarkup> layoutSupplier,
         IValidator<Message> messageValidator)
         : base(logger, commandValidator, metricsProcessor, messageValidator)
@@ -32,9 +30,9 @@ public class AiCommandProcessor<TReplyMarkup> : CommandProcessor<AiCommand> wher
         _bus = bus;
         var responseLayout = new AiLayout();
         var responseMarkup = layoutSupplier.GetMarkup(responseLayout);
-        
+
         var options = SendOptionsBuilder<TReplyMarkup>.CreateBuilder(responseMarkup);
-        
+
         _bus.OnReceived += async (sender, response) =>
         {
             await Bot.SendMessageAsync(new SendMessageRequest(response.Uid)

@@ -1,4 +1,3 @@
-using System.Net.Http.Headers;
 using System.Net.Http.Json;
 using Botticelli.AI.AIProvider;
 using Botticelli.AI.DeepSeekGpt.Message.DeepSeek;
@@ -31,12 +30,14 @@ public class DeepSeekGptProvider : ChatGptProvider<DeepSeekGptSettings>
     {
     }
 
+    public override string AiName => "deepseek";
+
 
     protected override async Task ProcessGptResponse(AiMessage message, CancellationToken token,
         HttpResponseMessage response)
     {
         var outMessage =
-            await response.Content.ReadFromJsonAsync<DeepSeekOutputMessage>(cancellationToken: token);
+            await response.Content.ReadFromJsonAsync<DeepSeekOutputMessage>(token);
 
         if (outMessage == null)
             throw new AiException($"{nameof(outMessage)} = null!");
@@ -95,6 +96,4 @@ public class DeepSeekGptProvider : ChatGptProvider<DeepSeekGptSettings>
             content,
             token);
     }
-
-    public override string AiName => "deepseek";
 }

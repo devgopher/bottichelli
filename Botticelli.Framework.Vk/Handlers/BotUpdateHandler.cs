@@ -30,10 +30,9 @@ public class BotUpdateHandler : IBotUpdateHandler
             {
                 eventId = bm.EventId,
                 message = bm.Object["message"]
-            }); 
-        
+            });
+
         foreach (var botMessage in messagesText.EmptyIfNull())
-        {
             try
             {
                 var eventId = botMessage.eventId;
@@ -56,7 +55,7 @@ public class BotUpdateHandler : IBotUpdateHandler
                         Id = fromId
                     },
                     ForwardedFrom = null,
-                    Location = null!,
+                    Location = null!
                     // LastModifiedAt = botMessage.
                 };
 
@@ -66,7 +65,6 @@ public class BotUpdateHandler : IBotUpdateHandler
             {
                 _logger.LogError(ex, ex.Message);
             }
-        }
 
         _logger.LogDebug($"{nameof(HandleUpdateAsync)}() finished...");
     }
@@ -85,12 +83,12 @@ public class BotUpdateHandler : IBotUpdateHandler
         if (token is { CanBeCanceled: true, IsCancellationRequested: true }) return Task.CompletedTask;
 
         var clientNonChainedTasks = _processorFactory
-            .GetProcessors(excludeChain: true)
+            .GetProcessors(true)
             .Select(p => p.ProcessAsync(message, token));
 
         var clientChainedTasks = _processorFactory
-                                    .GetCommandChainProcessors()
-                                    .Select(p => p.ProcessAsync(message, token));
+            .GetCommandChainProcessors()
+            .Select(p => p.ProcessAsync(message, token));
 
         Task.WaitAll(clientNonChainedTasks.Concat(clientChainedTasks).ToArray(), token);
 

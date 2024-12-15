@@ -1,12 +1,12 @@
 ﻿@page "/add_bot"
-@using Botticelli.Server.FrontNew.Settings
-@using Microsoft.Extensions.Options
+@using System.Net.Http.Headers
 @using Botticelli.Server.FrontNew.Models
+@using Botticelli.Server.FrontNew.Settings
 @using Botticelli.Shared.API.Client.Requests
 @using Botticelli.Shared.API.Client.Responses
 @using Botticelli.Shared.Constants
 @using Flurl
-@using System.Net.Http.Headers
+@using Microsoft.Extensions.Options
 @inject HttpClient Http
 @inject NavigationManager UriHelper;
 @inject IOptionsMonitor<BackSettings> BackSettings;
@@ -19,8 +19,10 @@
                 <RadzenLabel Text="Bot id:" Component="BotId" style="width: 100%;"/>
             </div>
             <div class="col-md-9">
-                <RadzenTextBox MaxLength="255" style="display: block; width: 100%;" @bind-Value="@_model.BotId" Name="BotId"/>
-                <RadzenRequiredValidator Component="BotId" Text="Bot id shouldn't be empty!" style="position: absolute;"/>
+                <RadzenTextBox MaxLength="255" style="display: block; width: 100%;" @bind-Value="@_model.BotId"
+                               Name="BotId"/>
+                <RadzenRequiredValidator Component="BotId" Text="Bot id shouldn't be empty!"
+                                         style="position: absolute;"/>
             </div>
         </div>
         <div style="margin-bottom: 1rem;" class="row">
@@ -28,8 +30,10 @@
                 <RadzenLabel Text="Messenger type:" Component="MessengerType" style="width: 100%;"/>
             </div>
             <div class="col-md-9">
-                <RadzenDropDown MaxLength="255" style="display: block; width: 100%;" Data="@_messengerNames" @bind-Value="@_model.BotType" Name="MessengerType"/>
-                <RadzenRequiredValidator Component="MessengerType" Text="MessengerType shouldn't be empty!" style="position: absolute;"/>
+                <RadzenDropDown MaxLength="255" style="display: block; width: 100%;" Data="@_messengerNames"
+                                @bind-Value="@_model.BotType" Name="MessengerType"/>
+                <RadzenRequiredValidator Component="MessengerType" Text="MessengerType shouldn't be empty!"
+                                         style="position: absolute;"/>
             </div>
         </div>
         <div style="margin-bottom: 1rem;" class="row">
@@ -37,8 +41,10 @@
                 <RadzenLabel Text="Bot key:" Component="BotKey" style="width: 100%;"/>
             </div>
             <div class="col-md-9">
-                <RadzenTextBox MaxLength="255" style="display: block; width: 100%;" @bind-Value="@_model.BotKey" Name="BotKey"/>
-                <RadzenRequiredValidator Component="BotKey" Text="Bot key shouldn't be empty!" style="position: absolute;"/>
+                <RadzenTextBox MaxLength="255" style="display: block; width: 100%;" @bind-Value="@_model.BotKey"
+                               Name="BotKey"/>
+                <RadzenRequiredValidator Component="BotKey" Text="Bot key shouldn't be empty!"
+                                         style="position: absolute;"/>
             </div>
         </div>
         <div style="margin-bottom: 1rem;" class="row">
@@ -47,8 +53,10 @@
                 </RadzenLabel>
             </div>
             <div class="col-md-9">
-                <RadzenTextBox MaxLength="255" style="display: block; width: 100%;" @bind-Value="@_model.BotName" Name="BotName"/>
-                <RadzenRequiredValidator Component="BotName" Text="Bot name shouldn't be empty!" style="position: absolute;"/>
+                <RadzenTextBox MaxLength="255" style="display: block; width: 100%;" @bind-Value="@_model.BotName"
+                               Name="BotName"/>
+                <RadzenRequiredValidator Component="BotName" Text="Bot name shouldn't be empty!"
+                                         style="position: absolute;"/>
             </div>
         </div>
         <div style="margin-bottom: 1rem;" class="row">

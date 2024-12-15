@@ -33,7 +33,7 @@ public class QuartzJobManager(ISchedulerFactory schedulerFactory) : IJobManager,
     {
         if (!CronExpression.IsValidExpression(schedule.Cron))
             throw new InvalidDataException($"Cron {schedule.Cron ?? "null"} is invalid!");
-        
+
         _scheduler ??= schedulerFactory.GetScheduler().Result;
 
         var jobId = GetJobId();
@@ -42,9 +42,9 @@ public class QuartzJobManager(ISchedulerFactory schedulerFactory) : IJobManager,
         {
             Message = message
         };
-        
+
         var serialized = JsonSerializer.Serialize(request);
-        
+
         preprocessFunc?.Invoke(request.Message);
 
         var job = !reliability.IsEnabled
@@ -56,7 +56,7 @@ public class QuartzJobManager(ISchedulerFactory schedulerFactory) : IJobManager,
                 .WithIdentity(jobId, "reliableSendMessageJobGroup")
                 .UsingJobData("sendMessageRequest", serialized)
                 .Build();
-       
+
         var triggerId = GetTriggerIdentity();
 
         var trigger = TriggerBuilder.Create()

@@ -11,12 +11,12 @@ namespace Botticelli.Locations.Integration;
 
 public class OsmLocationProvider : ILocationProvider
 {
-    private readonly IReverseGeocoder _reverseGeoCoder;
     private readonly IForwardGeocoder _forwardGeocoder;
     private readonly IOptionsSnapshot<LocationsProcessorOptions> _options;
+    private readonly IReverseGeocoder _reverseGeoCoder;
 
     public OsmLocationProvider(IReverseGeocoder reverseGeoCoder,
-        IForwardGeocoder forwardGeocoder, 
+        IForwardGeocoder forwardGeocoder,
         IOptionsSnapshot<LocationsProcessorOptions> options)
     {
         _reverseGeoCoder = reverseGeoCoder;
@@ -50,7 +50,7 @@ public class OsmLocationProvider : ILocationProvider
             address.Longitude = gr.Longitude;
             address.Latitude = gr.Latitude;
             address.DisplayName = gr.DisplayName;
-            
+
             return address;
         }).ToList();
 

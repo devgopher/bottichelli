@@ -97,7 +97,8 @@ builder.Services
     .AddScoped<IPasswordSender, PasswordSender>()
     .AddSingleton<IMapper, Mapper>()
     .AddScoped<ISender, SslMailKitSender>()
-    .AddDbContext<ServerDataContext>(options => options.UseSqlite($"Data source={serverSettings.SecureStorageConnection}"))
+    .AddDbContext<ServerDataContext>(options =>
+        options.UseSqlite($"Data source={serverSettings.SecureStorageConnection}"))
     .AddDefaultIdentity<IdentityUser<string>>(options => options
         .SignIn
         .RequireConfirmedAccount = true)

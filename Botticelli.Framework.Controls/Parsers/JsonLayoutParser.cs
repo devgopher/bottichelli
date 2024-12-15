@@ -13,10 +13,10 @@ public class JsonLayoutParser : ILayoutParser
         var layout = new BaseLayout();
 
         if (!jsonDoc.TryGetProperty("Name", out var layoutNameElement))
-            throw new LayoutException($"'Name' property wasn't found");
-        
+            throw new LayoutException("'Name' property wasn't found");
+
         if (!jsonDoc.TryGetProperty("Layout", out var layoutParams))
-            throw new LayoutException($"'Layout' property wasn't found");
+            throw new LayoutException("'Layout' property wasn't found");
 
         // rows
         var subElements = layoutParams.EnumerateArray().ToList();
@@ -35,20 +35,21 @@ public class JsonLayoutParser : ILayoutParser
                 ResolveControlType(itemElement, item);
 
                 if (itemElement.TryGetProperty("Params", out var cellParams))
-                {
                     item.Params = new ItemParams
                     {
-                        Align = cellParams.TryGetProperty("Align", out var alignElem) && alignElem.TryGetInt32(out var align)
+                        Align = cellParams.TryGetProperty("Align", out var alignElem) &&
+                                alignElem.TryGetInt32(out var align)
                             ? (CellAlign)align
                             : CellAlign.Left,
-                        Stretch = cellParams.TryGetProperty("Stretch", out var stretchElem) && stretchElem.TryGetInt32(out var stretch)
+                        Stretch = cellParams.TryGetProperty("Stretch", out var stretchElem) &&
+                                  stretchElem.TryGetInt32(out var stretch)
                             ? stretch
-                            : 1,
+                            : 1
                     };
-                }
 
-                if (itemElement.TryGetProperty("Specials", out var messengerSpecific)) 
-                    item.Control.MessengerSpecificParams = messengerSpecific.Deserialize<Dictionary<string, Dictionary<string, object>>>();
+                if (itemElement.TryGetProperty("Specials", out var messengerSpecific))
+                    item.Control.MessengerSpecificParams =
+                        messengerSpecific.Deserialize<Dictionary<string, Dictionary<string, object>>>();
 
                 row.AddItem(item);
             }
@@ -68,7 +69,7 @@ public class JsonLayoutParser : ILayoutParser
     {
         if (itemElement.TryGetProperty("Button", out var buttonElement))
         {
-            var button = new Button()
+            var button = new Button
             {
                 Content = buttonElement.GetProperty("Content").GetString()
             };
@@ -77,7 +78,7 @@ public class JsonLayoutParser : ILayoutParser
         }
         else if (itemElement.TryGetProperty("Text", out var textElement))
         {
-            var text = new Text()
+            var text = new Text
             {
                 Content = buttonElement.GetProperty("Content").GetString()
             };

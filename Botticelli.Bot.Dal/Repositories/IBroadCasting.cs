@@ -3,7 +3,7 @@ using Botticelli.BotData.Entities.Bot.Broadcasting;
 namespace Botticelli.Bot.Data.Repositories;
 
 /// <summary>
-/// Broadcasting support DAL
+///     Broadcasting support DAL
 /// </summary>
 public interface IBroadCasting
 {

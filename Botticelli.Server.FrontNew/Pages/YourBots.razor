@@ -1,12 +1,11 @@
 ﻿@page "/your_bots"
+@using System.Net.Http.Headers
+@using Botticelli.Server.Data.Entities.Bot
 @using Botticelli.Server.FrontNew.Settings
-@using Microsoft.Extensions.Options
-@using Botticelli.Server.Data.Entities
 @using Botticelli.Shared.API.Admin.Responses
 @using Botticelli.Shared.Constants
 @using Flurl
-@using System.Net.Http.Headers
-@using Botticelli.Server.Data.Entities.Bot
+@using Microsoft.Extensions.Options
 @inject NavigationManager UriHelper;
 @inject IOptionsMonitor<BackSettings> BackSettings;
 @inject CookieStorageAccessor Cookies;
@@ -37,7 +36,8 @@ else
                 {
                     <RadzenCard Style="@(GetStyle(bot))">
                         <RadzenStack Gap="5px" JustifyContent="JustifyContent.Center">
-                            <RadzenImage Path="@GetLogo(bot.Type)" Style="align-content: center; height: 100px; width: 100px;"/>
+                            <RadzenImage Path="@GetLogo(bot.Type)"
+                                         Style="align-content: center; height: 100px; width: 100px;"/>
                         </RadzenStack>
                         <RadzenStack Gap="10px">
                             <RadzenText TextStyle="TextStyle.Overline" Text="@bot.BotName"/>
@@ -60,7 +60,7 @@ else
         }
     </RadzenStack>
 
-   @*<RadzenLabel @bind-text="@_error" Style="color: red; font-weight: bold" />*@
+    @*<RadzenLabel @bind-text="@_error" Style="color: red; font-weight: bold" />*@
 
     <RadzenButton Click="@(e => UriHelper.NavigateTo("/add_bot", true))"
                   ButtonStyle="ButtonStyle.Primary"
@@ -111,10 +111,10 @@ else
 
     private static string GetIsActive(BotStatus? status) => status switch
     {
-        BotStatus.Unlocked    => "Unlocked",
+        BotStatus.Unlocked => "Unlocked",
         BotStatus.Locked => "Locked",
-        _                   => "Unknown"
-        };
+        _ => "Unknown"
+    };
 
     private static string GetIsAlive(DateTime? lastKeepAlive)
         => DateTime.UtcNow - lastKeepAlive <= TimeSpan.FromSeconds(30) ? "Alive" : "Dead";
@@ -129,7 +129,7 @@ else
         BotType.Signal => "Signal.png",
         BotType.Unknown => "Unknown.png",
         _ => "Unknown.png"
-        };
+    };
 
 
     private string GetStyle(BotInfo bot) => bot.Status switch
@@ -137,6 +137,6 @@ else
         BotStatus.Unlocked => $"width: 200px; background-color: {(GetIsAlive(bot.LastKeepAlive) == "Alive" ? "greenyellow" : "gainsboro")}",
         BotStatus.Locked => "width: 200px; background-color: red",
         _ => "width: 200px; background-color: gray"
-        };
+    };
 
 }

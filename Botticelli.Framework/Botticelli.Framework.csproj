@@ -30,7 +30,7 @@
     </ItemGroup>
 
     <ItemGroup>
-        <ProjectReference Include="..\Botticelli.Bot.Dal\Botticelli.Bot.Dal.csproj" />
+        <ProjectReference Include="..\Botticelli.Bot.Dal\Botticelli.Bot.Dal.csproj"/>
         <ProjectReference Include="..\Botticelli.Bot.Interfaces\Botticelli.Bot.Interfaces.csproj"/>
         <ProjectReference Include="..\Botticelli.Bot.Utils\Botticelli.Bot.Utils.csproj"/>
         <ProjectReference Include="..\Botticelli.Client.Analytics\Botticelli.Client.Analytics.csproj"/>
@@ -39,16 +39,16 @@
         <ProjectReference Include="..\Botticelli.Shared\Botticelli.Shared.csproj"/>
     </ItemGroup>
     <ItemGroup>
-        <PackageReference Include="EasyCaching.Core" Version="1.9.2" />
-        <PackageReference Include="EasyCaching.InMemory" Version="1.9.2" />
-        <PackageReference Include="MediatR" Version="12.4.1" />
+        <PackageReference Include="EasyCaching.Core" Version="1.9.2"/>
+        <PackageReference Include="EasyCaching.InMemory" Version="1.9.2"/>
+        <PackageReference Include="MediatR" Version="12.4.1"/>
         <PackageReference Include="Microsoft.Extensions.Configuration.Abstractions" Version="8.0.0"/>
-        <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="8.0.1" />
-        <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="8.0.2" />
-        <PackageReference Include="Microsoft.Extensions.Hosting.Abstractions" Version="8.0.1" />
-        <PackageReference Include="Microsoft.Extensions.Http" Version="8.0.1" />
-        <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="8.0.2" />
-        <PackageReference Include="NLog.Extensions.Logging" Version="5.3.14" />
+        <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="8.0.1"/>
+        <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="8.0.2"/>
+        <PackageReference Include="Microsoft.Extensions.Hosting.Abstractions" Version="8.0.1"/>
+        <PackageReference Include="Microsoft.Extensions.Http" Version="8.0.1"/>
+        <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="8.0.2"/>
+        <PackageReference Include="NLog.Extensions.Logging" Version="5.3.14"/>
     </ItemGroup>
     <ItemGroup>
         <None Include="..\logo.jpg">

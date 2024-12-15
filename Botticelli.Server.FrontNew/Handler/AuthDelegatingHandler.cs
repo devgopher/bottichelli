@@ -8,10 +8,13 @@ public class AuthDelegatingHandler : DelegatingHandler
 {
     private readonly SessionClient _sessionClient;
 
-    public AuthDelegatingHandler(SessionClient sessionClient) => _sessionClient = sessionClient;
+    public AuthDelegatingHandler(SessionClient sessionClient)
+    {
+        _sessionClient = sessionClient;
+    }
 
     protected override async Task<HttpResponseMessage> SendAsync(HttpRequestMessage request,
-                                                                 CancellationToken cancellationToken)
+        CancellationToken cancellationToken)
     {
         var session = _sessionClient.GetSession();
 

@@ -5,11 +5,10 @@ using Botticelli.Shared.API.Client.Responses;
 using Botticelli.Shared.Utils;
 using Microsoft.Extensions.Logging;
 
-
 namespace Botticelli.Framework.Services;
 
 /// <summary>
-/// Receives broadcast message
+///     Receives broadcast message
 /// </summary>
 /// <param name="httpClientFactory"></param>
 /// <param name="serverSettings"></param>

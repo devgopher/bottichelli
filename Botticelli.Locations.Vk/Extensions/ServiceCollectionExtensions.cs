@@ -5,7 +5,6 @@ using Botticelli.Framework.Extensions;
 using Botticelli.Framework.Vk.Messages;
 using Botticelli.Framework.Vk.Messages.API.Markups;
 using Botticelli.Framework.Vk.Messages.Layout;
-using Botticelli.Interfaces;
 using Botticelli.Locations.Commands;
 using Botticelli.Locations.Commands.CommandProcessors;
 using Botticelli.Locations.Integration;

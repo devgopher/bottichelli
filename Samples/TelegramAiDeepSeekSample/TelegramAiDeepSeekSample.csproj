@@ -7,8 +7,8 @@
     </PropertyGroup>
 
     <ItemGroup>
-        <ProjectReference Include="..\..\Botticelli.AI.DeepSeekGpt\Botticelli.AI.DeepSeekGpt.csproj" />
-        <ProjectReference Include="..\..\Botticelli.Framework.Telegram\Botticelli.Framework.Telegram.csproj" />
+        <ProjectReference Include="..\..\Botticelli.AI.DeepSeekGpt\Botticelli.AI.DeepSeekGpt.csproj"/>
+        <ProjectReference Include="..\..\Botticelli.Framework.Telegram\Botticelli.Framework.Telegram.csproj"/>
         <ProjectReference Include="..\AiSample.Common\AiSample.Common.csproj"/>
     </ItemGroup>
 

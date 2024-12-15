@@ -18,7 +18,7 @@ public class StartCommandProcessor<TReplyMarkup> : CommandProcessor<StartCommand
 {
     private readonly IJobManager _jobManager;
     private readonly SendOptionsBuilder<TReplyMarkup>? _options;
-    
+
     public StartCommandProcessor(ILogger<StartCommandProcessor<TReplyMarkup>> logger,
         ICommandValidator<StartCommand> commandValidator,
         MetricsProcessor metricsProcessor,
@@ -58,7 +58,8 @@ public class StartCommandProcessor<TReplyMarkup> : CommandProcessor<StartCommand
 
         await Bot.SendMessageAsync(greetingMessageRequest, _options, token);
 
-        var assemblyPath = Path.GetDirectoryName(typeof(StartCommandProcessor<TReplyMarkup>).Assembly.Location) ?? throw new FileNotFoundException();
+        var assemblyPath = Path.GetDirectoryName(typeof(StartCommandProcessor<TReplyMarkup>).Assembly.Location) ??
+                           throw new FileNotFoundException();
         _jobManager.AddJob(Bot,
             new Reliability
             {

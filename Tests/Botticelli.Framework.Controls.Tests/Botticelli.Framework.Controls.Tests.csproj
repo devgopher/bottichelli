@@ -11,16 +11,16 @@
 
     <ItemGroup>
         <PackageReference Include="coverlet.collector" Version="6.0.2">
-          <PrivateAssets>all</PrivateAssets>
-          <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+            <PrivateAssets>all</PrivateAssets>
+            <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
         </PackageReference>
-        <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.11.1" />
-        <PackageReference Include="NUnit" Version="4.2.2" />
+        <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.11.1"/>
+        <PackageReference Include="NUnit" Version="4.2.2"/>
         <PackageReference Include="NUnit.Analyzers" Version="4.3.0">
-          <PrivateAssets>all</PrivateAssets>
-          <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+            <PrivateAssets>all</PrivateAssets>
+            <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
         </PackageReference>
-        <PackageReference Include="NUnit3TestAdapter" Version="4.6.0" />
+        <PackageReference Include="NUnit3TestAdapter" Version="4.6.0"/>
     </ItemGroup>
 
     <ItemGroup>
@@ -28,17 +28,17 @@
     </ItemGroup>
 
     <ItemGroup>
-      <None Update="TestCases\CorrectLayout.json">
-        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-      </None>
-      <None Update="TestCases\InvalidLayout.json">
-        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-      </None>
+        <None Update="TestCases\CorrectLayout.json">
+            <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+        </None>
+        <None Update="TestCases\InvalidLayout.json">
+            <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+        </None>
     </ItemGroup>
 
     <ItemGroup>
-      <ProjectReference Include="..\..\Botticelli.Framework.Controls\Botticelli.Framework.Controls.csproj" />
-      <ProjectReference Include="..\..\Botticelli.Framework.Telegram\Botticelli.Framework.Telegram.csproj" />
+        <ProjectReference Include="..\..\Botticelli.Framework.Controls\Botticelli.Framework.Controls.csproj"/>
+        <ProjectReference Include="..\..\Botticelli.Framework.Telegram\Botticelli.Framework.Telegram.csproj"/>
     </ItemGroup>
 
 </Project>

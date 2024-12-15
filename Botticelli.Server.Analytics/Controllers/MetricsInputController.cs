@@ -14,10 +14,14 @@ public class MetricsInputController : Controller
 {
     private readonly IMetricsInputService _service;
 
-    public MetricsInputController(IMetricsInputService service) => _service = service;
+    public MetricsInputController(IMetricsInputService service)
+    {
+        _service = service;
+    }
 
     [HttpGet("[action]")]
-    public async Task<IActionResult> ReceiveMetric([FromQuery] PushMetricRequest<IMetricObject> request, CancellationToken token)
+    public async Task<IActionResult> ReceiveMetric([FromQuery] PushMetricRequest<IMetricObject> request,
+        CancellationToken token)
     {
         try
         {

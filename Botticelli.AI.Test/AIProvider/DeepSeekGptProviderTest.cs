@@ -1,8 +1,6 @@
 using System;
 using System.Text.Json;
 using System.Threading.Tasks;
-using Botticelli.AI.ChatGpt.Provider;
-using Botticelli.AI.ChatGpt.Settings;
 using Botticelli.AI.DeepSeekGpt.Message.DeepSeek;
 using Botticelli.AI.DeepSeekGpt.Provider;
 using Botticelli.AI.DeepSeekGpt.Settings;
@@ -18,16 +16,6 @@ namespace Botticelli.AI.Test.AIProvider;
 [TestOf(typeof(DeepSeekGptProvider))]
 public class DeepSeekGptProviderTest : BaseAiProviderTest
 {
-    private DeepSeekGptSettings DeepSeekGptSettings => new()
-    {
-        Url = AiSettings.Url,
-        AiName = AiSettings.AiName,
-        StreamGeneration = AiSettings.StreamGeneration,
-        ApiKey = AiSettings.ApiKey,
-        Model = "none"
-    };
-
-    
     [SetUp]
     public void StartMockServer()
     {
@@ -38,15 +26,15 @@ public class DeepSeekGptProviderTest : BaseAiProviderTest
             Object = "test",
             Created = 111111,
             Model = "testapi",
-           Usage = new Usage
-           {
-               CompletionTokens = 1000,
-               PromptTokens = 1000,
-               TotalTokens = 2000
-           },
+            Usage = new Usage
+            {
+                CompletionTokens = 1000,
+                PromptTokens = 1000,
+                TotalTokens = 2000
+            },
             Choices =
             [
-                new()
+                new Choice
                 {
                     DeepSeekMessage = new DeepSeekInnerOutputMessage
                     {
@@ -63,18 +51,27 @@ public class DeepSeekGptProviderTest : BaseAiProviderTest
         };
 
         Server?.Given(Request.Create().WithPath("/completions").UsingPost())
-              .RespondWith(
-                           Response.Create()
-                                   .WithStatusCode(200)
-                                   .WithBody(JsonSerializer.Serialize(responseMessage))
-                          );
+            .RespondWith(
+                Response.Create()
+                    .WithStatusCode(200)
+                    .WithBody(JsonSerializer.Serialize(responseMessage))
+            );
 
         AiProvider = new DeepSeekGptProvider(new OptionsMock<DeepSeekGptSettings>(DeepSeekGptSettings),
-                                                       ClientFactory,
-                                                       LoggerMocks.CreateConsoleLogger<DeepSeekGptProvider>(),
-                                                       BusClient,
-                                                       Validator);
+            ClientFactory,
+            LoggerMocks.CreateConsoleLogger<DeepSeekGptProvider>(),
+            BusClient,
+            Validator);
     }
+
+    private DeepSeekGptSettings DeepSeekGptSettings => new()
+    {
+        Url = AiSettings.Url,
+        AiName = AiSettings.AiName,
+        StreamGeneration = AiSettings.StreamGeneration,
+        ApiKey = AiSettings.ApiKey,
+        Model = "none"
+    };
 
     [Test]
     [TestCase("test query")]

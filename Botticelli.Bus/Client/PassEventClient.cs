@@ -6,19 +6,28 @@ namespace Botticelli.Bus.None.Client;
 
 public class PassEventClient : IEventBusClient
 {
-    private bool _startedFlag = true;
-    private readonly Task _workerTask;
     private const int Pause = 5;
-    
-    public event IEventBusClient.BusEventHandler OnReceived;
+    private readonly Task _workerTask;
+    private bool _startedFlag = true;
 
-    public PassEventClient() => _workerTask = Task.Run(Process);
+    public PassEventClient()
+    {
+        _workerTask = Task.Run(Process);
+    }
+
+    public event IEventBusClient.BusEventHandler OnReceived;
 
     public Task Send(SendMessageRequest request, CancellationToken token)
     {
         NoneBus.SendMessageRequests.Enqueue(request);
 
         return Task.CompletedTask;
+    }
+
+    public void Dispose()
+    {
+        _startedFlag = false;
+        _workerTask.Wait(500);
     }
 
     private void Process()
@@ -30,11 +39,5 @@ public class PassEventClient : IEventBusClient
 
             Thread.Sleep(Pause);
         }
-    }
-
-    public void Dispose()
-    {
-        _startedFlag = false;
-        _workerTask.Wait(500);
     }
 }

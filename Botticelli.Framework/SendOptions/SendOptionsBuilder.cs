@@ -16,7 +16,10 @@ public class SendOptionsBuilder<T> : ISendOptionsBuilder<T> where T : class
     {
     }
 
-    private SendOptionsBuilder(T? innerObject) => _innerObject = innerObject;
+    private SendOptionsBuilder(T? innerObject)
+    {
+        _innerObject = innerObject;
+    }
 
     public ISendOptionsBuilder<T> Create(params object[]? args)
     {
@@ -28,9 +31,9 @@ public class SendOptionsBuilder<T> : ISendOptionsBuilder<T> where T : class
             .ToArray();
 
         // no params? ok => let's seek a parameterless constructor!
-        if ((args != null && args.Length != 0) || constructors.All(c => c.GetParameters().Length != 0)) 
+        if ((args != null && args.Length != 0) || constructors.All(c => c.GetParameters().Length != 0))
             return this;
-        
+
         _innerObject = Activator.CreateInstance<T>();
 
         return this;

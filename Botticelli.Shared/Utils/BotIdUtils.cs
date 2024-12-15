@@ -22,16 +22,16 @@ public static partial class BotIdUtils
         var longest = a1.Length > a2.Length ? a1 : a2;
 
         for (var i = 0; i < min; ++i) longest[i] |= shortest[i];
-        
+
         return longest;
     }
 
     public static string? GenerateShortBotId()
         => ReplaceSymbols().Replace(Convert.ToBase64String(BitWiseSum(Guid.NewGuid().ToByteArray(),
                 GenerateSalt(32))), string.Empty)
-            .Replace("\r",string.Empty)
+            .Replace("\r", string.Empty)
             .Replace("\n", string.Empty);
-    
+
     [GeneratedRegex("[/+=]")]
     private static partial Regex ReplaceSymbols();
 }

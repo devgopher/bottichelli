@@ -82,7 +82,7 @@ public class UniversalLowQualityConvertor : IConvertor
                     .WithAudioBitrate(tgtParams.Bitrate))
                 .ProcessSynchronously(ffMpegOptions: new FFOptions
                 {
-                    BinaryFolder = "ffmpeg",
+                    BinaryFolder = "ffmpeg"
                 });
 
             return output.ToArray();

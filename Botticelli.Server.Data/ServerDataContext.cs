@@ -8,10 +8,11 @@ namespace Botticelli.Server.Data;
 
 public class ServerDataContext : DbContext
 {
-    public ServerDataContext() : base(new DbContextOptionsBuilder<ServerDataContext>().UseSqlite("Data Source=database.db").Options)
+    public ServerDataContext() : base(new DbContextOptionsBuilder<ServerDataContext>()
+        .UseSqlite("Data Source=database.db").Options)
     {
-    
     }
+
     public ServerDataContext(DbContextOptions options) : base(options)
     {
     }
@@ -36,7 +37,7 @@ public class ServerDataContext : DbContext
             .HasKey(k => k.Id);
 
         modelBuilder.Entity<IdentityRole<string>>()
-            .HasData(new IdentityRole<string>()
+            .HasData(new IdentityRole<string>
             {
                 Id = Guid.NewGuid().ToString(),
                 Name = "admin",

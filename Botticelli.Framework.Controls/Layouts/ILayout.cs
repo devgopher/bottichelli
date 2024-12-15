@@ -1,10 +1,7 @@
-﻿using Telegram.Bot.Requests;
-
-namespace Botticelli.Framework.Controls.Layouts;
+﻿namespace Botticelli.Framework.Controls.Layouts;
 
 public interface ILayout
 {
-    public void AddRow(Row row);
-    
     public IList<Row>? Rows { get; }
+    public void AddRow(Row row);
 }

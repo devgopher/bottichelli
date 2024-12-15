@@ -49,27 +49,28 @@ public class BotStatusService<TBot>(
         };
 
         _getRequiredStatusEventTask = Policy.HandleResult<GetRequiredStatusFromServerResponse>(_ => true)
-                                            .WaitAndRetryForeverAsync(_ => TimeSpan.FromMilliseconds(GetStatusPeriod))
-                                            .ExecuteAndCaptureAsync(ct => Process(request, ct)!,
-                                                                    cancellationToken);
+            .WaitAndRetryForeverAsync(_ => TimeSpan.FromMilliseconds(GetStatusPeriod))
+            .ExecuteAndCaptureAsync(ct => Process(request, ct)!,
+                cancellationToken);
     }
 
-    private Task<GetRequiredStatusFromServerResponse?> Process(GetRequiredStatusFromServerRequest request, CancellationToken cancellationToken)
+    private Task<GetRequiredStatusFromServerResponse?> Process(GetRequiredStatusFromServerRequest request,
+        CancellationToken cancellationToken)
     {
         var task = InnerSend<GetRequiredStatusFromServerRequest, GetRequiredStatusFromServerResponse>(request,
-                                                                                                      "/bot/client/GetRequiredBotStatus",
-                                                                                                      cancellationToken);
+            "/bot/client/GetRequiredBotStatus",
+            cancellationToken);
 
         task.Wait(cancellationToken);
 
         var taskResult = task.Result;
         if (taskResult == default)
             throw new BotException("No result from server!");
-        
+
         var botContext = taskResult.BotContext;
         if (botContext == default)
             throw new BotException("No bot context from server!");
-        
+
         var botData = new BotData.Entities.Bot.BotData
         {
             BotId = botContext.BotId,

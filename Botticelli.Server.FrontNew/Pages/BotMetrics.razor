@@ -1,15 +1,14 @@
 ﻿@page "/bot_metrics/{botId}/{From?}/{To?}"
-@using Flurl
-@using Microsoft.Extensions.Options
-@using Botticelli.Server.FrontNew.Settings
-@using Botticelli.Server.FrontNew.Models
-@using Botticelli.Server.Data.Entities
+@using System.Globalization
+@using System.Net.Http.Headers
 @using Botticelli.Analytics.Shared.Requests
 @using Botticelli.Analytics.Shared.Responses
-@using System.Net.Http.Headers
-@using Botticelli.Server.FrontNew.Utils
-@using System.Globalization
 @using Botticelli.Server.Data.Entities.Bot
+@using Botticelli.Server.FrontNew.Models
+@using Botticelli.Server.FrontNew.Settings
+@using Botticelli.Server.FrontNew.Utils
+@using Flurl
+@using Microsoft.Extensions.Options
 @inject NavigationManager UriHelper;
 @inject IOptionsMonitor<BackSettings> BackSettings;
 @inject CookieStorageAccessor Cookies;
@@ -37,10 +36,12 @@ else
     <RadzenStack Orientation="Orientation.Vertical" JustifyContent="JustifyContent.Center" Gap="20px">
         @{
             <RadzenStack Orientation="Orientation.Horizontal">
-                <RadzenLabel Text="From:"/><RadzenDatePicker Change="async () => await GetMetrics()" @bind-Value=@_from/>
+                <RadzenLabel Text="From:"/>
+                <RadzenDatePicker Change="async () => await GetMetrics()" @bind-Value=@_from/>
             </RadzenStack>
             <RadzenStack Orientation="Orientation.Horizontal">
-                <RadzenLabel Text="To:"/><RadzenDatePicker Change="async () => await GetMetrics()" @bind-Value=@_to/>
+                <RadzenLabel Text="To:"/>
+                <RadzenDatePicker Change="async () => await GetMetrics()" @bind-Value=@_to/>
             </RadzenStack>
             <RadzenButton Text="Apply" Click="ApplyDates"/>
 
@@ -51,8 +52,8 @@ else
                     <RadzenText TextStyle="TextStyle.Overline" Text="@metricName"/>
                     <RadzenChart>
                         <RadzenLegend Position="LegendPosition.Left"/>
-                        <RadzenColumnOptions Radius="3" Width="10.0" />
-                        <RadzenColumnSeries Data="@_metrics[metricName].Select(x => new 
+                        <RadzenColumnOptions Radius="3" Width="10.0"/>
+                        <RadzenColumnSeries Data="@_metrics[metricName].Select(x => new
                                                   {
                                                       DateTime = x.DateTime.ToString("dd.MM.yyyy HH:mm"), x.Value
                                                   })"
@@ -78,14 +79,11 @@ else
 
 @code {
 
-    [Parameter]
-    public string BotId { get; set; }
+    [Parameter] public string BotId { get; set; }
 
-    [Parameter]
-    public string From { get; set; }
+    [Parameter] public string From { get; set; }
 
-    [Parameter]
-    public string To { get; set; }
+    [Parameter] public string To { get; set; }
 
     readonly Dictionary<string, IEnumerable<MetricsModel>> _metrics = new();
 
@@ -132,7 +130,7 @@ else
                 BotId = BotId,
                 From = _from,
                 To = _to + interval,
-                Interval = (int) interval.TotalSeconds,
+                Interval = (int)interval.TotalSeconds,
                 Name = metricName
             };
 
@@ -145,8 +143,8 @@ else
     {
         using var http = HttpClientFactory.Create();
         var botStatusResponse = await http.GetAsync(Url.Combine(BackSettings.CurrentValue.AnalyticsUrl,
-                                                                "/metrics/getter/GetMetricsForInterval?")
-                                                       .SetQueryParams(request));
+                "/metrics/getter/GetMetricsForInterval?")
+            .SetQueryParams(request));
         var metrics = await botStatusResponse.Content.ReadFromJsonAsync<GetMetricsIntervalsResponse>();
         var output = metrics.MetricsForIntervals.Select(m => new MetricsModel
         {
@@ -180,4 +178,5 @@ else
     {
         UriHelper.NavigateTo($"/bot_metrics/{BotId}/{_from.ToString(dateFormat)}/{_to.ToString(dateFormat)}", true);
     }
+
 }

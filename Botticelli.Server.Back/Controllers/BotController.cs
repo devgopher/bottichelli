@@ -91,7 +91,7 @@ public class BotController(
             };
         }
     }
-    
+
     /// <summary>
     ///     Gets broadcast messages
     /// </summary>
@@ -138,8 +138,8 @@ public class BotController(
             };
         }
     }
-    
-    
+
+
     /// <summary>
     ///     Gets broadcast messages received notifications
     /// </summary>
@@ -147,7 +147,8 @@ public class BotController(
     /// <returns></returns>
     [AllowAnonymous]
     [HttpPost("client/[action]")]
-    public async Task<BroadCastMessagesReceivedResponse> BroadcastReceived([FromBody] BroadCastMessagesReceivedRequest request)
+    public async Task<BroadCastMessagesReceivedResponse> BroadcastReceived(
+        [FromBody] BroadCastMessagesReceivedRequest request)
     {
         try
         {
@@ -155,9 +156,7 @@ public class BotController(
             request.BotId?.NotNullOrEmpty();
 
             foreach (var messageId in request.MessageIds)
-            {
                 await broadcastService.DeleteReceived(request.BotId!, messageId);
-            }
 
             return new BroadCastMessagesReceivedResponse
             {

@@ -1,5 +1,4 @@
 ﻿using System.Net.Http.Json;
-using System.Text.Json;
 using Botticelli.Audio;
 using Botticelli.Framework.Exceptions;
 using Botticelli.Framework.Vk.Messages.API.Requests;
@@ -55,7 +54,7 @@ public class VkStorageUploader
                     }));
 
             var response = await httpClient.SendAsync(request, token);
-            return await response.Content.ReadFromJsonAsync<GetUploadAddress>(cancellationToken: token);
+            return await response.Content.ReadFromJsonAsync<GetUploadAddress>(token);
         }
         catch (Exception ex)
         {
@@ -94,7 +93,7 @@ public class VkStorageUploader
                     }));
 
             var response = await httpClient.SendAsync(request, token);
-            return await response.Content.ReadFromJsonAsync<GetUploadAddress>(cancellationToken: token);
+            return await response.Content.ReadFromJsonAsync<GetUploadAddress>(token);
         }
         catch (Exception ex)
         {
@@ -122,7 +121,7 @@ public class VkStorageUploader
         var content = new MultipartFormDataContent { { new StreamContent(memoryContentStream), "photo", name } };
 
         var response = await httpClient.PostAsync(uploadUrl, content, token);
-        return await response.Content.ReadFromJsonAsync<UploadPhotoResult>(cancellationToken: token);
+        return await response.Content.ReadFromJsonAsync<UploadPhotoResult>(token);
     }
 
 
@@ -160,7 +159,7 @@ public class VkStorageUploader
         };
 
         var response = await httpClient.PostAsync(uploadUrl, content, token);
-        return await response.Content.ReadFromJsonAsync<TResult>(cancellationToken: token);
+        return await response.Content.ReadFromJsonAsync<TResult>(token);
     }
 
     /// <summary>
@@ -193,7 +192,7 @@ public class VkStorageUploader
         var content = new MultipartFormDataContent { { new StreamContent(memoryContentStream), "video", name } };
 
         var response = await httpClient.PostAsync(uploadUrl, content, token);
-        return await response.Content.ReadFromJsonAsync<UploadVideoResult>(cancellationToken: token);
+        return await response.Content.ReadFromJsonAsync<UploadVideoResult>(token);
     }
 
     /// <summary>
@@ -235,7 +234,7 @@ public class VkStorageUploader
             });
 
             var response = await httpClient.SendAsync(request, token);
-            return await response.Content.ReadFromJsonAsync<VkSendPhotoResponse>(cancellationToken: token);
+            return await response.Content.ReadFromJsonAsync<VkSendPhotoResponse>(token);
         }
         catch (Exception ex)
         {
@@ -287,7 +286,7 @@ public class VkStorageUploader
             });
 
             var response = await httpClient.SendAsync(request, token);
-            return await response.Content.ReadFromJsonAsync<VkSendAudioResponse>(cancellationToken: token);
+            return await response.Content.ReadFromJsonAsync<VkSendAudioResponse>(token);
         }
         catch (Exception ex)
         {
@@ -327,7 +326,7 @@ public class VkStorageUploader
             });
 
             var response = await httpClient.SendAsync(request, token);
-            return await response.Content.ReadFromJsonAsync<VkSendDocumentResponse>(cancellationToken: token);
+            return await response.Content.ReadFromJsonAsync<VkSendDocumentResponse>(token);
         }
         catch (Exception ex)
         {

@@ -20,7 +20,7 @@ public class ContainerJobActivator(IServiceCollection services) : JobActivator
 
 
         realTypeDescriptor.NotNull();
-        
+
         return services.BuildServiceProvider().GetRequiredService(realTypeDescriptor.ServiceType);
     }
 }

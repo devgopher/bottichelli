@@ -22,74 +22,95 @@ public class InlineCalendar : ILayout
         Init(dt, cultureInfo);
     }
 
+    /// <summary>
+    ///     Today checkmark image  path
+    /// </summary>
+    public string TodayMark { get; set; }
+
     public void AddRow(Row row) => Rows.Add(row);
 
-    /// <summary>
-    /// Today checkmark image  path
-    /// </summary>
-    public string TodayMark
-    {
-        get;
-        set;
-    }
-    
-    public IList<Row>? Rows { get; }  
+    public IList<Row>? Rows { get; }
 
     private void Init(DateTime dt, CultureInfo cultureInfo)
     {
         // Displays a year in a header
         var yearNameRow = new Row();
-        yearNameRow.Items.Add(new Item {Control = new Button {Content = "<<", Params = new Dictionary<string, string>
+        yearNameRow.Items.Add(new Item
         {
-            {"CallbackData", $"/YearBackward {dt:dd/MM/yyyy}"}
-        }}});
-        yearNameRow.Items.Add(new Item {Control = new Button {Content = dt.ToString("yyyy")}});
-        yearNameRow.Items.Add(new Item {Control = new Button {Content = ">>", Params = new Dictionary<string, string>
+            Control = new Button
+            {
+                Content = "<<", Params = new Dictionary<string, string>
+                {
+                    { "CallbackData", $"/YearBackward {dt:dd/MM/yyyy}" }
+                }
+            }
+        });
+        yearNameRow.Items.Add(new Item { Control = new Button { Content = dt.ToString("yyyy") } });
+        yearNameRow.Items.Add(new Item
         {
-            {"CallbackData", $"/YearForward {dt:dd/MM/yyyy}"}
-        }}});
+            Control = new Button
+            {
+                Content = ">>", Params = new Dictionary<string, string>
+                {
+                    { "CallbackData", $"/YearForward {dt:dd/MM/yyyy}" }
+                }
+            }
+        });
         Rows.Add(yearNameRow);
 
         // Displays a month name in a header
-        var monthName = cultureInfo.DateTimeFormat.MonthNames[dt.Month-1];
+        var monthName = cultureInfo.DateTimeFormat.MonthNames[dt.Month - 1];
         var monthNameRow = new Row();
-        monthNameRow.Items.Add(new Item {Control = new Button {Content = "<<", Params = new Dictionary<string, string>
+        monthNameRow.Items.Add(new Item
         {
-            {"CallbackData", $"/MonthBackward {dt:dd/MM/yyyy}"}
-        }}});
-        monthNameRow.Items.Add(new Item {Control = new Button {Content = monthName}});
-        monthNameRow.Items.Add(new Item {Control = new Button {Content = ">>", Params = new Dictionary<string, string>
+            Control = new Button
+            {
+                Content = "<<", Params = new Dictionary<string, string>
+                {
+                    { "CallbackData", $"/MonthBackward {dt:dd/MM/yyyy}" }
+                }
+            }
+        });
+        monthNameRow.Items.Add(new Item { Control = new Button { Content = monthName } });
+        monthNameRow.Items.Add(new Item
         {
-            {"CallbackData", $"/MonthForward {dt:dd/MM/yyyy}"}
-        }}});
-        
+            Control = new Button
+            {
+                Content = ">>", Params = new Dictionary<string, string>
+                {
+                    { "CallbackData", $"/MonthForward {dt:dd/MM/yyyy}" }
+                }
+            }
+        });
+
         Rows.Add(monthNameRow);
 
         // Displays a weekday names in a header
         var sortedDays = new DayOfWeek[Days.Length];
-        var fdw = (int) cultureInfo.DateTimeFormat.FirstDayOfWeek;
+        var fdw = (int)cultureInfo.DateTimeFormat.FirstDayOfWeek;
         for (var i = 0; i < Days.Length; ++i) sortedDays[i] = Days[(fdw + i) % Days.Length];
 
         var weekDaysRow = new Row();
-        weekDaysRow.Items.AddRange(sortedDays.Select(sd => new Item {Control = new Button {Content = sd.ToString("G")}}));
+        weekDaysRow.Items.AddRange(sortedDays.Select(sd => new Item
+            { Control = new Button { Content = sd.ToString("G") } }));
         Rows.Add(weekDaysRow);
 
         // Displays dates
-        var days = CultureInfo.InvariantCulture.Calendar.GetDaysInMonth(year: dt.Year, month: dt.Month);
-       
+        var days = CultureInfo.InvariantCulture.Calendar.GetDaysInMonth(dt.Year, dt.Month);
+
         var rows = new Row?[6];
 
         for (var day = 1; day <= days; ++day)
         {
-            var dayOfWeek = (int)CultureInfo.InvariantCulture.Calendar.GetDayOfWeek(new DateTime(year: dt.Year, month: dt.Month, day: 1));
+            var dayOfWeek = (int)CultureInfo.InvariantCulture.Calendar.GetDayOfWeek(new DateTime(dt.Year, dt.Month, 1));
             var offset = dayOfWeek - 1;
             var rowNum = (day + offset) / Days.Length;
-            
+
             rows[rowNum] ??= new Row();
 
             PreloadItems(rows, rowNum);
             var buttonDt = new DateTime(day: day, month: dt.Month, year: dt.Year);
-            
+
             rows[rowNum]!.Items[(day + offset) % Days.Length] = new Item
             {
                 Control = new Button
@@ -102,14 +123,16 @@ public class InlineCalendar : ILayout
 
             var weekDayOffset = (day + offset) % Days.Length;
             rows[rowNum]!.Items[weekDayOffset].Control!.CallbackData
-                    = $"/DateChosen {new DateTime(day: day, month: dt.Month, year: dt.Year):dd/MM/yyyy}";
+                = $"/DateChosen {new DateTime(day: day, month: dt.Month, year: dt.Year):dd/MM/yyyy}";
         }
 
-        foreach (var row in rows) 
+        foreach (var row in rows)
             Rows.Add(row!);
     }
 
-    private string GetImage(DateTime buttonDt) => DateTime.Today == buttonDt.Date ? !string.IsNullOrWhiteSpace(TodayMark) ? TodayMark : "✓" : string.Empty;
+    private string GetImage(DateTime buttonDt) => DateTime.Today == buttonDt.Date
+        ? !string.IsNullOrWhiteSpace(TodayMark) ? TodayMark : "✓"
+        : string.Empty;
 
     private static void PreloadItems(Row?[] rows, int rowNum)
     {
@@ -118,7 +141,6 @@ public class InlineCalendar : ILayout
         if (cnt >= Days.Length) return;
 
         for (var i = cnt; i < Days.Length; ++i)
-        {
             rows[rowNum]!.Items.Add(new Item
             {
                 Control = new Button
@@ -126,6 +148,5 @@ public class InlineCalendar : ILayout
                     Content = "-"
                 }
             });
-        }
     }
 }

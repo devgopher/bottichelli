@@ -1,29 +1,29 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
-  <PropertyGroup>
-    <TargetFrameworks>net8.0</TargetFrameworks>
-    
-    <IsPackable>false</IsPackable>
-    
-    <RootNamespace>Botticelli.AI.TEST</RootNamespace>
-    
-    <Nullable>enable</Nullable>
-  </PropertyGroup>
+    <PropertyGroup>
+        <TargetFrameworks>net8.0</TargetFrameworks>
 
-  <ItemGroup>
-    <PackageReference Include="FluentAssertions" Version="6.12.1" />
-    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.11.1" />
-    <PackageReference Include="NUnit" Version="4.2.2" />
-    <PackageReference Include="NUnit3TestAdapter" Version="4.6.0" />
-    <PackageReference Include="WireMock.Net" Version="1.6.7" />
-  </ItemGroup>
+        <IsPackable>false</IsPackable>
 
-  <ItemGroup>
-    <ProjectReference Include="..\Botticelli.AI.ChatGpt\Botticelli.AI.ChatGpt.csproj" />
-    <ProjectReference Include="..\Botticelli.AI.DeepSeekGpt\Botticelli.AI.DeepSeekGpt.csproj" />
-    <ProjectReference Include="..\Botticelli.AI.YaGpt\Botticelli.AI.YaGpt.csproj" />
-    <ProjectReference Include="..\Botticelli.AI\Botticelli.AI.csproj" />
-    <ProjectReference Include="..\Tests\Shared\Shared.csproj" />
-  </ItemGroup>
-  
+        <RootNamespace>Botticelli.AI.TEST</RootNamespace>
+
+        <Nullable>enable</Nullable>
+    </PropertyGroup>
+
+    <ItemGroup>
+        <PackageReference Include="FluentAssertions" Version="6.12.1"/>
+        <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.11.1"/>
+        <PackageReference Include="NUnit" Version="4.2.2"/>
+        <PackageReference Include="NUnit3TestAdapter" Version="4.6.0"/>
+        <PackageReference Include="WireMock.Net" Version="1.6.7"/>
+    </ItemGroup>
+
+    <ItemGroup>
+        <ProjectReference Include="..\Botticelli.AI.ChatGpt\Botticelli.AI.ChatGpt.csproj"/>
+        <ProjectReference Include="..\Botticelli.AI.DeepSeekGpt\Botticelli.AI.DeepSeekGpt.csproj"/>
+        <ProjectReference Include="..\Botticelli.AI.YaGpt\Botticelli.AI.YaGpt.csproj"/>
+        <ProjectReference Include="..\Botticelli.AI\Botticelli.AI.csproj"/>
+        <ProjectReference Include="..\Tests\Shared\Shared.csproj"/>
+    </ItemGroup>
+
 </Project>

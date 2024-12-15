@@ -1,9 +1,8 @@
 ﻿using Botticelli.Framework.Vk.Messages;
 using Botticelli.Framework.Vk.Messages.Options;
 using Botticelli.Shared.Utils;
-using Microsoft.Extensions.Configuration;
-using Shared;
 using NUnit.Framework;
+using Shared;
 
 namespace Botticelli.Framework.Vk.Tests;
 
@@ -14,11 +13,11 @@ public class LongPollMessagesProviderTests
     public void Setup()
     {
         _provider = new LongPollMessagesProvider(new OptionsMonitorMock<VkBotSettings>(new VkBotSettings
-                                                 {
-                                                     Name = "test",
-                                                     PollIntervalMs = 500,
-                                                     GroupId = 221973506
-                                                 }).CurrentValue,
+            {
+                Name = "test",
+                PollIntervalMs = 500,
+                GroupId = 221973506
+            }).CurrentValue,
             new TestHttpClientFactory(),
             LoggerMocks.CreateConsoleLogger<LongPollMessagesProvider>());
     }

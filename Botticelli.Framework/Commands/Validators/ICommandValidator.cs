@@ -3,7 +3,7 @@
 namespace Botticelli.Framework.Commands.Validators;
 
 public interface ICommandValidator<in TCommand>
-        where TCommand : ICommand
+    where TCommand : ICommand
 {
     /// <summary>
     ///     Main validation procedure

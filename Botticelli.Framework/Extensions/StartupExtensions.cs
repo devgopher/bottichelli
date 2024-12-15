@@ -1,11 +1,8 @@
-﻿using System.Net.Security;
-using System.Security.Cryptography.X509Certificates;
-using Botticelli.Bot.Interfaces.Processors;
+﻿using Botticelli.Bot.Interfaces.Processors;
 using Botticelli.Framework.Commands;
 using Botticelli.Framework.Commands.Processors;
 using Botticelli.Framework.Commands.Validators;
 using Botticelli.Framework.HostedService;
-using Botticelli.Framework.Options;
 using Botticelli.Interfaces;
 using Botticelli.Shared.Extensions;
 using Botticelli.Shared.Utils;
@@ -113,10 +110,11 @@ public static class StartupExtensions
         sp.GetRequiredService<ClientProcessorFactory>()
             .AddProcessor<TCommandProcessor, TBot>(sp);
 
-        return new CommandRegisterServices<TCommand, TBot>(sp);;
+        return new CommandRegisterServices<TCommand, TBot>(sp);
+        ;
     }
 
-    public static IServiceProvider RegisterFluentBotCommand<TCommandProcessor, TBot>(this IServiceProvider sp) 
+    public static IServiceProvider RegisterFluentBotCommand<TCommandProcessor, TBot>(this IServiceProvider sp)
         where TCommandProcessor : class, ICommandProcessor
         where TBot : IBot<TBot>
     {
@@ -125,8 +123,9 @@ public static class StartupExtensions
 
         return sp;
     }
-    
-    public static CommandRegisterServices<TCommand, TBot> RegisterFluentBotCommand<TCommand, TCommandProcessor, TBot>(this IServiceProvider sp) 
+
+    public static CommandRegisterServices<TCommand, TBot> RegisterFluentBotCommand<TCommand, TCommandProcessor, TBot>(
+        this IServiceProvider sp)
         where TCommandProcessor : class, ICommandProcessor
         where TBot : IBot<TBot>
         where TCommand : ICommand

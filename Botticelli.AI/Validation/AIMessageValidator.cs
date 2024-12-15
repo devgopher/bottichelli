@@ -5,7 +5,7 @@ namespace Botticelli.AI.Validation;
 
 public class AiMessageValidator : AbstractValidator<AiMessage>
 {
-    public AiMessageValidator() 
+    public AiMessageValidator()
     {
         RuleFor(x => x.Body).NotEmpty();
         RuleFor(x => x.Uid).NotEmpty();

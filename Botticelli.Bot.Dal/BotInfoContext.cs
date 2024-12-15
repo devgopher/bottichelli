@@ -1,5 +1,4 @@
-﻿using System.Globalization;
-using Botticelli.BotData.Entities.Bot;
+﻿using Botticelli.BotData.Entities.Bot;
 using Botticelli.BotData.Entities.Bot.Broadcasting;
 using Microsoft.EntityFrameworkCore;
 
@@ -11,7 +10,7 @@ public class BotInfoContext : DbContext
     // {
     //
     // }
-    
+
     public BotInfoContext(DbContextOptions options) : base(options)
     {
     }

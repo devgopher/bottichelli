@@ -3,6 +3,7 @@
 @inject CookieStorageAccessor Cookies;
 
 @code
+
 {
     private string _message = string.Empty;
 }
@@ -15,6 +16,7 @@
         <RadzenButton Text="Logoff" Click="async e => await DoLogoff(e)"/>
 
         @code
+        
         {
             public async Task DoLogoff(MouseEventArgs args)
             {

@@ -1,14 +1,13 @@
 ﻿using Botticelli.Server.Analytics.Cache;
 using Botticelli.Server.Analytics.Models;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.ChangeTracking;
 
 namespace Botticelli.Server.Analytics;
 
 public class MetricsContext : DbContext
 {
     private readonly ICacheAccessor _cacheAccessor;
-    
+
     public MetricsContext(DbContextOptions options, ICacheAccessor cacheAccessor) : base(options)
     {
         _cacheAccessor = cacheAccessor;

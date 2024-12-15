@@ -6,11 +6,11 @@ public class AiMessage : Shared.ValueObjects.Message
     {
     }
 
-    public string Instruction { get; set; }
-
-    public List<AiMessage> AdditionalMessages { get; set; }
-
     public AiMessage(string uid) : base(uid)
     {
     }
+
+    public string Instruction { get; set; }
+
+    public List<AiMessage> AdditionalMessages { get; set; }
 }

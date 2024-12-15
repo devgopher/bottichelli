@@ -34,7 +34,7 @@ public class UserService : IUserService
         {
             request.NotNull();
             request.Email.NotNull();
-            
+
             if (await _context.ApplicationUsers.AnyAsync(token))
                 return false;
 
@@ -42,9 +42,9 @@ public class UserService : IUserService
 
             var user = await _context.ApplicationUsers.FirstOrDefaultAsync(
                 u => u.NormalizedEmail == GetNormalized(request.Email!), token);
-            
+
             user.NotNull();
-            
+
             user!.EmailConfirmed = true;
             await _context.SaveChangesAsync(token);
 
@@ -83,8 +83,8 @@ public class UserService : IUserService
                 NormalizedEmail = GetNormalized(request.Email!),
                 PasswordHash = HashUtils.GetHash(request.Password!, _config["Authorization:Salt"])
             };
-            
-            #if DEBUG
+
+#if DEBUG
             if (request.Email == "test@test.com")
             {
                 _logger.LogInformation("Test login password: {password}", request.Password);
@@ -93,7 +93,7 @@ public class UserService : IUserService
 
                 needConfirmation = false;
             }
-            #endif
+#endif
 
 
             // Temporary - because now we assume, that we've only a single role - "admin"! 
@@ -142,7 +142,7 @@ public class UserService : IUserService
 
             var user = await _context.ApplicationUsers.FirstOrDefaultAsync(
                 u => u.NormalizedUserName == GetNormalized(request.UserName!), token);
-            
+
             user.NotNull();
 
             var prevMail = user!.NormalizedEmail;
@@ -175,7 +175,7 @@ public class UserService : IUserService
 
             request.NotNull();
             request.UserName.NotNull();
-            
+
             if (_context.ApplicationUsers.AsQueryable()
                 .All(u => u.NormalizedUserName != GetNormalized(request.UserName!)))
                 throw new DataException($"User with name {request.UserName} doesn't exist!");
@@ -213,7 +213,7 @@ public class UserService : IUserService
 
             user.NotNull();
             user!.Email.NotNull();
-            
+
             _logger.LogInformation($"{nameof(GetAsync)}({request.UserName}) finished...");
 
             return new UserGetResponse

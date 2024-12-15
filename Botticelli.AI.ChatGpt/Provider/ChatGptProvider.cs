@@ -1,5 +1,4 @@
-﻿using System.Net.Http.Headers;
-using System.Net.Http.Json;
+﻿using System.Net.Http.Json;
 using System.Text;
 using Botticelli.AI.AIProvider;
 using Botticelli.AI.ChatGpt.Message.ChatGpt;
@@ -20,7 +19,7 @@ public class ChatGptProvider : ChatGptProvider<GptSettings>
     public ChatGptProvider(IOptions<GptSettings> gptSettings,
         IHttpClientFactory? factory,
         ILogger<ChatGptProvider> logger,
-        IBusClient? bus, 
+        IBusClient? bus,
         IValidator<AiMessage>? messageValidator) : base(gptSettings,
         factory,
         logger,
@@ -31,7 +30,8 @@ public class ChatGptProvider : ChatGptProvider<GptSettings>
 
     public override string AiName => "chatgpt";
 
-    protected override async Task ProcessGptResponse(AiMessage message, CancellationToken token, HttpResponseMessage response)
+    protected override async Task ProcessGptResponse(AiMessage message, CancellationToken token,
+        HttpResponseMessage response)
     {
         var text = new StringBuilder();
 
@@ -93,7 +93,8 @@ public class ChatGptProvider : ChatGptProvider<GptSettings>
         }
     }
 
-    protected override async Task<HttpResponseMessage> GetGptResponse(AiMessage message, CancellationToken token, HttpClient client)
+    protected override async Task<HttpResponseMessage> GetGptResponse(AiMessage message, CancellationToken token,
+        HttpClient client)
     {
         var content = JsonContent.Create(new ChatGptInputMessage
         {

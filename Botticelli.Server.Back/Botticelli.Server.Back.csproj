@@ -27,10 +27,10 @@
     <ItemGroup>
         <Content Remove="appsettings.json"/>
         <Content Update="appsettings.Development.json">
-          <DependentUpon>appsettings.json</DependentUpon>
+            <DependentUpon>appsettings.json</DependentUpon>
         </Content>
         <Content Update="appsettings.Release.json">
-          <DependentUpon>appsettings.json</DependentUpon>
+            <DependentUpon>appsettings.json</DependentUpon>
         </Content>
     </ItemGroup>
 
@@ -46,11 +46,11 @@
             <Link>new_logo_compact.png</Link>
         </None>
         <None Include="appsettings.Development.json">
-          <DependentUpon>appsettings.json</DependentUpon>
-          <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+            <DependentUpon>appsettings.json</DependentUpon>
+            <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
         </None>
         <None Include="appsettings.Release.json">
-          <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+            <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
         </None>
         <None Include="nlog.config">
             <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
@@ -62,18 +62,18 @@
         <PackageReference Include="FluentEmail.Smtp" Version="3.0.2"/>
         <PackageReference Include="Flurl" Version="4.0.0"/>
         <PackageReference Include="Mapster" Version="7.4.0"/>
-        <PackageReference Include="Microsoft.AspNetCore.ApiAuthorization.IdentityServer" Version="7.0.20" />
-        <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="8.0.10" />
-        <PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="8.0.10" />
+        <PackageReference Include="Microsoft.AspNetCore.ApiAuthorization.IdentityServer" Version="7.0.20"/>
+        <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="8.0.10"/>
+        <PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="8.0.10"/>
         <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="8.0.10">
             <PrivateAssets>all</PrivateAssets>
             <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
         </PackageReference>
-        <PackageReference Include="Microsoft.Extensions.Identity.Core" Version="8.0.10" />
-        <PackageReference Include="NLog" Version="5.3.4" />
-        <PackageReference Include="NLog.Web.AspNetCore" Version="5.3.14" />
+        <PackageReference Include="Microsoft.Extensions.Identity.Core" Version="8.0.10"/>
+        <PackageReference Include="NLog" Version="5.3.4"/>
+        <PackageReference Include="NLog.Web.AspNetCore" Version="5.3.14"/>
         <PackageReference Include="PasswordGenerator" Version="2.1.0"/>
-        <PackageReference Include="Swashbuckle.AspNetCore" Version="6.9.0" />
+        <PackageReference Include="Swashbuckle.AspNetCore" Version="6.9.0"/>
     </ItemGroup>
 
     <ItemGroup>

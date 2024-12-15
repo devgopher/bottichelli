@@ -14,7 +14,7 @@ public static class ServiceCollectionExtensions
     /// <param name="services">Service collection</param>
     /// <param name="config">Settings</param>
     /// <returns></returns>
-    public static IServiceCollection AddQuartzScheduler(this IServiceCollection services, 
+    public static IServiceCollection AddQuartzScheduler(this IServiceCollection services,
         IConfiguration config)
     {
         var settings = new SchedulerSettings();

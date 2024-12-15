@@ -3,6 +3,6 @@
 public enum CellAlign
 {
     Left,
-    Center, 
+    Center,
     Right
 }

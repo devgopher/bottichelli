@@ -1,5 +1,4 @@
 using Botticelli.Server.Analytics;
-using Botticelli.Server.Analytics.Cache;
 using Botticelli.Server.Analytics.Extensions;
 using Botticelli.Server.Analytics.Settings;
 using MapsterMapper;

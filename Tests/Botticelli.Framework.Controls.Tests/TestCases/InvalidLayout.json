@@ -1,29 +1,29 @@
 {
-	"Name22": "TestLayout",
-	"Layout22": [
-		[
-			{
-				"Button": {
-					"Content": "TestContent1"
-				}
-			},
-			{
-				"Button": {
-					"Content": "TestContent2"
-				}
-			}
-		],
-		[
-			{
-				"Button": {
-					"Content": "TestContent3"
-				}
-			},
-			{
-				"Button": {
-					"Content": "TestContent4"
-				}
-			}
-		]
-	]
+  "Name22": "TestLayout",
+  "Layout22": [
+    [
+      {
+        "Button": {
+          "Content": "TestContent1"
+        }
+      },
+      {
+        "Button": {
+          "Content": "TestContent2"
+        }
+      }
+    ],
+    [
+      {
+        "Button": {
+          "Content": "TestContent3"
+        }
+      },
+      {
+        "Button": {
+          "Content": "TestContent4"
+        }
+      }
+    ]
+  ]
 }

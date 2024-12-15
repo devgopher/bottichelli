@@ -1,4 +1,3 @@
-using Botticelli.Framework.Commands;
 using Botticelli.Framework.Monads.Commands.Context;
 using Botticelli.Interfaces;
 using Microsoft.Extensions.DependencyInjection;
@@ -16,39 +15,39 @@ public class ChainBuilder<TCommand>(IServiceCollection services)
     public ChainBuilder<TCommand> Next(IChainProcessor<TCommand> processor)
     {
         _chain.Add(processor);
-        
+
         return this;
     }
 
-    public ChainBuilder<TCommand> Next<TProcessor>() 
+    public ChainBuilder<TCommand> Next<TProcessor>()
         where TProcessor : class, IChainProcessor<TCommand>
     {
         services.AddScoped<TProcessor>();
         var processor = services.BuildServiceProvider()
             .GetRequiredService<TProcessor>();
-        
+
         return Next(processor);
     }
-    
-    public ChainBuilder<TCommand> Next<TProcessor>(Action<TProcessor> func) 
+
+    public ChainBuilder<TCommand> Next<TProcessor>(Action<TProcessor> func)
         where TProcessor : class, IChainProcessor<TCommand>
     {
         services.AddScoped<TProcessor>();
         var processor = services.BuildServiceProvider()
             .GetRequiredService<TProcessor>();
         func(processor);
-        
+
         return Next(processor);
     }
-    
-    public ChainBuilder<TCommand> SetBot<TBot>(TBot bot) 
+
+    public ChainBuilder<TCommand> SetBot<TBot>(TBot bot)
         where TBot : IBot<TBot>
     {
         _bot = bot;
-   
+
         return this;
     }
-    
+
     public ChainRunner<TCommand> Build()
     {
         var sp = services.BuildServiceProvider();
@@ -56,12 +55,12 @@ public class ChainBuilder<TCommand>(IServiceCollection services)
 
         if (_bot == default)
             throw new NullReferenceException($"Bot should be set up: call {nameof(SetBot)} to set a bot instance!");
-            
+
         foreach (var processor in _chain) processor.SetBot(_bot);
-        
+
         _runner ??= new ChainRunner<TCommand>(_chain, sp
             .GetRequiredService<ILogger<ChainRunner<TCommand>>>());
-        
+
         return _runner;
     }
 }

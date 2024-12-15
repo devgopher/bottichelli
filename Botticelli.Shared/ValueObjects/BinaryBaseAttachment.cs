@@ -1,5 +1,4 @@
-﻿using System.Text.Json.Serialization;
-using Botticelli.Shared.Constants;
+﻿using Botticelli.Shared.Constants;
 
 namespace Botticelli.Shared.ValueObjects;
 

@@ -62,7 +62,7 @@ public class TelegramBotBuilder : BotBuilder<TelegramBotBuilder, TelegramBot>
         Services!.AddHttpClient<BotKeepAliveService<TelegramBot>>()
             .AddServerCertificates(BotSettings);
         Services!.AddHostedService<BotKeepAliveService<IBot<TelegramBot>>>();
-        
+
         Services!.AddHttpClient<GetBroadCastMessagesService<TelegramBot>>()
             .AddServerCertificates(BotSettings);
         Services!.AddHostedService<GetBroadCastMessagesService<IBot<TelegramBot>>>();
@@ -107,7 +107,7 @@ public class TelegramBotBuilder : BotBuilder<TelegramBotBuilder, TelegramBot>
 
         var sp = Services!.BuildServiceProvider();
         ApplyMigrations(sp);
-        
+
         return new TelegramBot(_client,
             sp.GetRequiredService<IBotUpdateHandler>(),
             sp.GetRequiredService<ILogger<TelegramBot>>(),

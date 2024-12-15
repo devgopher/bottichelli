@@ -13,21 +13,21 @@ using TelegramCommandChainSample.Commands.CommandProcessors;
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Services
-       .AddTelegramBot(builder.Configuration)
-       .AddLogging(cfg => cfg.AddNLog())
-       .AddScoped<StartCommandProcessor<ReplyKeyboardMarkup>>()
-       .AddScoped<StopCommandProcessor<ReplyKeyboardMarkup>>()
-       .AddScoped<InfoCommandProcessor<ReplyKeyboardMarkup>>()
-       .AddScoped<ILayoutParser, JsonLayoutParser>()
-       .AddBotCommand<InfoCommand, InfoCommandProcessor<ReplyKeyboardMarkup>, PassValidator<InfoCommand>>()
-       .AddBotCommand<StartCommand, StartCommandProcessor<ReplyKeyboardMarkup>, PassValidator<StartCommand>>()
-       .AddBotCommand<StopCommand, StopCommandProcessor<ReplyKeyboardMarkup>, PassValidator<StopCommand>>();
+    .AddTelegramBot(builder.Configuration)
+    .AddLogging(cfg => cfg.AddNLog())
+    .AddScoped<StartCommandProcessor<ReplyKeyboardMarkup>>()
+    .AddScoped<StopCommandProcessor<ReplyKeyboardMarkup>>()
+    .AddScoped<InfoCommandProcessor<ReplyKeyboardMarkup>>()
+    .AddScoped<ILayoutParser, JsonLayoutParser>()
+    .AddBotCommand<InfoCommand, InfoCommandProcessor<ReplyKeyboardMarkup>, PassValidator<InfoCommand>>()
+    .AddBotCommand<StartCommand, StartCommandProcessor<ReplyKeyboardMarkup>, PassValidator<StartCommand>>()
+    .AddBotCommand<StopCommand, StopCommandProcessor<ReplyKeyboardMarkup>, PassValidator<StopCommand>>();
 
 
 // Command processing chain is being initialized here...
 builder.Services.AddBotChainProcessedCommand<GetNameCommand, PassValidator<GetNameCommand>>()
-       .AddNext<GetNameCommandProcessor>()
-       .AddNext<SayHelloFinalCommandProcessor>();
+    .AddNext<GetNameCommandProcessor>()
+    .AddNext<SayHelloFinalCommandProcessor>();
 
 var app = builder.Build();
 

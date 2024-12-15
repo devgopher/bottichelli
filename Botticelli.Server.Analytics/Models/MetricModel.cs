@@ -13,6 +13,6 @@ public class MetricModel : IMetricModel, INotifyPropertyChanging, INotifyPropert
     public DateTime Timestamp { get; set; }
     public string InternalValue { get; set; }
     public Dictionary<string, string> AdditionalParameters { get; set; }
-    public event PropertyChangingEventHandler? PropertyChanging;
     public event PropertyChangedEventHandler? PropertyChanged;
+    public event PropertyChangingEventHandler? PropertyChanging;
 }

@@ -30,13 +30,13 @@
     </ItemGroup>
 
     <ItemGroup>
-        <ProjectReference Include="..\Botticelli.Framework.Controls\Botticelli.Framework.Controls.csproj" />
+        <ProjectReference Include="..\Botticelli.Framework.Controls\Botticelli.Framework.Controls.csproj"/>
         <ProjectReference Include="..\Botticelli.Audio\Botticelli.Audio.csproj"/>
         <ProjectReference Include="..\Botticelli.Framework.Common\Botticelli.Framework.Events.csproj"/>
         <ProjectReference Include="..\Botticelli.Framework\Botticelli.Framework.csproj"/>
         <PackageReference Include="Flurl" Version="4.0.0"/>
-        <PackageReference Include="Microsoft.Extensions.Http.Polly" Version="8.0.10" />
-        <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="8.0.2" />
+        <PackageReference Include="Microsoft.Extensions.Http.Polly" Version="8.0.10"/>
+        <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="8.0.2"/>
         <PackageReference Include="Polly.Extensions.Http" Version="3.0.0"/>
     </ItemGroup>
 

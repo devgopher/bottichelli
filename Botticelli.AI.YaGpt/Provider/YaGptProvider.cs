@@ -23,16 +23,19 @@ public class YaGptProvider : ChatGptProvider<YaGptSettings>
     public YaGptProvider(IOptions<YaGptSettings> gptSettings,
         IHttpClientFactory? factory,
         ILogger<YaGptProvider> logger,
-        IBusClient? bus, 
+        IBusClient? bus,
         IValidator<AiMessage>? messageValidator) : base(gptSettings,
-                                      factory,
-                                      logger,
-                                      bus,
-                                      messageValidator)
+        factory,
+        logger,
+        bus,
+        messageValidator)
     {
     }
 
-    protected override async Task ProcessGptResponse(AiMessage message, CancellationToken token, HttpResponseMessage response)
+    public override string AiName => "yagpt";
+
+    protected override async Task ProcessGptResponse(AiMessage message, CancellationToken token,
+        HttpResponseMessage response)
     {
         var text = new StringBuilder();
 
@@ -48,7 +51,7 @@ public class YaGptProvider : ChatGptProvider<YaGptSettings>
         {
             if (reader.TokenType != JsonToken.StartObject)
                 continue;
-                    
+
             var part = serializer.Deserialize<YaGptOutputMessage>(reader);
 
             text.AppendJoin(' ',
@@ -97,7 +100,7 @@ public class YaGptProvider : ChatGptProvider<YaGptSettings>
                     Text = message.Body
                 }
             },
-            CompletionOptions = new CompletionOptions()
+            CompletionOptions = new CompletionOptions
             {
                 MaxTokens = Settings.Value.MaxTokens,
                 Stream = Settings.Value.StreamGeneration,
@@ -105,7 +108,7 @@ public class YaGptProvider : ChatGptProvider<YaGptSettings>
             }
         };
 
-        yaGptMessage.Messages.AddRange(message.AdditionalMessages?.Select(m => new YaGptMessage()
+        yaGptMessage.Messages.AddRange(message.AdditionalMessages?.Select(m => new YaGptMessage
         {
             Role = UserRole,
             Text = m.Body
@@ -119,6 +122,4 @@ public class YaGptProvider : ChatGptProvider<YaGptSettings>
             content,
             token);
     }
-
-    public override string AiName => "yagpt";
 }

@@ -40,11 +40,11 @@ public class UserController : Controller
     public async Task<IActionResult> AddDefaultUserAsync(DefaultUserAddRequest request, CancellationToken token)
     {
         try
-        {   
+        {
             request.NotNull();
             request.UserName.NotNull();
             request.Email.NotNull();
-            
+
             var password = _password.Next();
             var mapped = _mapper.Map<UserAddRequest>(request);
             mapped.Password = password;
@@ -70,7 +70,7 @@ public class UserController : Controller
             passwordRequest.NotNull();
             passwordRequest.UserName.NotNull();
             passwordRequest.Email.NotNull();
-            
+
             var mapped = _mapper.Map<UserUpdateRequest>(passwordRequest);
             mapped.Password = _password.Next();
 
@@ -115,7 +115,8 @@ public class UserController : Controller
     }
 
     private string GetCurrentUserName() =>
-        HttpContext.User.Claims.FirstOrDefault(c => c.Type == "applicationUserName")?.Value ?? throw new NullReferenceException();
+        HttpContext.User.Claims.FirstOrDefault(c => c.Type == "applicationUserName")?.Value ??
+        throw new NullReferenceException();
 
     [HttpGet]
     public async Task<ActionResult<UserGetResponse>> GetUserAsync(UserGetRequest request, CancellationToken token)

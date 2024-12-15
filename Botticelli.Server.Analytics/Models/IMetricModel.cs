@@ -1,6 +1,4 @@
-﻿using System.Runtime.InteropServices;
-
-namespace Botticelli.Server.Analytics.Models;
+﻿namespace Botticelli.Server.Analytics.Models;
 
 public interface IMetricModel
 {

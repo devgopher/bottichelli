@@ -16,9 +16,9 @@ public static class ServiceCollectionExtensions
         where TCommand : class, IChainCommand, new()
         where TValidator : class, ICommandValidator<TCommand>
     {
-        var chainBuilder = new ChainBuilder<TCommand>(services);        
+        var chainBuilder = new ChainBuilder<TCommand>(services);
         chainBuilderOptions(chainBuilder);
-       
+
         var runner = chainBuilder.Build();
 
         services.AddScoped(_ => runner);
@@ -26,7 +26,7 @@ public static class ServiceCollectionExtensions
         return commandAddServices.AddProcessor<ChainRunProcessor<TCommand>>()
             .AddValidator<TValidator>();
     }
-    
+
     public static CommandAddServices<TCommand> AddMonadsChain<TCommand, TValidator, TReplyMarkup, TLayoutSupplier>(
         this CommandAddServices<TCommand> commandAddServices,
         IServiceCollection services,
@@ -35,14 +35,14 @@ public static class ServiceCollectionExtensions
         where TValidator : class, ICommandValidator<TCommand>
         where TLayoutSupplier : class, ILayoutSupplier<TReplyMarkup>
     {
-        var chainBuilder = new ChainBuilder<TCommand>(services);        
+        var chainBuilder = new ChainBuilder<TCommand>(services);
         chainBuilderOptions(chainBuilder);
 
         var runner = chainBuilder.Build();
 
         services.AddScoped(_ => runner)
-                .AddScoped<ILayoutSupplier<TReplyMarkup>, TLayoutSupplier>();
-        
+            .AddScoped<ILayoutSupplier<TReplyMarkup>, TLayoutSupplier>();
+
         return commandAddServices.AddProcessor<ChainRunProcessor<TCommand>>()
             .AddValidator<TValidator>();
     }

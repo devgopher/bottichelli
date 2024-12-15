@@ -1,7 +1,7 @@
 namespace Botticelli.Bot.Data.Settings;
 
 /// <summary>
-/// Bot data access layer settings
+///     Bot data access layer settings
 /// </summary>
 public class DataAccessSettings : IDataAccessSettings
 {

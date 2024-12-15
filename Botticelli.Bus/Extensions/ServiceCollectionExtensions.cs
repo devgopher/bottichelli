@@ -30,7 +30,7 @@ public static class ServiceCollectionExtensions
     public static IServiceCollection UsePassEventBusClient<TBot>(this IServiceCollection services)
         where TBot : IBot =>
         services.AddSingleton<IEventBusClient, PassEventClient>();
-    
+
     /// <summary>
     ///     Uses a no-bus scheme
     /// </summary>

@@ -25,11 +25,11 @@ public interface IBusAgent : IHostedService
     /// <param name="timeoutMs"></param>
     /// <returns></returns>
     public Task SendResponseAsync(SendMessageResponse response,
-                                  CancellationToken token,
-                                  int timeoutMs = 10000);
+        CancellationToken token,
+        int timeoutMs = 10000);
 }
 
 public interface IBotticelliBusAgent<in THandler> : IBusAgent
-        where THandler : IHandler<SendMessageRequest, SendMessageResponse>
+    where THandler : IHandler<SendMessageRequest, SendMessageResponse>
 {
 }

@@ -6,11 +6,9 @@ using Botticelli.AI.ChatGpt.Extensions;
 using Botticelli.Bus.None.Extensions;
 using Botticelli.Framework.Commands.Validators;
 using Botticelli.Framework.Extensions;
-using Botticelli.Framework.Options;
 using Botticelli.Framework.Vk.Messages;
 using Botticelli.Framework.Vk.Messages.API.Markups;
 using Botticelli.Framework.Vk.Messages.Extensions;
-using Botticelli.Framework.Vk.Messages.Options;
 using Botticelli.Interfaces;
 using NLog.Extensions.Logging;
 
