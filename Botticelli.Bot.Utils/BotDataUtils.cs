@@ -1,14 +1,14 @@
 ﻿using System.IO;
 using Botticelli.Shared.Utils;
 
-namespace Botticelli.BotBase.Utils;
+namespace Botticelli.Bot.Utils;
 
 public static class BotDataUtils
 {
     private const string SubDir = "Data";
-    private static string _botId;
+    private static string? _botId;
 
-    public static string? GetPath() => Path.Combine(SubDir, "botId");
+    private static string? GetPath() => Path.Combine(SubDir, "botId");
 
     public static string? GetBotId()
     {

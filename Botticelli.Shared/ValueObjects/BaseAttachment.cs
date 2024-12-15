@@ -6,9 +6,7 @@ namespace Botticelli.Shared.ValueObjects;
 [JsonPolymorphic(UnknownDerivedTypeHandling = JsonUnknownDerivedTypeHandling.FallBackToBaseType)]
 [JsonDerivedType(typeof(BinaryBaseAttachment), typeDiscriminator: "binaryAttachment")]
 [JsonDerivedType(typeof(InvoiceBaseAttachment), typeDiscriminator: "invoiceAttachment")]
-public class BaseAttachment
+public class BaseAttachment(string? uid)
 {
-    public virtual string Uid { get; }
-    public virtual string Name { get; }
-    public virtual string OwnerId { get; }
+    public string? Uid { get; } = uid;
 }

@@ -1,0 +1,37 @@
+﻿<Project Sdk="Microsoft.NET.Sdk.Web">
+
+	<PropertyGroup>
+		<TargetFramework>net8.0</TargetFramework>
+		<Nullable>enable</Nullable>
+		<ImplicitUsings>enable</ImplicitUsings>
+		<Version>0.6.0</Version>
+		<Company>Botticelli</Company>
+		<Copyright>Igor Evdokimov</Copyright>
+		<PackageProjectUrl>https://github.com/devgopher/botticelli</PackageProjectUrl>
+		<PackageIcon>logo.jpg</PackageIcon>
+		<RepositoryUrl>https://github.com/devgopher/botticelli</RepositoryUrl>
+	</PropertyGroup>
+
+	<ItemGroup>
+		<PackageReference Include="NLog.Extensions.Logging" Version="5.3.14"/>
+	</ItemGroup>
+
+	<ItemGroup>
+		<PackageReference Include="Microsoft.Extensions.Configuration" Version="8.0.*"/>
+		<PackageReference Include="Microsoft.Extensions.Configuration.Binder" Version="8.0.2"/>
+		<ProjectReference Include="..\MessagingSample.Common\MessagingSample.Common.csproj"/>
+	</ItemGroup>
+
+	<ItemGroup>
+		<None Update="Properties\launchSettings.json">
+			<CopyToOutputDirectory>Never</CopyToOutputDirectory>
+			<ExcludeFromSingleFile>true</ExcludeFromSingleFile>
+			<CopyToPublishDirectory>Never</CopyToPublishDirectory>
+		</None>
+	</ItemGroup>
+
+	<ItemGroup>
+		<Folder Include="Data\"/>
+	</ItemGroup>
+
+</Project>

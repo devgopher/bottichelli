@@ -1,11 +1,11 @@
 sudo apt-get update
-sudo apt-get install -y dotnet-sdk-7.0 dotnet-runtime-7.0 aspnetcore-runtime-7.0
+sudo apt-get install -y dotnet-sdk-8.0 dotnet-runtime-8.0 aspnetcore-runtime-8.0
 
 
 rm -rf botticelli/
 git clone https://github.com/devgopher/botticelli.git
 pushd botticelli/
-git checkout release/0.3
+git checkout release/0.6
 git pull
 
 pushd TelegramMessagingSample

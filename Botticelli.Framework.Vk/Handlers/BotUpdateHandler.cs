@@ -1,5 +1,6 @@
 ﻿using Botticelli.Framework.Commands.Processors;
 using Botticelli.Framework.Vk.Messages.API.Responses;
+using Botticelli.Shared.Utils;
 using Botticelli.Shared.ValueObjects;
 using Microsoft.Extensions.Logging;
 
@@ -24,17 +25,15 @@ public class BotUpdateHandler : IBotUpdateHandler
             .Where(x => x.Type == "message_new")
             .ToList();
 
-        var messagesText = botMessages.Select(bm =>
+        var messagesText = botMessages?.Select(bm =>
             new
             {
                 eventId = bm.EventId,
                 message = bm.Object["message"]
             }); 
         
-        foreach (var botMessage in messagesText)
+        foreach (var botMessage in messagesText.EmptyIfNull())
         {
-            if (botMessage == default) continue;
-
             try
             {
                 var eventId = botMessage.eventId;
@@ -46,8 +45,8 @@ public class BotUpdateHandler : IBotUpdateHandler
                 {
                     ChatIds =
                     [
-                        peerId,
-                        fromId
+                        peerId.EmptyIfNull(),
+                        fromId.EmptyIfNull()
                     ],
                     Subject = string.Empty,
                     Body = text,
@@ -57,54 +56,17 @@ public class BotUpdateHandler : IBotUpdateHandler
                         Id = fromId
                     },
                     ForwardedFrom = null,
-                    Location = null
+                    Location = null!,
+                    // LastModifiedAt = botMessage.
                 };
 
                 await Process(botticelliMessage, cancellationToken);
             }
             catch (Exception ex)
             {
-                _logger.LogError($"{nameof(HandleUpdateAsync)}() error", ex);
+                _logger.LogError(ex, ex.Message);
             }
         }
-
-
-        //if (botMessage == null) return;
-
-        //var botticelliMessage = new Message(botMessage.MessageId.ToString())
-        //{
-        //    ChatIds = new() {botMessage.Chat.Id.ToString()},
-        //    Subject = string.Empty,
-        //    Body = botMessage.Text,
-        //    Attachments = new List<IAttachment>(5),
-        //    From = new User
-        //    {
-        //        Id = botMessage.From?.Id.ToString(),
-        //        Name = botMessage.From?.FirstName,
-        //        Surname = botMessage.From?.LastName,
-        //        Info = string.Empty,
-        //        IsBot = botMessage.From?.IsBot,
-        //        NickName = botMessage.From?.Username
-        //    },
-        //    ForwardedFrom = new User
-        //    {
-        //        Id = botMessage.ForwardFrom?.Id.ToString(),
-        //        Name = botMessage.ForwardFrom?.FirstName,
-        //        Surname = botMessage.ForwardFrom?.LastName,
-        //        Info = string.Empty,
-        //        IsBot = botMessage.ForwardFrom?.IsBot,
-        //        NickName = botMessage.ForwardFrom?.Username
-        //    },
-        //    Location = botMessage.Location != null ?
-        //            new GeoLocation
-        //            {
-        //                Latitude = (decimal) botMessage.Location?.Latitude,
-        //                Longitude = (decimal) botMessage.Location?.Longitude
-        //            } :
-        //            null
-        //};
-
-        //await Process(botticelliMessage, cancellationToken);
 
         _logger.LogDebug($"{nameof(HandleUpdateAsync)}() finished...");
     }
@@ -114,21 +76,25 @@ public class BotUpdateHandler : IBotUpdateHandler
     /// <summary>
     ///     Processes requests
     /// </summary>
-    /// <param name="request"></param>
+    /// <param name="message"></param>
     /// <param name="token"></param>
-    protected async Task Process(Message request, CancellationToken token)
+    protected Task Process(Message message, CancellationToken token)
     {
-        _logger.LogDebug($"{nameof(Process)}({request.Uid}) started...");
+        _logger.LogDebug($"{nameof(Process)}({message.Uid}) started...");
 
-        if (token is { CanBeCanceled: true, IsCancellationRequested: true }) return;
+        if (token is { CanBeCanceled: true, IsCancellationRequested: true }) return Task.CompletedTask;
 
-        var clientTasks = _processorFactory
-            .GetProcessors()
-            .Select(p => p.ProcessAsync(request, token));
+        var clientNonChainedTasks = _processorFactory
+            .GetProcessors(excludeChain: true)
+            .Select(p => p.ProcessAsync(message, token));
 
+        var clientChainedTasks = _processorFactory
+                                    .GetCommandChainProcessors()
+                                    .Select(p => p.ProcessAsync(message, token));
 
-        Task.WaitAll(clientTasks.ToArray());
+        Task.WaitAll(clientNonChainedTasks.Concat(clientChainedTasks).ToArray(), token);
 
-        _logger.LogDebug($"{nameof(Process)}({request.Uid}) finished...");
+        _logger.LogDebug($"{nameof(Process)}({message.Uid}) finished...");
+        return Task.CompletedTask;
     }
 }

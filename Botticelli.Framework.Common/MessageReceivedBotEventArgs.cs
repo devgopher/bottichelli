@@ -4,5 +4,5 @@ namespace Botticelli.Framework.Events;
 
 public class MessageReceivedBotEventArgs : BotEventArgs
 {
-    public Message Message { get; set; }
+    public required Message Message { get; set; }
 }

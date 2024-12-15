@@ -7,17 +7,13 @@
 	</PropertyGroup>
 
 	<ItemGroup>
-		<Folder Include="Handlers\"/>
-	</ItemGroup>
-
-	<ItemGroup>
 		<PackageReference Include="Flurl" Version="4.0.0"/>
 		<PackageReference Include="Flurl.Http" Version="4.0.2"/>
 		<PackageReference Include="GeoTimeZone" Version="5.3.0"/>
 		<PackageReference Include="Mapster" Version="7.4.0" />
 		<PackageReference Include="Mapster.Core" Version="1.2.1" />
-		<PackageReference Include="Microsoft.Extensions.Http" Version="8.0.0"/>
-		<PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="8.0.1"/>
+		<PackageReference Include="Microsoft.Extensions.Http" Version="8.0.1"/>
+		<PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="8.0.2"/>
 		<PackageReference Include="Nominatim.API" Version="2.0.0"/>
 	</ItemGroup>
 

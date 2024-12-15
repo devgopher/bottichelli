@@ -1,5 +1,5 @@
 ﻿using System.Text.Json;
-using Botticelli.BotBase.Exceptions;
+using Botticelli.Framework.Exceptions;
 using Botticelli.Framework.Vk.Messages.API.Responses;
 using Botticelli.Framework.Vk.Messages.API.Utils;
 using Botticelli.Framework.Vk.Messages.Options;
@@ -25,7 +25,7 @@ public class LongPollMessagesProvider : IDisposable
 
     private readonly IHttpClientFactory _httpClientFactory;
     private readonly ILogger<LongPollMessagesProvider> _logger;
-    private readonly IOptionsMonitor<VkBotSettings> _settings;
+    private readonly VkBotSettings _settings;
     private readonly CancellationTokenSource _tokenSource;
     private readonly object _syncObj = new();
     private string _apiKey;
@@ -35,7 +35,7 @@ public class LongPollMessagesProvider : IDisposable
     private string _server;
     private bool _isStarted;
 
-    public LongPollMessagesProvider(IOptionsMonitor<VkBotSettings> settings,
+    public LongPollMessagesProvider(VkBotSettings settings,
         IHttpClientFactory httpClientFactory,
         ILogger<LongPollMessagesProvider> logger)
     {
@@ -43,7 +43,7 @@ public class LongPollMessagesProvider : IDisposable
         _httpClientFactory = httpClientFactory;
         _logger = logger;
         _tokenSource = new CancellationTokenSource();
-        _groupId = settings.CurrentValue.GroupId;
+        _groupId = settings.GroupId;
     }
 
     private string ApiVersion => "5.199";
@@ -98,11 +98,11 @@ public class LongPollMessagesProvider : IDisposable
 
                     return codesForRetry.Contains(ex.Call.Response.StatusCode);
                 })
-                .WaitAndRetryAsync(3, n => n * TimeSpan.FromMilliseconds(_settings.CurrentValue.PollIntervalMs));
+                .WaitAndRetryAsync(3, n => n * TimeSpan.FromMilliseconds(_settings.PollIntervalMs));
 
 
             var repeatPolicy = Policy.HandleResult<UpdatesResponse>(r => true)
-                .WaitAndRetryForeverAsync(_ => TimeSpan.FromMilliseconds(_settings.CurrentValue.PollIntervalMs));
+                .WaitAndRetryForeverAsync(_ => TimeSpan.FromMilliseconds(_settings.PollIntervalMs));
             var pollingTask = repeatPolicy.WrapAsync(updatePolicy)
                 .ExecuteAsync(async () =>
                 {

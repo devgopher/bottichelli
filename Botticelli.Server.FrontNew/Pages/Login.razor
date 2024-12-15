@@ -76,7 +76,7 @@
             public async Task DoReset(string userName)
             {
                 var result = await SessionClient.ResetPassword(userName);
-                if (result != default && result.UserMessage.ToLowerInvariant() != "success")
+                if (result.UserMessage.ToLowerInvariant() != "success")
                 {
                     _error.UserMessage = result.UserMessage;
                 }

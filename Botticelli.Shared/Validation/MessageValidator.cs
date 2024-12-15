@@ -7,6 +7,7 @@ public class MessageValidator : AbstractValidator<Message>
 {
     public MessageValidator() 
     {
-        RuleFor(x => x.Body).NotEmpty();
+        //RuleFor(x => x.Body).NotEmpty();
+        RuleFor(x => x.Uid).NotEmpty();
     }
 }

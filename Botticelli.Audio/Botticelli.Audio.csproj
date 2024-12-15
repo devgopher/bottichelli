@@ -5,7 +5,7 @@
         <ImplicitUsings>enable</ImplicitUsings>
         <Nullable>enable</Nullable>
         <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
-        <Version>0.5.0</Version>
+        <Version>0.6.0</Version>
         <Title>Botticelli.Audio</Title>
         <Authors>BotticelliBots</Authors>
         <PackageIcon>new_logo_compact.png</PackageIcon>
@@ -27,16 +27,17 @@
     <ItemGroup>
         <PackageReference Include="FFmpeg.Win64.Static" Version="4.1.1.1" />
         <PackageReference Include="FFMpegCore" Version="5.1.0"/>
-        <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="8.0.1"/>
+        <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="8.0.2" />
         <PackageReference Include="NAudio" Version="2.2.1"/>
         <PackageReference Include="NAudio.Lame" Version="2.1.0"/>
         <PackageReference Include="NAudio.Vorbis" Version="1.5.0"/>
         <PackageReference Include="NAudio.WaveFormRenderer" Version="2.0.0"/>
-        <PackageReference Include="System.Text.Json" Version="8.0.3"/>
+        <PackageReference Include="System.Text.Json" Version="8.0.5" />
     </ItemGroup>
 
     <ItemGroup>
         <ProjectReference Include="..\3dParty\FileSignatures\FileSignatures.csproj"/>
+        <ProjectReference Include="..\Botticelli.Shared\Botticelli.Shared.csproj" />
     </ItemGroup>
 
 </Project>

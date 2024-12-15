@@ -18,6 +18,6 @@ public class ReplyTelegramLayoutSupplierTest
         var layout = _jsonLayoutParser.Parse(jsonText);
         var markup = _supplier.GetMarkup(layout);
         
-        Assert.IsNotNull(markup);
+        Assert.That(markup != null);
     }
 }

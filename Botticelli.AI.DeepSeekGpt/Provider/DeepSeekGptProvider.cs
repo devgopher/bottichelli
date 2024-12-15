@@ -13,17 +13,17 @@ using Microsoft.Extensions.Options;
 
 namespace Botticelli.AI.DeepSeekGpt.Provider;
 
-public class DeepSeekGptProvider : GenericAiProvider<DeepSeekGptSettings>
+public class DeepSeekGptProvider : ChatGptProvider<DeepSeekGptSettings>
 {
     private const string SystemRole = "system";
     private const string UserRole = "user";
     private const string Completion = "completions";
 
     public DeepSeekGptProvider(IOptions<DeepSeekGptSettings> gptSettings,
-        IHttpClientFactory factory,
+        IHttpClientFactory? factory,
         ILogger<DeepSeekGptProvider> logger,
-        IBusClient bus,
-        IValidator<AiMessage> messageValidator) : base(gptSettings,
+        IBusClient? bus,
+        IValidator<AiMessage>? messageValidator) : base(gptSettings,
         factory,
         logger,
         bus,

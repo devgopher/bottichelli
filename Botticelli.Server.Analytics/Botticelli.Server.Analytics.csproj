@@ -10,10 +10,10 @@
 
     <PropertyGroup>
         <TargetFramework>net8.0</TargetFramework>
-        <Nullable>disable</Nullable>
+        <Nullable>enable</Nullable>
         <ImplicitUsings>enable</ImplicitUsings>
         <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
-        <Version>0.5.0</Version>
+        <Version>0.6.0</Version>
         <PackageProjectUrl>https://botticellibots.com</PackageProjectUrl>
         <PackageIcon>new_logo_compact.png</PackageIcon>
         <RepositoryUrl>https://github.com/devgopher/botticelli</RepositoryUrl>
@@ -23,6 +23,7 @@
         <Authors>BotticelliBots</Authors>
         <Description>Botticelli analytics server part</Description>
         <Copyright>BotticelliBots</Copyright>
+        <DockerDefaultTargetOS>Linux</DockerDefaultTargetOS>
     </PropertyGroup>
 
     <ItemGroup>
@@ -45,25 +46,24 @@
 
     <ItemGroup>
         <PackageReference Include="Mapster" Version="7.4.0"/>
-        <PackageReference Include="Microsoft.AspNetCore.ApiAuthorization.IdentityServer" Version="7.0.18"/>
-        <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="8.0.4"/>
-        <PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="8.0.4"/>
-        <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="8.0.4">
+        <PackageReference Include="Microsoft.AspNetCore.ApiAuthorization.IdentityServer" Version="7.0.20" />
+        <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="8.0.10" />
+        <PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="8.0.10" />
+        <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="8.0.10">
             <PrivateAssets>all</PrivateAssets>
             <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
         </PackageReference>
-        <PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite.Core" Version="8.0.4"/>
-        <PackageReference Include="Microsoft.Extensions.Identity.Core" Version="8.0.4"/>
-        <PackageReference Include="Npgsql" Version="8.0.2"/>
-        <PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="8.0.2"/>
-        <PackageReference Include="Polly" Version="8.3.1"/>
-        <PackageReference Include="Swashbuckle.AspNetCore" Version="6.5.0"/>
+        <PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite.Core" Version="8.0.10" />
+        <PackageReference Include="Microsoft.Extensions.Identity.Core" Version="8.0.10" />
+        <PackageReference Include="Npgsql" Version="8.0.5" />
+        <PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="8.0.10" />
+        <PackageReference Include="Polly" Version="8.4.2" />
+        <PackageReference Include="Swashbuckle.AspNetCore" Version="6.9.0" />
         <PackageReference Include="System.Linq.Async" Version="6.0.1"/>
         <PackageReference Include="System.Linq.Async.Queryable" Version="6.0.1"/>
     </ItemGroup>
 
     <ItemGroup>
-        <ProjectReference Include="..\Botticelli.SecureStorage\Botticelli.SecureStorage.csproj" />
         <ProjectReference Include="..\Botticelli.Analytics.Shared\Botticelli.Analytics.Shared.csproj"/>
     </ItemGroup>
 

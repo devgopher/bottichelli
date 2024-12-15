@@ -3,8 +3,8 @@
     <PropertyGroup>
         <TargetFramework>net8.0</TargetFramework>
         <ImplicitUsings>enable</ImplicitUsings>
-        <Nullable>disable</Nullable>
-        <Version>0.5.0</Version>
+        <Nullable>enable</Nullable>
+        <Version>0.6.0</Version>
         <Title>Botticelli.Framework.Telegram</Title>
         <Authors>BotticelliBots</Authors>
         <PackageIcon>new_logo_compact.png</PackageIcon>
@@ -25,12 +25,10 @@
     </ItemGroup>
     <ItemGroup>
         <ProjectReference Include="..\Botticelli.Framework.Controls\Botticelli.Framework.Controls.csproj" />
-        <ProjectReference Include="..\Botticelli.SecureStorage\Botticelli.SecureStorage.csproj" />
-        <ProjectReference Include="..\Botticelli.API\Botticelli.BotBase.csproj"/>
         <ProjectReference Include="..\Botticelli.Bot.Utils\Botticelli.Bot.Utils.csproj"/>
         <ProjectReference Include="..\Botticelli.Framework.Common\Botticelli.Framework.Events.csproj"/>
         <ProjectReference Include="..\Botticelli.Framework\Botticelli.Framework.csproj"/>
-        <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="8.0.1"/>
+        <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="8.0.2" />
         <PackageReference Include="Telegram.Bot" Version="19.0.0"/>
     </ItemGroup>
     <ItemGroup>

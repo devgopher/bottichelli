@@ -4,8 +4,8 @@ namespace Botticelli.Shared.API.Client.Requests;
 
 public class RegisterBotRequest
 {
-    public string BotId { get; set; }
-    public string BotKey { get; set; }
-    public string BotName { get; set; }
+    public required string BotId { get; set; }
+    public required string BotKey { get; set; }
+    public required string BotName { get; set; }
     public BotType Type { get; set; }
 }

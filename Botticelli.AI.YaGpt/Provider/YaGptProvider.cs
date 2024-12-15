@@ -1,4 +1,3 @@
-using System.Net.Http.Headers;
 using System.Net.Http.Json;
 using System.Text;
 using Botticelli.AI.AIProvider;
@@ -15,21 +14,21 @@ using Newtonsoft.Json;
 
 namespace Botticelli.AI.YaGpt.Provider;
 
-public class YaGptProvider : GenericAiProvider<YaGptSettings>
+public class YaGptProvider : ChatGptProvider<YaGptSettings>
 {
     private const string SystemRole = "system";
     private const string UserRole = "user";
     private const string Completion = "completion";
 
     public YaGptProvider(IOptions<YaGptSettings> gptSettings,
-        IHttpClientFactory factory,
+        IHttpClientFactory? factory,
         ILogger<YaGptProvider> logger,
-        IBusClient bus, 
-        IValidator<Shared.ValueObjects.Message> messageValidator) : base(gptSettings,
-        factory,
-        logger,
-        bus,
-        messageValidator)
+        IBusClient? bus, 
+        IValidator<AiMessage>? messageValidator) : base(gptSettings,
+                                      factory,
+                                      logger,
+                                      bus,
+                                      messageValidator)
     {
     }
 

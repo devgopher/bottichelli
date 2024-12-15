@@ -1,6 +1,7 @@
-﻿using System.Text.Json;
+﻿using System.Net.Http.Json;
+using System.Text.Json;
 using Botticelli.Audio;
-using Botticelli.BotBase.Exceptions;
+using Botticelli.Framework.Exceptions;
 using Botticelli.Framework.Vk.Messages.API.Requests;
 using Botticelli.Framework.Vk.Messages.API.Responses;
 using Botticelli.Framework.Vk.Messages.API.Utils;
@@ -54,9 +55,7 @@ public class VkStorageUploader
                     }));
 
             var response = await httpClient.SendAsync(request, token);
-            var resultString = await response.Content.ReadAsStringAsync(token);
-
-            return JsonSerializer.Deserialize<GetUploadAddress>(resultString);
+            return await response.Content.ReadFromJsonAsync<GetUploadAddress>(cancellationToken: token);
         }
         catch (Exception ex)
         {
@@ -95,9 +94,7 @@ public class VkStorageUploader
                     }));
 
             var response = await httpClient.SendAsync(request, token);
-            var resultString = await response.Content.ReadAsStringAsync(token);
-
-            return JsonSerializer.Deserialize<GetUploadAddress>(resultString);
+            return await response.Content.ReadFromJsonAsync<GetUploadAddress>(cancellationToken: token);
         }
         catch (Exception ex)
         {
@@ -111,10 +108,11 @@ public class VkStorageUploader
     ///     Uploads a photo (binaries)
     /// </summary>
     /// <param name="uploadUrl"></param>
+    /// <param name="name"></param>
     /// <param name="binaryContent"></param>
     /// <param name="token"></param>
     /// <returns></returns>
-    private async Task<UploadPhotoResult> UploadPhoto(string uploadUrl, string name, byte[] binaryContent,
+    private async Task<UploadPhotoResult?> UploadPhoto(string uploadUrl, string name, byte[] binaryContent,
         CancellationToken token)
     {
         using var httpClient = _httpClientFactory.CreateClient();
@@ -124,9 +122,7 @@ public class VkStorageUploader
         var content = new MultipartFormDataContent { { new StreamContent(memoryContentStream), "photo", name } };
 
         var response = await httpClient.PostAsync(uploadUrl, content, token);
-        var resultString = await response.Content.ReadAsStringAsync(token);
-
-        return JsonSerializer.Deserialize<UploadPhotoResult>(resultString);
+        return await response.Content.ReadFromJsonAsync<UploadPhotoResult>(cancellationToken: token);
     }
 
 
@@ -134,10 +130,11 @@ public class VkStorageUploader
     ///     Uploads an audio message (binaries)
     /// </summary>
     /// <param name="uploadUrl"></param>
+    /// <param name="name"></param>
     /// <param name="binaryContent"></param>
     /// <param name="token"></param>
     /// <returns></returns>
-    private async Task<UploadDocResult> UploadAudioMessage(string uploadUrl, string name, byte[] binaryContent,
+    private async Task<UploadDocResult?> UploadAudioMessage(string uploadUrl, string name, byte[] binaryContent,
         CancellationToken token)
     {
         // convert to ogg in order to meet VK requirements
@@ -149,7 +146,7 @@ public class VkStorageUploader
         return await PushDocument<UploadDocResult>(uploadUrl, name, oggContent, token);
     }
 
-    private async Task<TResult> PushDocument<TResult>(string uploadUrl, string name, byte[] binContent,
+    private async Task<TResult?> PushDocument<TResult>(string uploadUrl, string name, byte[] binContent,
         CancellationToken token)
     {
         using var httpClient = _httpClientFactory.CreateClient();
@@ -163,19 +160,18 @@ public class VkStorageUploader
         };
 
         var response = await httpClient.PostAsync(uploadUrl, content, token);
-        var resultString = await response.Content.ReadAsStringAsync(token);
-
-        return JsonSerializer.Deserialize<TResult>(resultString);
+        return await response.Content.ReadFromJsonAsync<TResult>(cancellationToken: token);
     }
 
     /// <summary>
     ///     Uploads a document message (binaries)
     /// </summary>
     /// <param name="uploadUrl"></param>
+    /// <param name="name"></param>
     /// <param name="binaryContent"></param>
     /// <param name="token"></param>
     /// <returns></returns>
-    private async Task<UploadDocResult> UploadDocMessage(string uploadUrl, string name, byte[] binaryContent,
+    private async Task<UploadDocResult?> UploadDocMessage(string uploadUrl, string name, byte[] binaryContent,
         CancellationToken token)
         => await PushDocument<UploadDocResult>(uploadUrl, name, binaryContent, token);
 
@@ -183,10 +179,11 @@ public class VkStorageUploader
     ///     Uploads a video (binaries)
     /// </summary>
     /// <param name="uploadUrl"></param>
+    /// <param name="name"></param>
     /// <param name="binaryContent"></param>
     /// <param name="token"></param>
     /// <returns></returns>
-    private async Task<UploadVideoResult> UploadVideo(string uploadUrl, string name, byte[] binaryContent,
+    private async Task<UploadVideoResult?> UploadVideo(string uploadUrl, string name, byte[] binaryContent,
         CancellationToken token)
     {
         using var httpClient = _httpClientFactory.CreateClient();
@@ -196,20 +193,19 @@ public class VkStorageUploader
         var content = new MultipartFormDataContent { { new StreamContent(memoryContentStream), "video", name } };
 
         var response = await httpClient.PostAsync(uploadUrl, content, token);
-        var resultString = await response.Content.ReadAsStringAsync();
-
-        return JsonSerializer.Deserialize<UploadVideoResult>(resultString);
+        return await response.Content.ReadFromJsonAsync<UploadVideoResult>(cancellationToken: token);
     }
 
     /// <summary>
     ///     The main public method for sending a photo
     /// </summary>
     /// <param name="vkMessageRequest"></param>
+    /// <param name="name"></param>
     /// <param name="binaryContent"></param>
     /// <param name="token"></param>
     /// <returns></returns>
     /// <exception cref="BotException"></exception>
-    public async Task<VkSendPhotoResponse> SendPhotoAsync(VkSendMessageRequest vkMessageRequest, string name,
+    public async Task<VkSendPhotoResponse?> SendPhotoAsync(VkSendMessageRequest vkMessageRequest, string name,
         byte[] binaryContent, CancellationToken token)
     {
         try
@@ -239,9 +235,7 @@ public class VkStorageUploader
             });
 
             var response = await httpClient.SendAsync(request, token);
-            var resultString = await response.Content.ReadAsStringAsync(token);
-
-            return JsonSerializer.Deserialize<VkSendPhotoResponse>(resultString);
+            return await response.Content.ReadFromJsonAsync<VkSendPhotoResponse>(cancellationToken: token);
         }
         catch (Exception ex)
         {
@@ -256,11 +250,12 @@ public class VkStorageUploader
     ///     The main public method for sending an audio message
     /// </summary>
     /// <param name="vkMessageRequest"></param>
+    /// <param name="name"></param>
     /// <param name="binaryContent"></param>
     /// <param name="token"></param>
     /// <returns></returns>
     /// <exception cref="BotException"></exception>
-    public async Task<VkSendAudioResponse> SendAudioMessageAsync(VkSendMessageRequest vkMessageRequest, string name,
+    public async Task<VkSendAudioResponse?> SendAudioMessageAsync(VkSendMessageRequest vkMessageRequest, string name,
         byte[] binaryContent, CancellationToken token)
     {
         try
@@ -292,9 +287,7 @@ public class VkStorageUploader
             });
 
             var response = await httpClient.SendAsync(request, token);
-            var resultString = await response.Content.ReadAsStringAsync(token);
-
-            return JsonSerializer.Deserialize<VkSendAudioResponse>(resultString);
+            return await response.Content.ReadFromJsonAsync<VkSendAudioResponse>(cancellationToken: token);
         }
         catch (Exception ex)
         {
@@ -305,7 +298,7 @@ public class VkStorageUploader
     }
 
 
-    public async Task<VkSendDocumentResponse> SendDocsMessageAsync(VkSendMessageRequest vkMessageRequest, string name,
+    public async Task<VkSendDocumentResponse?> SendDocsMessageAsync(VkSendMessageRequest vkMessageRequest, string name,
         byte[] binaryContent, CancellationToken token)
     {
         try
@@ -334,9 +327,7 @@ public class VkStorageUploader
             });
 
             var response = await httpClient.SendAsync(request, token);
-            var resultString = await response.Content.ReadAsStringAsync(token);
-
-            return JsonSerializer.Deserialize<VkSendDocumentResponse>(resultString);
+            return await response.Content.ReadFromJsonAsync<VkSendDocumentResponse>(cancellationToken: token);
         }
         catch (Exception ex)
         {

@@ -1,0 +1,27 @@
+﻿FROM mcr.microsoft.com/dotnet/aspnet:8.0 AS base
+WORKDIR /app
+
+FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
+ARG BUILD_CONFIGURATION=Debug
+WORKDIR /src
+COPY ["Botticelli.Server.FrontNew/Botticelli.Server.FrontNew.csproj", "Botticelli.Server.FrontNew/"]
+COPY ["Botticelli.Analytics.Shared/Botticelli.Analytics.Shared.csproj", "Botticelli.Analytics.Shared/"]
+COPY ["Botticelli.Server.Data.Entities/Botticelli.Server.Data.Entities.csproj", "Botticelli.Server.Data.Entities/"]
+COPY ["Botticelli.Shared/Botticelli.Shared.csproj", "Botticelli.Shared/"]
+COPY ["Botticelli.Server.Models/Botticelli.Server.Models.csproj", "Botticelli.Server.Models/"]
+RUN dotnet restore "Botticelli.Server.FrontNew/Botticelli.Server.FrontNew.csproj"
+COPY . .
+WORKDIR "/src/Botticelli.Server.FrontNew"
+RUN dotnet build "Botticelli.Server.FrontNew.csproj" -c $BUILD_CONFIGURATION -o /app/build
+
+FROM build AS publish
+ARG BUILD_CONFIGURATION=Debug
+RUN dotnet publish "Botticelli.Server.FrontNew.csproj" -c $BUILD_CONFIGURATION -o /app/publish /p:UseAppHost=false
+
+FROM base AS final
+WORKDIR /app
+COPY --from=publish /https/botticelli_server_dev_cert.pfx /https/botticelli_server_dev_cert.pfx
+COPY --from=publish /app/publish .
+ENV ASPNETCORE_Kestrel__Certificates__Default__Password=12345678
+ENV ASPNETCORE_Kestrel__Certificates__Default__Path=/https/botticelli_server_dev_cert.pfx
+ENTRYPOINT ["dotnet", "Botticelli.Server.FrontNew.dll"]

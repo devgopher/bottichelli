@@ -3,8 +3,8 @@
     <PropertyGroup>
         <TargetFramework>net8.0</TargetFramework>
         <ImplicitUsings>enable</ImplicitUsings>
-        <Nullable>disable</Nullable>
-        <Version>0.5.0</Version>
+        <Nullable>enable</Nullable>
+        <Version>0.6.0</Version>
         <Company>Botticelli</Company>
         <Copyright>Igor Evdokimov</Copyright>
         <PackageProjectUrl>https://github.com/devgopher/botticelli</PackageProjectUrl>
@@ -18,6 +18,7 @@
         </None>
     </ItemGroup>
     <ItemGroup>
+        <ProjectReference Include="..\Botticelli.Bot.Data.Entities\Botticelli.Bot.Data.Entities.csproj" />
         <ProjectReference Include="..\Botticelli.Shared\Botticelli.Shared.csproj"/>
     </ItemGroup>
 

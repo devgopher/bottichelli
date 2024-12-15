@@ -6,9 +6,40 @@
 [Serializable]
 public class Message
 {
-    public Message() => Uid = Guid.NewGuid().ToString();
+    /// <summary>
+    ///     Type of message
+    /// </summary>
+    public enum MessageType
+    {
+        /// <summary>
+        ///     A simple texting message
+        /// </summary>
+        Messaging,
 
-    public Message(string uid) => Uid = uid;
+        /// <summary>
+        ///     A command message
+        /// </summary>
+        Command
+    }
+
+    public Message()
+    {
+        Uid = Guid.NewGuid().ToString();
+        CreatedAt = DateTime.Now;
+        ProcessingArgs = new List<string>(1);
+    }
+
+    public Message(string uid)
+    {
+        Uid = uid;
+        CreatedAt = DateTime.Now;
+        ProcessingArgs = new List<string>(1);
+    }
+
+    /// <summary>
+    ///     Message type
+    /// </summary>
+    public virtual MessageType Type { get; set; }
 
     /// <summary>
     ///     Message uid
@@ -16,10 +47,10 @@ public class Message
     public string? Uid { get; set; }
 
     /// <summary>
-    /// Chat Id <=> Inner message id links
+    ///     Chat Id <=> Inner message id links
     /// </summary>
     public Dictionary<string, List<string>> ChatIdInnerIdLinks { get; init; } = new();
-    
+
     /// <summary>
     ///     Chat ids
     /// </summary>
@@ -34,6 +65,11 @@ public class Message
     ///     Message body
     /// </summary>
     public string? Body { get; set; }
+
+    /// <summary>
+    ///     Message arguments for processing
+    /// </summary>
+    public IList<string>? ProcessingArgs { get; set; }
 
     /// <summary>
     ///     Message attachments
@@ -69,9 +105,24 @@ public class Message
     ///     GeoLocation
     /// </summary>
     public GeoLocation Location { get; set; }
-    
+
     /// <summary>
-    /// Callback data if exists
+    ///     Callback data if exists
     /// </summary>
     public string? CallbackData { get; set; }
+
+    /// <summary>
+    ///     Message creation date
+    /// </summary>
+    public DateTime CreatedAt { get; init; }
+
+    /// <summary>
+    ///     Message modification date
+    /// </summary>
+    public DateTime LastModifiedAt { get; set; }
+
+    /// <summary>
+    ///     Chain id for chained command processing
+    /// </summary>
+    public Guid? ChainId { get; set; }
 }

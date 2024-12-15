@@ -30,4 +30,4 @@ ENV ASPNETCORE_ENVIRONMENT=Release
 ENV ServerSettings__ServerUri $server_uri
 ENV AnalyticsSettings__ServerUri $analytics_uri
 
-ENTRYPOINT ["dotnet", "Botticelli.Server.dll"]
+ENTRYPOINT ["dotnet", "<Entrypoint>.dll"]

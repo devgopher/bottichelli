@@ -30,9 +30,9 @@ public static class ServiceCollectionExtensions
     public static IServiceProvider UseInlineCalendar<TBot, TDateChosenCommandProcessor>(this IServiceProvider sp)
             where TDateChosenCommandProcessor : CommandProcessor<DateChosenCommand>
             where TBot : IBot<TBot> =>
-            sp.RegisterBotCommand<MonthForwardCommand, ICCommandProcessor<MonthForwardCommand, InlineKeyboardMarkup>, TBot>()
-              .RegisterBotCommand<MonthBackwardCommand, ICCommandProcessor<MonthBackwardCommand, InlineKeyboardMarkup>, TBot>()
-              .RegisterBotCommand<YearForwardCommand, ICCommandProcessor<YearForwardCommand, InlineKeyboardMarkup>, TBot>()
-              .RegisterBotCommand<YearBackwardCommand, ICCommandProcessor<YearBackwardCommand, InlineKeyboardMarkup>, TBot>()
-              .RegisterBotCommand<DateChosenCommand, TDateChosenCommandProcessor, TBot>();
+            sp.RegisterBotCommand<ICCommandProcessor<MonthForwardCommand, InlineKeyboardMarkup>, TBot>()
+              .RegisterBotCommand<ICCommandProcessor<MonthBackwardCommand, InlineKeyboardMarkup>, TBot>()
+              .RegisterBotCommand<ICCommandProcessor<YearForwardCommand, InlineKeyboardMarkup>, TBot>()
+              .RegisterBotCommand<ICCommandProcessor<YearBackwardCommand, InlineKeyboardMarkup>, TBot>()
+              .RegisterBotCommand<TDateChosenCommandProcessor, TBot>();
 }

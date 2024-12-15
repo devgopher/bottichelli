@@ -6,6 +6,7 @@
         <PackageIcon>new_logo_compact.png</PackageIcon>
         <AssemblyName>Botticelli.Scheduler.Hangfire</AssemblyName>
         <RootNamespace>Botticelli.Scheduler.Hangfire</RootNamespace>
+        <Nullable>enable</Nullable>
     </PropertyGroup>
 
     <ItemGroup>
@@ -15,9 +16,9 @@
     </ItemGroup>
 
     <ItemGroup>
-        <PackageReference Include="Hangfire" Version="1.8.12"/>
+        <PackageReference Include="Hangfire" Version="1.8.15" />
         <PackageReference Include="Hangfire.LiteDB" Version="0.4.1"/>
-        <PackageReference Include="Hangfire.MemoryStorage" Version="1.8.0"/>
+        <PackageReference Include="Hangfire.MemoryStorage" Version="1.8.1.1" />
         <ProjectReference Include="..\Botticelli.Interfaces\Botticelli.Interfaces.csproj"/>
         <ProjectReference Include="..\Botticelli.Scheduler\Botticelli.Scheduler.csproj" />
         <ProjectReference Include="..\Botticelli.Shared\Botticelli.Shared.csproj"/>

@@ -2,9 +2,9 @@
 
     <PropertyGroup>
         <TargetFramework>net8.0</TargetFramework>
-        <Nullable>disable</Nullable>
+        <Nullable>enable</Nullable>
         <ImplicitUsings>enable</ImplicitUsings>
-        <Version>0.5.0</Version>
+        <Version>0.6.0</Version>
         <Company>Botticelli</Company>
         <Copyright>Igor Evdokimov</Copyright>
         <PackageProjectUrl>https://github.com/devgopher/botticelli</PackageProjectUrl>
@@ -14,8 +14,8 @@
     </PropertyGroup>
 
     <ItemGroup>
-        <PackageReference Include="NLog.Extensions.Logging" Version="5.3.8"/>
-        <PackageReference Include="NLog.Web.AspNetCore" Version="5.3.8"/>
+        <PackageReference Include="NLog.Extensions.Logging" Version="5.3.14"/>
+        <PackageReference Include="NLog.Web.AspNetCore" Version="5.3.14"/>
     </ItemGroup>
 
     <ItemGroup>

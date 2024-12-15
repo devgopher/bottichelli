@@ -8,5 +8,5 @@ public class GetMetricsResponse
     public DateTime To { get; set; }
     public decimal Count { get; set; }
 
-    public IEnumerable<IMetricObject> Objects { get; set; }
+    public IEnumerable<IMetricObject>? Objects { get; set; }
 }

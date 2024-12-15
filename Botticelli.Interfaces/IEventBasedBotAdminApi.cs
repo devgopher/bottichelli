@@ -1,7 +1,6 @@
-﻿using Botticelli.Shared.API.Admin.Requests;
+﻿using Botticelli.Bot.Data.Entities.Bot;
+using Botticelli.Shared.API.Admin.Requests;
 using Botticelli.Shared.API.Admin.Responses;
-using Botticelli.Shared.API.Client.Requests;
-using Botticelli.Shared.API.Client.Responses;
 using Botticelli.Shared.ValueObjects;
 
 namespace Botticelli.Interfaces;
@@ -12,22 +11,10 @@ namespace Botticelli.Interfaces;
 public interface IEventBasedBotAdminApi
 {
     /// <summary>
-    ///     Ping
-    /// </summary>
-    /// <param name="request"></param>
-    /// <returns></returns>
-    public Task<PingResponse> PingAsync(PingRequest request);
-
-    ///// <summary>
-    ///// Adds event processor
-    ///// </summary>
-    ///// <param name="messageProcessor"></param>
-    //public void AddAdminEventProcessor(IAdminMessageProcessor messageProcessor);
-
-    /// <summary>
     ///     Starts serving
     /// </summary>
     /// <param name="request">Request</param>
+    /// <param name="token"></param>
     /// <returns></returns>
     public Task<StartBotResponse> StartBotAsync(StartBotRequest request, CancellationToken token);
 
@@ -35,21 +22,15 @@ public interface IEventBasedBotAdminApi
     ///     Stops serving
     /// </summary>
     /// <param name="request">Request</param>
+    /// <param name="token"></param>
     /// <returns></returns>
     public Task<StopBotResponse> StopBotAsync(StopBotRequest request, CancellationToken token);
-
-    /// <summary>
-    ///     Sets bot key/key for a messenger
-    /// </summary>
-    /// <param name="key"></param>
-    /// <returns></returns>
-    [Obsolete($"Use {nameof(SetBotContext)}")]
-    public Task SetBotKey(string key, CancellationToken token);
 
     /// <summary>
     ///     Sets bot context
     /// </summary>
     /// <param name="context"></param>
+    /// <param name="token"></param>
     /// <returns></returns>
-    public Task SetBotContext(BotContext context, CancellationToken token);
+    public Task SetBotContext(BotData? context, CancellationToken token);
 }

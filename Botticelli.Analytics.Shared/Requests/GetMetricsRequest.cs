@@ -2,8 +2,8 @@
 
 public class GetMetricsRequest
 {
-    public string BotId { get; set; }
-    public string Name { get; set; }
-    public DateTime From { get; set; }
-    public DateTime To { get; set; }
+    public required string BotId { get; init; }
+    public required string Name { get; init; }
+    public DateTime From { get; init; }
+    public DateTime To { get; init; }
 }

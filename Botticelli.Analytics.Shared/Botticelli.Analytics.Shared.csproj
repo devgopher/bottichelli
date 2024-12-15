@@ -5,7 +5,7 @@
         <ImplicitUsings>enable</ImplicitUsings>
         <Nullable>enable</Nullable>
         <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
-        <Version>0.5.0</Version>
+        <Version>0.6.0</Version>
         <PackageProjectUrl>https://botticellibots.com</PackageProjectUrl>
         <PackageIcon>new_logo_compact.png</PackageIcon>
         <RepositoryUrl>https://github.com/devgopher/botticelli</RepositoryUrl>

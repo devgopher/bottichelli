@@ -2,7 +2,7 @@
 
 public class RemoveMessageRequest : BaseRequest<RemoveMessageRequest>
 {
-    public RemoveMessageRequest(string uid, string chatId) : base(uid)
+    public RemoveMessageRequest(string? uid, string chatId) : base(uid)
     {
         ChatId = chatId;
     }

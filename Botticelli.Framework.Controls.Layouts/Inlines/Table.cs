@@ -15,7 +15,7 @@ public class Table(int cols) : ILayout
         lastRow.Items.Add(item);
     }
     
-    public void AddRow(Row row)
+    public virtual void AddRow(Row row)
     {
         Rows.Add(row);
     }

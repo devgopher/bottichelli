@@ -51,6 +51,6 @@ public static class ServiceCollectionExtensions
 
     public static IServiceProvider RegisterOsmLocationsCommands(this IServiceProvider sp,
         string url = "https://nominatim.openstreetmap.org")
-        => sp.RegisterBotCommand<FindLocationsCommand, FindLocationsCommandProcessor<VkKeyboardMarkup>, VkBot>()
-            .RegisterBotCommand<MapCommand, MapCommandProcessor<VkKeyboardMarkup>, VkBot>();
+        => sp.RegisterBotCommand<FindLocationsCommandProcessor<VkKeyboardMarkup>, VkBot>()
+            .RegisterBotCommand<MapCommandProcessor<VkKeyboardMarkup>, VkBot>();
 }

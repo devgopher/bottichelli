@@ -17,8 +17,8 @@ public static class MetricNames
     public const string UserDefined = "UserDefined";
 
 
-    public static string[] Names =
-    {
+    public static readonly string[] Names =
+    [
         MessageReceived,
         MessageSent,
         MessageRemoved,
@@ -29,5 +29,5 @@ public static class MetricNames
         CommandReceived,
         BotError,
         UserDefined
-    };
+    ];
 }

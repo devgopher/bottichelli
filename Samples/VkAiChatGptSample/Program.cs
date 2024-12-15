@@ -12,7 +12,6 @@ using Botticelli.Framework.Vk.Messages.API.Markups;
 using Botticelli.Framework.Vk.Messages.Extensions;
 using Botticelli.Framework.Vk.Messages.Options;
 using Botticelli.Interfaces;
-using Botticelli.SecureStorage.Settings;
 using NLog.Extensions.Logging;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -21,13 +20,7 @@ var settings = builder.Configuration
     .GetSection(nameof(SampleSettings))
     .Get<SampleSettings>();
 
-builder.Services.AddVkBot(builder.Configuration,
-        new BotOptionsBuilder<VkBotSettings>()
-            .Set(s => s.SecureStorageSettings = new SecureStorageSettings
-            {
-                ConnectionString = settings.SecureStorageConnectionString
-            })
-            .Set(s => s.Name = "test_bot"))
+builder.Services.AddVkBot(builder.Configuration)
     .AddLogging(cfg => cfg.AddNLog())
     .AddChatGptProvider(builder.Configuration)
     .AddScoped<ICommandValidator<AiCommand>, PassValidator<AiCommand>>()
@@ -37,6 +30,6 @@ builder.Services.AddVkBot(builder.Configuration,
     .AddBotCommand<AiCommand, AiCommandProcessor<VkKeyboardMarkup>, PassValidator<AiCommand>>();
 
 var app = builder.Build();
-app.Services.RegisterBotCommand<AiCommand, AiCommandProcessor<VkKeyboardMarkup>, VkBot>();
+app.Services.RegisterBotCommand<AiCommandProcessor<VkKeyboardMarkup>, VkBot>();
 
 app.Run();

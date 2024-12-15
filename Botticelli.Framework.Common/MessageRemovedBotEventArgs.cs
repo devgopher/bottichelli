@@ -2,5 +2,5 @@
 
 public class MessageRemovedBotEventArgs : BotEventArgs
 {
-    public string MessageUid { get; set; }
+    public required string MessageUid { get; set; }
 }

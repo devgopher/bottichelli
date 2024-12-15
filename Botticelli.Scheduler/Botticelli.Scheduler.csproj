@@ -3,8 +3,8 @@
     <PropertyGroup>
         <TargetFramework>net8.0</TargetFramework>
         <ImplicitUsings>enable</ImplicitUsings>
-        <Nullable>disable</Nullable>
-        <Version>0.5.0</Version>
+        <Nullable>enable</Nullable>
+        <Version>0.6.0</Version>
         <Title>Botticelli.Scheduler</Title>
         <Authors>BotticelliBots</Authors>
         <PackageIcon>new_logo_compact.png</PackageIcon>
@@ -18,8 +18,8 @@
 
 
     <ItemGroup>
-        <PackageReference Include="NLog" Version="5.2.8"/>
-        <PackageReference Include="Polly" Version="8.3.1"/>
+        <PackageReference Include="NLog" Version="5.3.4" />
+        <PackageReference Include="Polly" Version="8.4.2" />
     </ItemGroup>
 
     <ItemGroup>

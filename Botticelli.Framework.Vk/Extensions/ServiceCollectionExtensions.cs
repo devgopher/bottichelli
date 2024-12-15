@@ -1,104 +1,95 @@
-﻿using Botticelli.Audio;
-using Botticelli.BotBase;
-using Botticelli.BotBase.Settings;
-using Botticelli.BotBase.Utils;
-using Botticelli.Client.Analytics;
+﻿using System.Configuration;
+using Botticelli.Bot.Data.Settings;
+using Botticelli.Client.Analytics.Settings;
 using Botticelli.Framework.Controls.Parsers;
-using Botticelli.Framework.Extensions;
 using Botticelli.Framework.Options;
 using Botticelli.Framework.Vk.Messages.API.Markups;
-using Botticelli.Framework.Vk.Messages.Handlers;
+using Botticelli.Framework.Vk.Messages.Builders;
 using Botticelli.Framework.Vk.Messages.Layout;
 using Botticelli.Framework.Vk.Messages.Options;
 using Botticelli.Interfaces;
-using Botticelli.Shared.ValueObjects;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Logging;
-using Polly;
-using Polly.Extensions.Http;
 
 namespace Botticelli.Framework.Vk.Messages.Extensions;
 
 public static class ServiceCollectionExtensions
 {
+    private static readonly BotSettingsBuilder<VkBotSettings> SettingsBuilder = new();
+    private static readonly ServerSettingsBuilder<ServerSettings> ServerSettingsBuilder = new();
+    private static readonly AnalyticsClientSettingsBuilder<AnalyticsClientSettings> AnalyticsClientOptionsBuilder = new();
+    private static readonly DataAccessSettingsBuilder<DataAccessSettings> DataAccessSettingsBuilder = new();
+    
+    public static IServiceCollection AddVkBot(this IServiceCollection services, IConfiguration configuration)
+    {
+        var vkBotSettings = configuration
+                                  .GetSection(VkBotSettings.Section)
+                                  .Get<VkBotSettings>() ??
+                                  throw new ConfigurationErrorsException($"Can't load configuration for {nameof(VkBotSettings)}!");
+
+        var analyticsClientSettings = configuration
+                                      .GetSection(AnalyticsClientSettings.Section)
+                                      .Get<AnalyticsClientSettings>() ??
+                                      throw new ConfigurationErrorsException($"Can't load configuration for {nameof(AnalyticsClientSettings)}!");
+
+        var serverSettings = configuration
+                             .GetSection(ServerSettings.Section)
+                             .Get<ServerSettings>() ??
+                             throw new ConfigurationErrorsException($"Can't load configuration for {nameof(ServerSettings)}!");
+
+        var dataAccessSettings = configuration
+                                 .GetSection(DataAccessSettings.Section)
+                                 .Get<DataAccessSettings>() ??
+                                 throw new ConfigurationErrorsException($"Can't load configuration for {nameof(DataAccessSettings)}!");
+        ;
+
+        return services.AddVkBot(vkBotSettings,
+                                       analyticsClientSettings,
+                                       serverSettings,
+                                       dataAccessSettings);
+    }
+    
+    public static IServiceCollection AddVkBot(this IServiceCollection services,
+                                                    VkBotSettings botSettings,
+                                                    AnalyticsClientSettings analyticsClientSettings,
+                                                    ServerSettings serverSettings,
+                                                    DataAccessSettings dataAccessSettings) =>
+            services.AddVkBot(o => o.Set(botSettings),
+                                    o => o.Set(analyticsClientSettings),
+                                    o => o.Set(serverSettings),
+                                    o => o.Set(dataAccessSettings));
+    
     /// <summary>
     ///     Adds a Vk bot
     /// </summary>
     /// <param name="services"></param>
-    /// <param name="config"></param>
-    /// <param name="optionsBuilder"></param>
+    /// <param name="optionsBuilderFunc"></param>
+    /// <param name="analyticsOptionsBuilderFunc"></param>
+    /// <param name="serverSettingsBuilderFunc"></param>
+    /// <param name="dataAccessSettingsBuilderFunc"></param>
     /// <returns></returns>
     public static IServiceCollection AddVkBot(this IServiceCollection services,
-        IConfiguration config,
-        BotOptionsBuilder<VkBotSettings> optionsBuilder)
+                                              Action<BotSettingsBuilder<VkBotSettings>> optionsBuilderFunc,
+                                              Action<AnalyticsClientSettingsBuilder<AnalyticsClientSettings>> analyticsOptionsBuilderFunc,
+                                              Action<ServerSettingsBuilder<ServerSettings>> serverSettingsBuilderFunc,
+                                              Action<DataAccessSettingsBuilder<DataAccessSettings>> dataAccessSettingsBuilderFunc)
     {
-        var settings = optionsBuilder.Build();
-        var secureStorage = new SecureStorage.SecureStorage(settings.SecureStorageSettings);
-        var botId = BotDataUtils.GetBotId();
-        var botContext = secureStorage.GetBotContext(botId);
-
-        if (string.IsNullOrWhiteSpace(botContext?.BotId))
-        {
-            botContext = new BotContext
-            {
-                BotId = botId,
-                BotKey = string.Empty,
-                Items = new Dictionary<string, string>()
-            };
-
-            secureStorage.SetBotContext(botContext);
-        }
-
-        services.AddHttpClient<BotStatusService<VkBot>>();
-        services.AddHttpClient<BotActualizationService<VkBot>>();
+        optionsBuilderFunc(SettingsBuilder);
+        serverSettingsBuilderFunc(ServerSettingsBuilder);
+        analyticsOptionsBuilderFunc(AnalyticsClientOptionsBuilder);
+        dataAccessSettingsBuilderFunc(DataAccessSettingsBuilder);
         
-        var serverConfig = new ServerSettings();
-        config.GetSection(nameof(ServerSettings)).Bind(serverConfig);
-
-        var retryPolicy = HttpPolicyExtensions
-            .HandleTransientHttpError()
-            .WaitAndRetryForeverAsync(n => TimeSpan.FromMicroseconds(settings.PollIntervalMs));
-
-        var timeoutPolicy = Policy.TimeoutAsync<HttpResponseMessage>(120);
-
-        services.Configure<VkBotSettings>(config.GetSection(nameof(VkBotSettings)));
-
-        services.AddHttpClient<LongPollMessagesProvider>()
-            .AddPolicyHandler(retryPolicy)
-            .AddPolicyHandler(timeoutPolicy);
-
-        services.AddHttpClient<VkStorageUploader>()
-            .AddPolicyHandler(retryPolicy)
-            .AddPolicyHandler(timeoutPolicy);
-
-        services.AddHttpClient<MessagePublisher>()
-            .AddPolicyHandler(retryPolicy)
-            .AddPolicyHandler(timeoutPolicy);
-
-        services.AddSingleton(serverConfig)
-            .AddSingleton<IBotUpdateHandler, BotUpdateHandler>()
-            .AddSingleton<VkStorageUploader>()
-            .AddSingleton<LongPollMessagesProvider>()
-            .AddSingleton<MessagePublisher>()
-            .AddSingleton<IConvertor, UniversalLowQualityConvertor>()
-            .AddSingleton<IAnalyzer, InputAnalyzer>()
-            .AddSingleton(secureStorage)
-            .AddBotticelliFramework(config);
-
-        var sp = services.BuildServiceProvider();
-
-        var bot = new VkBot(sp.GetRequiredService<LongPollMessagesProvider>(),
-            sp.GetRequiredService<MessagePublisher>(),
-            secureStorage,
-            sp.GetRequiredService<VkStorageUploader>(),
-            sp.GetRequiredService<IBotUpdateHandler>(),
-            sp.GetRequiredService<MetricsProcessor>(),
-            sp.GetRequiredService<ILogger<VkBot>>());
-
+        var clientBuilder = LongPollMessagesProviderBuilder.Instance(SettingsBuilder);
+        
+        var botBuilder = VkBotBuilder.Instance(services,
+                                                     ServerSettingsBuilder,
+                                                     SettingsBuilder, 
+                                                     DataAccessSettingsBuilder,
+                                                     AnalyticsClientOptionsBuilder)
+                                           .AddClient(clientBuilder);
+        var bot = botBuilder.Build();
         return services.AddSingleton<IBot<VkBot>>(bot)
-            .AddHostedService<BotStatusService<IBot<VkBot>>>()
-            .AddHostedService<BotKeepAliveService<IBot<VkBot>>>();
+                       .AddSingleton<IBot>(bot);
     }
     public static IServiceCollection AddVkLayoutsSupport(this IServiceCollection services) =>
             services.AddScoped<ILayoutParser, JsonLayoutParser>()

@@ -4,7 +4,7 @@ namespace Botticelli.Shared.API.Client.Requests;
 
 public class PingRequest : BaseRequest<PingRequest>
 {
-    protected PingRequest(string uid) : base(uid)
+    protected PingRequest(string? uid) : base(uid)
     {
     }
 

@@ -8,15 +8,15 @@ public class BotContext
     ///     Botticelli bot id
     /// </summary>
     [BsonId]
-    public string BotId { get; set; }
+    public required string BotId { get; set; }
 
     /// <summary>
     ///     Bot key in a messenger
     /// </summary>
-    public string BotKey { get; set; }
+    public required string BotKey { get; set; }
 
     /// <summary>
     ///     Additional info
     /// </summary>
-    public Dictionary<string, string> Items { get; set; }
+    public Dictionary<string, string>? Items { get; set; }
 }

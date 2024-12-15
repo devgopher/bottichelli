@@ -7,12 +7,12 @@ namespace Botticelli.Client.Analytics;
 
 public class MetricsPublisher
 {
-    private readonly AnalyticsSettings _settings;
+    private readonly AnalyticsClientSettings _clientSettings;
 
-    public MetricsPublisher(AnalyticsSettings settings) => _settings = settings;
+    public MetricsPublisher(AnalyticsClientSettings clientSettings) => _clientSettings = clientSettings;
 
     public async Task Publish(IMetricObject metric, CancellationToken token)
-        => await Url.Combine(_settings.TargetUrl, "/metrics/receiver/ReceiveMetric")
+        => await Url.Combine(_clientSettings.TargetUrl, "/metrics/receiver/ReceiveMetric")
             .SetQueryParams(metric)
             .SendAsync(HttpMethod.Get, cancellationToken: token); // polly!
 }

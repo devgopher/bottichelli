@@ -10,7 +10,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace Botticelli.Server.Data.Migrations
 {
-    [DbContext(typeof(BotInfoContext))]
+    [DbContext(typeof(ServerDataContext))]
     [Migration("20230311100413_auth")]
     partial class auth
     {

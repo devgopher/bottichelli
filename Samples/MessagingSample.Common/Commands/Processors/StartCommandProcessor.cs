@@ -9,8 +9,8 @@ using Botticelli.Scheduler.Interfaces;
 using Botticelli.Shared.API.Client.Requests;
 using Botticelli.Shared.Constants;
 using Botticelli.Shared.ValueObjects;
+using FluentValidation;
 using Microsoft.Extensions.Logging;
-using Telegram.Bot.Types.ReplyMarkups;
 
 namespace MessagingSample.Common.Commands.Processors;
 
@@ -18,33 +18,34 @@ public class StartCommandProcessor<TReplyMarkup> : CommandProcessor<StartCommand
 {
     private readonly IJobManager _jobManager;
     private readonly SendOptionsBuilder<TReplyMarkup> _options;
-    
+
     public StartCommandProcessor(ILogger<StartCommandProcessor<TReplyMarkup>> logger,
-                                 ICommandValidator<StartCommand> validator,
-                                 MetricsProcessor metricsProcessor,
-                                 IJobManager jobManager,
-                                 ILayoutSupplier<TReplyMarkup> layoutSupplier,
-                                 ILayoutParser layoutParser)
-        : base(logger, validator, metricsProcessor)
+        ICommandValidator<StartCommand> commandValidator,
+        MetricsProcessor metricsProcessor,
+        IJobManager jobManager,
+        ILayoutSupplier<TReplyMarkup> layoutSupplier,
+        ILayoutParser layoutParser,
+        IValidator<Message> messageValidator)
+        : base(logger, commandValidator, metricsProcessor, messageValidator)
     {
         _jobManager = jobManager;
 
         var location = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location) ?? string.Empty;
         var responseLayout = layoutParser.ParseFromFile(Path.Combine(location, "main_layout.json"));
         var responseMarkup = layoutSupplier.GetMarkup(responseLayout);
-        
+
         _options = SendOptionsBuilder<TReplyMarkup>.CreateBuilder(responseMarkup);
     }
 
-    protected override Task InnerProcessContact(Message message, string argsString, CancellationToken token) => Task.CompletedTask;
+    protected override Task InnerProcessContact(Message message, CancellationToken token) => Task.CompletedTask;
 
-    protected override Task InnerProcessPoll(Message message, string argsString, CancellationToken token) => Task.CompletedTask;
+    protected override Task InnerProcessPoll(Message message, CancellationToken token) => Task.CompletedTask;
 
-    protected override Task InnerProcessLocation(Message message, string argsString, CancellationToken token) => Task.CompletedTask;
+    protected override Task InnerProcessLocation(Message message, CancellationToken token) => Task.CompletedTask;
 
-    protected override async Task InnerProcess(Message message, string args, CancellationToken token)
+    protected override async Task InnerProcess(Message message, CancellationToken token)
     {
-        var chatId = message.ChatIds.FirstOrDefault();
+        var chatId = message.ChatIds.First();
         var greetingMessageRequest = new SendMessageRequest
         {
             Message = new Message
@@ -57,7 +58,7 @@ public class StartCommandProcessor<TReplyMarkup> : CommandProcessor<StartCommand
 
         await Bot.SendMessageAsync(greetingMessageRequest, _options, token);
 
-        var assemblyPath = Path.GetDirectoryName(typeof(StartCommandProcessor<TReplyMarkup>).Assembly.Location);
+        var assemblyPath = Path.GetDirectoryName(typeof(StartCommandProcessor<TReplyMarkup>).Assembly.Location) ?? throw new FileNotFoundException();
         _jobManager.AddJob(Bot,
             new Reliability
             {
@@ -79,11 +80,11 @@ public class StartCommandProcessor<TReplyMarkup> : CommandProcessor<StartCommand
                 Poll = new Poll
                 {
                     Question = "To be or not to be?",
-                    Variants = new []
-                    {
+                    Variants =
+                    [
                         "To be!",
                         "Not to be!"
-                    },
+                    ],
                     CorrectAnswerId = 0,
                     IsAnonymous = false,
                     Type = Poll.PollType.Quiz

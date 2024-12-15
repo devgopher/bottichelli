@@ -9,9 +9,8 @@ public class InvoiceBaseAttachment : BaseAttachment
         string description,
         string startParameter,
         string currency,
-        int totalAmount)
+        int totalAmount) : base(uid)
     {
-        Uid = uid;
         Name = name;
         Url = url;
         Title = title;
@@ -49,17 +48,12 @@ public class InvoiceBaseAttachment : BaseAttachment
     public decimal TotalAmount { get; set; }
 
     /// <summary>
-    ///     Id of an attachment
-    /// </summary>
-    public override string Uid { get; }
-
-    /// <summary>
     ///     Attachment name
     /// </summary>
-    public override string Name { get; }
+    public virtual string Name { get; }
 
     /// <summary>
     ///     Attachment owner id
     /// </summary>
-    public override string OwnerId { get; }
+    public virtual string OwnerId { get; }
 }

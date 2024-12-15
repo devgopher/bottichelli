@@ -6,6 +6,7 @@ using Botticelli.Framework.Controls.Parsers;
 using Botticelli.Framework.SendOptions;
 using Botticelli.Shared.API.Client.Requests;
 using Botticelli.Shared.ValueObjects;
+using FluentValidation;
 using Microsoft.Extensions.Logging;
 
 namespace MessagingSample.Common.Commands.Processors;
@@ -15,10 +16,12 @@ public class InfoCommandProcessor<TReplyMarkup> : CommandProcessor<InfoCommand> 
     private readonly SendOptionsBuilder<TReplyMarkup> _options;
     
     public InfoCommandProcessor(ILogger<InfoCommandProcessor<TReplyMarkup>> logger, 
-        ICommandValidator<InfoCommand> validator, 
+        ICommandValidator<InfoCommand> commandValidator, 
         MetricsProcessor metricsProcessor,
         ILayoutSupplier<TReplyMarkup> layoutSupplier,
-        ILayoutParser layoutParser) : base(logger, validator, metricsProcessor)
+        ILayoutParser layoutParser,
+        IValidator<Message> messageValidator) 
+        : base(logger, commandValidator, metricsProcessor, messageValidator)
     {
         var location = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location) ?? string.Empty;
         var responseLayout = layoutParser.ParseFromFile(Path.Combine(location, "main_layout.json"));
@@ -27,15 +30,14 @@ public class InfoCommandProcessor<TReplyMarkup> : CommandProcessor<InfoCommand> 
         _options = SendOptionsBuilder<TReplyMarkup>.CreateBuilder(responseMarkup);
     }
 
-    protected override Task InnerProcessContact(Message message, string args, CancellationToken token) => throw new NotImplementedException();
+    protected override Task InnerProcessContact(Message message, CancellationToken token) => Task.CompletedTask;
 
-    protected override Task InnerProcessPoll(Message message, string args, CancellationToken token) => throw new NotImplementedException();
+    protected override Task InnerProcessPoll(Message message, CancellationToken token) => Task.CompletedTask;
 
-    protected override Task InnerProcessLocation(Message message, string args, CancellationToken token) => throw new NotImplementedException();
+    protected override Task InnerProcessLocation(Message message, CancellationToken token) => Task.CompletedTask;
 
-    protected override async Task InnerProcess(Message message, string args, CancellationToken token)
+    protected override async Task InnerProcess(Message message, CancellationToken token)
     {
-        var chatId = message.ChatIds.FirstOrDefault();
         var greetingMessageRequest = new SendMessageRequest
         {
             Message = new Message
@@ -46,6 +48,6 @@ public class InfoCommandProcessor<TReplyMarkup> : CommandProcessor<InfoCommand> 
             }
         };
 
-        await Bot.SendMessageAsync(greetingMessageRequest, _options, token);
+        await Bot?.SendMessageAsync(greetingMessageRequest, _options, token)!; // TODO: think about Bot mocks
     }
 }

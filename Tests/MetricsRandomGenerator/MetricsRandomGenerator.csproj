@@ -8,6 +8,7 @@
 
     <ItemGroup>
         <ProjectReference Include="..\..\Botticelli.Client.Analytics\Botticelli.Client.Analytics.csproj" />
+        <ProjectReference Include="..\..\Botticelli.Server.Analytics\Botticelli.Server.Analytics.csproj" />
     </ItemGroup>
 
 </Project>

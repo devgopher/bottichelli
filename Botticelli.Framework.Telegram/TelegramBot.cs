@@ -1,8 +1,12 @@
 ﻿using System.Text;
-using Botticelli.BotBase.Utils;
+using Botticelli.Bot.Data.Entities.Bot;
+using Botticelli.Bot.Data.Repositories;
+using Botticelli.Bot.Utils;
+using Botticelli.Bot.Utils.TextUtils;
 using Botticelli.Client.Analytics;
 using Botticelli.Framework.Events;
 using Botticelli.Framework.Exceptions;
+using Botticelli.Framework.Global;
 using Botticelli.Framework.Telegram.Handlers;
 using Botticelli.Interfaces;
 using Botticelli.Shared.API;
@@ -13,7 +17,6 @@ using Botticelli.Shared.API.Client.Responses;
 using Botticelli.Shared.Constants;
 using Botticelli.Shared.Utils;
 using Botticelli.Shared.ValueObjects;
-using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Extensions.Logging;
 using Telegram.Bot;
 using Telegram.Bot.Types;
@@ -25,35 +28,33 @@ using Poll = Botticelli.Shared.ValueObjects.Poll;
 
 namespace Botticelli.Framework.Telegram;
 
-public class TelegramBot : BaseBot<TelegramBot>
+public sealed class TelegramBot : BaseBot<TelegramBot>
 {
     private readonly IBotUpdateHandler _handler;
-
-    private readonly SecureStorage.SecureStorage _secureStorage;
-
-    // private static readonly IMemoryCache Cache;
+    private readonly ITextTransformer _textTransformer;
+    private readonly IBotDataAccess _data;
     private ITelegramBotClient _client;
 
     public TelegramBot(ITelegramBotClient client,
         IBotUpdateHandler handler,
         ILogger<TelegramBot> logger,
         MetricsProcessor metrics,
-        SecureStorage.SecureStorage secureStorage) : base(logger, metrics)
+        ITextTransformer textTransformer,
+        IBotDataAccess data) : base(logger, metrics)
     {
         BotStatusKeeper.IsStarted = false;
         _client = client;
         _handler = handler;
-        _secureStorage = secureStorage;
-
-        // Migration to a bot context instead of simple bot key
-        _secureStorage.MigrateToBotContext(BotDataUtils.GetBotId());
+        _textTransformer = textTransformer;
+        _data = data;
+        BotUserId = _client.BotId.ToString();
     }
 
     public override BotType Type => BotType.Telegram;
-    public override event MsgSentEventHandler MessageSent;
-    public override event MsgReceivedEventHandler MessageReceived;
-    public override event MsgRemovedEventHandler MessageRemoved;
-    public override event MessengerSpecificEventHandler MessengerSpecificEvent;
+    public override event MsgSentEventHandler? MessageSent;
+    public override event MsgReceivedEventHandler? MessageReceived;
+    public override event MsgRemovedEventHandler? MessageRemoved;
+    public event MessengerSpecificEventHandler? MessengerSpecificEvent;
 
     /// <summary>
     ///     Deletes a message
@@ -65,6 +66,10 @@ public class TelegramBot : BaseBot<TelegramBot>
     protected override async Task<RemoveMessageResponse> InnerDeleteMessageAsync(RemoveMessageRequest request,
                                                                                  CancellationToken token)
     {
+        request.NotNull();
+        request.Uid.NotNull();
+        request.ChatId.NotNull();
+        
         if (!BotStatusKeeper.IsStarted)
         {
             Logger.LogInformation("Bot wasn't started!");
@@ -118,6 +123,9 @@ public class TelegramBot : BaseBot<TelegramBot>
                                                                                            bool isUpdate,
                                                                                            CancellationToken token)
     {
+        request.NotNull();
+        request.Message.NotNull();
+        
         if (!BotStatusKeeper.IsStarted)
         {
             Logger.LogInformation("Bot wasn't started!");
@@ -130,7 +138,7 @@ public class TelegramBot : BaseBot<TelegramBot>
 
         SendMessageResponse response = new(request.Uid, string.Empty);
 
-        IReplyMarkup replyMarkup;
+        IReplyMarkup? replyMarkup;
 
         if (optionsBuilder == default)
             replyMarkup = null;
@@ -144,7 +152,7 @@ public class TelegramBot : BaseBot<TelegramBot>
             if (request?.Message == default) throw new BotException("request/message is null!");
 
             var text = new StringBuilder($"{request.Message.Subject} {request.Message.Body}");
-            var retText = Escape(text).ToString();
+            var retText = _textTransformer.Escape(text).ToString();
             List<(string chatId, string innerId)> pairs = [];
 
             foreach (var link in request.Message.ChatIdInnerIdLinks)
@@ -158,7 +166,7 @@ public class TelegramBot : BaseBot<TelegramBot>
             for (var i = 0; i < pairs.Count; i++)
             {
                 var link = pairs[i];
-                Message message = null;
+                Message? message = null;
 
                 if (!string.IsNullOrWhiteSpace(retText))
                 {
@@ -178,131 +186,152 @@ public class TelegramBot : BaseBot<TelegramBot>
                         if (!isUpdate)
                         {
                             var sentMessage = await _client.SendTextMessageAsync(link.chatId,
-                                                                                 sendText,
-                                                                                 parseMode: ParseMode.MarkdownV2,
-                                                                                 replyToMessageId: request.Message.ReplyToMessageUid != default ?
-                                                                                         int.Parse(request.Message.ReplyToMessageUid) :
-                                                                                         default,
-                                                                                 replyMarkup: replyMarkup,
-                                                                                 cancellationToken: token);
+                                sendText,
+                                parseMode: ParseMode.MarkdownV2,
+                                replyToMessageId: request.Message?.ReplyToMessageUid != default
+                                    ? int.Parse(request.Message.ReplyToMessageUid)
+                                    : default,
+                                replyMarkup: replyMarkup,
+                                cancellationToken: token);
 
                             link.innerId = sentMessage.MessageId.ToString();
                         }
-                        else 
+                        else
+                        {
                             await _client.EditMessageTextAsync(chatId: link.chatId,
-                                                               messageId: int.Parse(link.innerId),
-                                                               sendText,
-                                                               parseMode: ParseMode.MarkdownV2,
-                                                               replyMarkup: replyMarkup as InlineKeyboardMarkup,
-                                                               cancellationToken: token);
+                                messageId: int.Parse(link.innerId),
+                                sendText,
+                                parseMode: ParseMode.MarkdownV2,
+                                replyMarkup: replyMarkup as InlineKeyboardMarkup,
+                                cancellationToken: token);
+                        }
                     }
                 }
 
                 if (request.Message?.Poll != default)
                 {
+                    request.Message.Poll.Question.NotNull();
+                    request.Message.Poll.Variants.NotNull();
+                    
                     var type = request.Message.Poll?.Type switch
                     {
-                        Poll.PollType.Quiz    => PollType.Quiz,
+                        Poll.PollType.Quiz => PollType.Quiz,
                         Poll.PollType.Regular => PollType.Regular,
-                        _                     => throw new ArgumentOutOfRangeException()
+                        _ => throw new ArgumentOutOfRangeException()
                     };
 
                     message = await _client.SendPollAsync(link.chatId,
-                                                          request.Message.Poll?.Question,
-                                                          request.Message.Poll?.Variants,
-                                                          isAnonymous: request.Message.Poll?.IsAnonymous,
-                                                          type: type,
-                                                          correctOptionId: request.Message.Poll?.CorrectAnswerId,
-                                                          replyToMessageId: request.Message.ReplyToMessageUid != default ? int.Parse(request.Message.ReplyToMessageUid) : default,
-                                                          replyMarkup: replyMarkup,
-                                                          cancellationToken: token);
+                        request.Message.Poll.Question,
+                        request.Message.Poll.Variants,
+                        isAnonymous: request.Message.Poll.IsAnonymous,
+                        type: type,
+                        correctOptionId: request.Message.Poll?.CorrectAnswerId,
+                        replyToMessageId: request.Message.ReplyToMessageUid != default
+                            ? int.Parse(request.Message.ReplyToMessageUid)
+                            : default,
+                        replyMarkup: replyMarkup,
+                        cancellationToken: token);
                     AddChatIdInnerIdLink(response, link.chatId, message);
                 }
 
-                if (request.Message?.Contact != default)
+                if (request.Message.Contact != default)
                     await SendContact(request,
-                                      response,
-                                      token,
-                                      replyMarkup);
+                        response,
+                        token,
+                        replyMarkup);
 
-                if (request.Message?.Attachments == null) continue;
+                if (request.Message.Attachments == null) continue;
 
                 foreach (var attachment in request.Message
-                                                  .Attachments
-                                                  .Where(a => a is BinaryBaseAttachment)
-                                                  .Cast<BinaryBaseAttachment>())
+                             .Attachments
+                             .Where(a => a is BinaryBaseAttachment)
+                             .Cast<BinaryBaseAttachment>())
                 {
                     switch (attachment.MediaType)
                     {
                         case MediaType.Audio:
                             var audio = new InputFileStream(attachment.Data.ToStream(), attachment.Name);
                             message = await _client.SendAudioAsync(link.chatId,
-                                                                   audio,
-                                                                   caption: request.Message.Subject,
-                                                                   parseMode: ParseMode.MarkdownV2,
-                                                                   replyToMessageId: request.Message.ReplyToMessageUid != default ? int.Parse(request.Message.ReplyToMessageUid) : default,
-                                                                   replyMarkup: replyMarkup,
-                                                                   cancellationToken: token);
+                                audio,
+                                caption: request.Message.Subject,
+                                parseMode: ParseMode.MarkdownV2,
+                                replyToMessageId: request.Message.ReplyToMessageUid != default
+                                    ? int.Parse(request.Message.ReplyToMessageUid)
+                                    : default,
+                                replyMarkup: replyMarkup,
+                                cancellationToken: token);
                             AddChatIdInnerIdLink(response, link.chatId, message);
 
                             break;
                         case MediaType.Video:
                             var video = new InputFileStream(attachment.Data.ToStream(), attachment.Name);
                             message = await _client.SendVideoAsync(link.chatId,
-                                                                   video,
-                                                                   replyToMessageId: request.Message.ReplyToMessageUid != default ? int.Parse(request.Message.ReplyToMessageUid) : default,
-                                                                   replyMarkup: replyMarkup,
-                                                                   cancellationToken: token);
+                                video,
+                                replyToMessageId: request.Message.ReplyToMessageUid != default
+                                    ? int.Parse(request.Message.ReplyToMessageUid)
+                                    : default,
+                                replyMarkup: replyMarkup,
+                                cancellationToken: token);
                             AddChatIdInnerIdLink(response, link.chatId, message);
 
                             break;
                         case MediaType.Image:
                             var image = new InputFileStream(attachment.Data.ToStream(), attachment.Name);
                             message = await _client.SendPhotoAsync(link.chatId,
-                                                                   image,
-                                                                   replyToMessageId: request.Message.ReplyToMessageUid != default ? int.Parse(request.Message.ReplyToMessageUid) : default,
-                                                                   replyMarkup: replyMarkup,
-                                                                   cancellationToken: token);
+                                image,
+                                replyToMessageId: request.Message.ReplyToMessageUid != default
+                                    ? int.Parse(request.Message.ReplyToMessageUid)
+                                    : default,
+                                replyMarkup: replyMarkup,
+                                cancellationToken: token);
                             AddChatIdInnerIdLink(response, link.chatId, message);
 
                             break;
                         case MediaType.Voice:
                             var voice = new InputFileStream(attachment.Data.ToStream(), attachment.Name);
                             message = await _client.SendVoiceAsync(link.chatId,
-                                                                   voice,
-                                                                   caption: request.Message.Subject,
-                                                                   parseMode: ParseMode.MarkdownV2,
-                                                                   replyToMessageId: request.Message.ReplyToMessageUid != default ? int.Parse(request.Message.ReplyToMessageUid) : default,
-                                                                   replyMarkup: replyMarkup,
-                                                                   cancellationToken: token);
+                                voice,
+                                caption: request.Message.Subject,
+                                parseMode: ParseMode.MarkdownV2,
+                                replyToMessageId: request.Message.ReplyToMessageUid != default
+                                    ? int.Parse(request.Message.ReplyToMessageUid)
+                                    : default,
+                                replyMarkup: replyMarkup,
+                                cancellationToken: token);
                             AddChatIdInnerIdLink(response, link.chatId, message);
 
                             break;
                         case MediaType.Sticker:
-                            InputFile sticker = string.IsNullOrWhiteSpace(attachment.Url) ? new InputFileStream(attachment.Data.ToStream(), attachment.Name) : new InputFileUrl(attachment.Url);
+                            InputFile sticker = string.IsNullOrWhiteSpace(attachment.Url)
+                                ? new InputFileStream(attachment.Data.ToStream(), attachment.Name)
+                                : new InputFileUrl(attachment.Url);
 
                             message = await _client.SendStickerAsync(link.chatId,
-                                                                     sticker,
-                                                                     replyToMessageId: request.Message.ReplyToMessageUid != default ? int.Parse(request.Message.ReplyToMessageUid) : default,
-                                                                     replyMarkup: replyMarkup,
-                                                                     cancellationToken: token);
+                                sticker,
+                                replyToMessageId: request.Message.ReplyToMessageUid != default
+                                    ? int.Parse(request.Message.ReplyToMessageUid)
+                                    : default,
+                                replyMarkup: replyMarkup,
+                                cancellationToken: token);
                             AddChatIdInnerIdLink(response, link.chatId, message);
 
                             break;
                         case MediaType.Contact:
                             await SendContact(request,
-                                              response,
-                                              token,
-                                              replyMarkup);
+                                response,
+                                token,
+                                replyMarkup);
 
                             break;
                         case MediaType.Document:
                             var doc = new InputFileStream(attachment.Data.ToStream(), attachment.Name);
                             message = await _client.SendDocumentAsync(link.chatId,
-                                                                      doc,
-                                                                      replyToMessageId: request.Message.ReplyToMessageUid != default ? int.Parse(request.Message.ReplyToMessageUid) : default,
-                                                                      replyMarkup: replyMarkup,
-                                                                      cancellationToken: token);
+                                doc,
+                                replyToMessageId: request.Message.ReplyToMessageUid != default
+                                    ? int.Parse(request.Message.ReplyToMessageUid)
+                                    : default,
+                                replyMarkup: replyMarkup,
+                                cancellationToken: token);
                             AddChatIdInnerIdLink(response, link.chatId, message);
 
                             break;
@@ -315,11 +344,13 @@ public class TelegramBot : BaseBot<TelegramBot>
                     }
                 }
 
+                message.NotNull();
                 AddChatIdInnerIdLink(response, link.chatId, message);
             }
 
             response.MessageSentStatus = MessageSentStatus.Ok;
-
+            request.Message.NotNull();
+            
             var eventArgs = new MessageSentBotEventArgs
             {
                 Message = request.Message
@@ -347,17 +378,22 @@ public class TelegramBot : BaseBot<TelegramBot>
     private async Task SendContact(SendMessageRequest request,
         SendMessageResponse response,
         CancellationToken token,
-        IReplyMarkup replyMarkup)
+        IReplyMarkup? replyMarkup)
     {
-        foreach (var chatId in request.Message?.ChatIds)
+        request.Message.NotNull();
+        request.Message.Contact.NotNull();
+        request.Message.Contact.Phone.NotNull();
+        request.Message.Contact.Name.NotNull();
+        
+        foreach (var chatId in request.Message.ChatIds.EmptyIfNull())
         {
             try
             {
                 var message = await _client.SendContactAsync(chatId,
-                                                             request.Message.Contact?.Phone,
-                                                             request.Message?.Contact?.Name,
+                                                             request.Message.Contact!.Phone,
+                                                             request.Message.Contact.Name,
                                                              lastName: request.Message?.Contact?.Surname,
-                                                             replyToMessageId: request.Message.ReplyToMessageUid != default ? int.Parse(request.Message.ReplyToMessageUid) : default,
+                                                             replyToMessageId: request.Message!.ReplyToMessageUid != default ? int.Parse(request.Message.ReplyToMessageUid) : default,
                                                              replyMarkup: replyMarkup,
                                                              cancellationToken: token);
 
@@ -369,33 +405,6 @@ public class TelegramBot : BaseBot<TelegramBot>
             }
         }
     }
-
-    /// <summary>
-    ///     Autoescape for special symbols
-    /// </summary>
-    /// <param name="text"></param>
-    /// <returns></returns>
-    private static StringBuilder Escape(StringBuilder text) =>
-        text.Replace("!", @"\!")
-            .Replace("*", @"\*")
-            .Replace("'", @"\'")
-            .Replace(".", @"\.")
-            .Replace("+", @"\+")
-            .Replace("~", @"\~")
-            .Replace("@", @"\@")
-            .Replace("_", @"\_")
-            .Replace("(", @"\(")
-            .Replace(")", @"\)")
-            .Replace("-", @"\-")
-            .Replace("`", @"\`")
-            .Replace("=", @"\=")
-            .Replace(">", @"\>")
-            .Replace("<", @"\<")
-            .Replace("{", @"\{")
-            .Replace("}", @"\}")
-            .Replace("[", @"\[")
-            .Replace("]", @"\]")
-            .Replace("#", @"\#");
 
     /// <summary>
     ///     Starts a bot
@@ -470,23 +479,7 @@ public class TelegramBot : BaseBot<TelegramBot>
 
         return StopBotResponse.GetInstance(AdminCommandStatus.Fail, "error");
     }
-
-    [Obsolete($"Use {nameof(SetBotContext)}")]
-    public override async Task SetBotKey(string key, CancellationToken token)
-    {
-        var currentKey = _secureStorage.GetBotKey(BotDataUtils.GetBotId());
-
-        if (currentKey?.Key != key)
-        {
-            await StopBot(token);
-
-            _secureStorage.SetBotKey(currentKey?.Id, key);
-            RecreateClient(key);
-
-            await StartBot(token);
-        }
-    }
-
+    
     private void RecreateClient(string key) => _client = new TelegramBotClient(key);
 
     private async Task StartBot(CancellationToken token)
@@ -501,21 +494,28 @@ public class TelegramBot : BaseBot<TelegramBot>
         await StopBotAsync(stopRequest, token);
     }
 
-    public override async Task SetBotContext(BotContext context, CancellationToken token)
+    public override async Task SetBotContext(BotData? context, CancellationToken token)
     {
         if (context == default) return;
 
-        var currentContext = _secureStorage.GetBotContext(BotDataUtils.GetBotId());
+        var currentContext = _data.GetData();
 
         if (currentContext?.BotKey != context.BotKey)
         {
             await StopBot(token);
 
-            _secureStorage.SetBotContext(context);
+            _data.SetData(context);
             RecreateClient(context.BotKey);
 
-
             await StartBot(token);
+        } else if (currentContext != null)
+        {
+            if (_client.BotId is null)
+            {
+                await StopBot(token);
+                RecreateClient(context.BotKey);
+                await StartBot(token);
+            }
         }
     }
 }

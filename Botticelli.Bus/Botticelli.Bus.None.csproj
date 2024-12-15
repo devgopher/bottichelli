@@ -3,8 +3,8 @@
     <PropertyGroup>
         <TargetFramework>net8.0</TargetFramework>
         <ImplicitUsings>enable</ImplicitUsings>
-        <Nullable>disable</Nullable>
-        <Version>0.5.0</Version>
+        <Nullable>enable</Nullable>
+        <Version>0.6.0</Version>
         <Company>Botticelli</Company>
         <Copyright>BotticelliBots</Copyright>
         <PackageProjectUrl>https://botticellibots.com</PackageProjectUrl>
@@ -17,8 +17,8 @@
         <PackageTags>telegram, bots, botticelli, vk, facebook, wechat, whatsapp</PackageTags>
     </PropertyGroup>
     <ItemGroup>
-        <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="8.0.1"/>
-        <PackageReference Include="Microsoft.Extensions.Hosting.Abstractions" Version="8.0.0"/>
+        <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="8.0.2" />
+        <PackageReference Include="Microsoft.Extensions.Hosting.Abstractions" Version="8.0.1" />
     </ItemGroup>
     <ItemGroup>
         <None Include="..\logo.jpg">

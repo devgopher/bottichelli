@@ -1,3 +1,4 @@
+# This is a sample script
 function check_and_setup()
 {
   read -p "Enter $1 $2: " $1

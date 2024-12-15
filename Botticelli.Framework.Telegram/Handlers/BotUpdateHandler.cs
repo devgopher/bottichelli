@@ -1,4 +1,6 @@
 ﻿using Botticelli.Framework.Commands.Processors;
+using Botticelli.Framework.Events;
+using Botticelli.Shared.Utils;
 using Botticelli.Shared.ValueObjects;
 using Microsoft.Extensions.Logging;
 using Telegram.Bot;
@@ -42,13 +44,32 @@ public class BotUpdateHandler : IBotUpdateHandler
             if (botMessage == null)
             {
                 if (update.CallbackQuery != null)
+                {
+                    update.CallbackQuery.Message.NotNull();
+                    update.CallbackQuery.Message.Chat.NotNull();
+                    botMessage = update.CallbackQuery?.Message;
+                    botMessage.NotNull();
+                    
                     botticelliMessage = new Message()
                     {
                         ChatIdInnerIdLinks = new Dictionary<string, List<string>>
-                                {{update.CallbackQuery?.Message.Chat?.Id.ToString(), [update.CallbackQuery.Message?.MessageId.ToString()]}},
-                        ChatIds = [update.CallbackQuery?.Message.Chat?.Id.ToString()],
-                        CallbackData = update.CallbackQuery?.Data ?? string.Empty
+                                {{update.CallbackQuery?.Message.Chat.Id.ToString() ?? string.Empty,
+                                    [update.CallbackQuery?.Message?.MessageId.ToString() ?? string.Empty]}},
+                        ChatIds = [update.CallbackQuery?.Message?.Chat?.Id.ToString() ?? string.Empty],
+                        CallbackData = update.CallbackQuery?.Data ?? string.Empty,
+                        CreatedAt = update.Message?.Date ?? DateTime.Now,
+                        LastModifiedAt = update.Message?.Date ?? DateTime.Now,
+                        From = new User
+                        {
+                            Id = botMessage.From?.Id.ToString(),
+                            Name = botMessage.From?.FirstName,
+                            Surname = botMessage.From?.LastName,
+                            Info = string.Empty,
+                            IsBot = botMessage.From?.IsBot,
+                            NickName = botMessage.From?.Username
+                        },
                     };
+                }
                 else
                     return;
             }
@@ -61,7 +82,9 @@ public class BotUpdateHandler : IBotUpdateHandler
                     ChatIds = [botMessage.Chat.Id.ToString()],
                     Subject = string.Empty,
                     Body = botMessage?.Text ?? string.Empty,
+                    LastModifiedAt = botMessage.Date,
                     Attachments = new List<BaseAttachment>(5),
+                    CreatedAt = botMessage.Date,
                     From = new User
                     {
                         Id = botMessage.From?.Id.ToString(),
@@ -92,6 +115,11 @@ public class BotUpdateHandler : IBotUpdateHandler
 
             await Process(botticelliMessage, cancellationToken);
 
+            MessageReceived?.Invoke(this, new MessageReceivedBotEventArgs
+            {
+                Message = botticelliMessage
+            });
+            
             _logger.LogDebug($"{nameof(HandleUpdateAsync)}() finished...");
         }
         catch (Exception ex)
@@ -107,20 +135,25 @@ public class BotUpdateHandler : IBotUpdateHandler
     /// </summary>
     /// <param name="request"></param>
     /// <param name="token"></param>
-    protected Task Process(Message request, CancellationToken token)
+    protected async Task Process(Message request, CancellationToken token)
     {
         _logger.LogDebug($"{nameof(Process)}({request.Uid}) started...");
 
         if (token is { CanBeCanceled: true, IsCancellationRequested: true })
-            return Task.CompletedTask;
+            return;
         
-        var clientTasks = _processorFactory
-            .GetProcessors()
-            .Select(p => p.ProcessAsync(request, token));
+        var clientNonChainedTasks = _processorFactory
+                                    .GetProcessors(excludeChain: true)
+                                    .Select(p => p.ProcessAsync(request, token));
 
-        Parallel.ForEachAsync(clientTasks, token, async (t, ct) => await t.WaitAsync(ct));
+        var clientChainedTasks = _processorFactory
+                                 .GetCommandChainProcessors()
+                                 .Select(p => p.ProcessAsync(request, token));
+
+        var clientTasks = clientNonChainedTasks.Concat(clientChainedTasks).ToArray();
+        
+        await Parallel.ForEachAsync(clientTasks, token, async (t, ct) => await t.WaitAsync(ct));
         
         _logger.LogDebug($"{nameof(Process)}({request.Uid}) finished...");
-        return Task.CompletedTask;
     }
 }

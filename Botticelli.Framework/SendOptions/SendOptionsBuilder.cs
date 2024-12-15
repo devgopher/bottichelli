@@ -10,15 +10,15 @@ namespace Botticelli.Framework.SendOptions;
 /// <typeparam name="T"></typeparam>
 public class SendOptionsBuilder<T> : ISendOptionsBuilder<T> where T : class
 {
-    private T _innerObject;
+    private T? _innerObject;
 
-    protected SendOptionsBuilder()
+    private SendOptionsBuilder()
     {
     }
 
-    protected SendOptionsBuilder(T innerObject) => _innerObject = innerObject;
+    private SendOptionsBuilder(T? innerObject) => _innerObject = innerObject;
 
-    public ISendOptionsBuilder<T> Create(params object[] args)
+    public ISendOptionsBuilder<T> Create(params object[]? args)
     {
         if (_innerObject != default) throw new BotException($"You shouldn't use {nameof(Create)}() method twice!");
 
@@ -28,31 +28,29 @@ public class SendOptionsBuilder<T> : ISendOptionsBuilder<T> where T : class
             .ToArray();
 
         // no params? ok => let's seek a parameterless constructor!
-        if ((args == null || !args.Any()) && constructors.Any(c => !c.GetParameters().Any()))
-        {
-            _innerObject = Activator.CreateInstance<T>();
-
+        if ((args != null && args.Length != 0) || constructors.All(c => c.GetParameters().Length != 0)) 
             return this;
-        }
-
-        // Let's see if we can process parameter set and put it to a constructor|initializer
-        foreach (var c in constructors)
-        {
-            // c.CallingConvention = 
-        }
-
+        
+        _innerObject = Activator.CreateInstance<T>();
 
         return this;
+
+        // // Let's see if we can process parameter set and put it to a constructor|initializer
+        // foreach (var c in constructors)
+        // {
+        //     // c.CallingConvention = 
+        // }
+
     }
 
-    public ISendOptionsBuilder<T> Set(Func<T, T> func)
+    public ISendOptionsBuilder<T> Set(Func<T?, T>? func)
     {
         func?.Invoke(_innerObject);
 
         return this;
     }
 
-    public T Build() => _innerObject;
+    public T? Build() => _innerObject;
 
     public static SendOptionsBuilder<T> CreateBuilder() => new();
 

@@ -1,6 +1,7 @@
 using System.Globalization;
 using Botticelli.Client.Analytics;
 using Botticelli.Framework.Commands.Processors;
+using Botticelli.Framework.Commands.Utils;
 using Botticelli.Framework.Commands.Validators;
 using Botticelli.Framework.Controls.Layouts.Commands.InlineCalendar;
 using Botticelli.Framework.Controls.Layouts.Inlines;
@@ -8,6 +9,7 @@ using Botticelli.Framework.Controls.Parsers;
 using Botticelli.Framework.SendOptions;
 using Botticelli.Shared.API.Client.Requests;
 using Botticelli.Shared.ValueObjects;
+using FluentValidation;
 using Microsoft.Extensions.Logging;
 
 namespace Botticelli.Framework.Controls.Layouts.CommandProcessors.InlineCalendar;
@@ -23,17 +25,18 @@ public class ICCommandProcessor<TCommand, TReplyMarkup> : CommandProcessor<TComm
     private readonly ILayoutSupplier<TReplyMarkup> _layoutSupplier;
 
     public ICCommandProcessor(ILogger<ICCommandProcessor<TCommand, TReplyMarkup>> logger,
-                              ICommandValidator<TCommand> validator,
+                              ICommandValidator<TCommand> commandValidator,
                               ILayoutSupplier<TReplyMarkup> layoutSupplier,
-                              MetricsProcessor metricsProcessor) 
-            : base(logger, validator, metricsProcessor) =>
+                              MetricsProcessor metricsProcessor,
+                              IValidator<Message> messageValidator) 
+            : base(logger, commandValidator, metricsProcessor, messageValidator) =>
             _layoutSupplier = layoutSupplier;
 
-    protected override async Task InnerProcess(Message message, string args, CancellationToken token)
+    protected override async Task InnerProcess(Message message, CancellationToken token)
     {
         Inlines.InlineCalendar calendar;
 
-        if (!DateTime.TryParse(args, out var dt)) return;
+        if (!DateTime.TryParse(message.Body?.GetArguments(), out var dt)) return;
         
         if (typeof(TCommand) == typeof(MonthBackwardCommand))
             calendar = CalendarFactory.GetMonthsForward(dt, CultureInfo.InvariantCulture.Name, -1);

@@ -52,6 +52,6 @@ public static class ServiceCollectionExtensions
 
     public static IServiceProvider RegisterOsmLocationsCommands(this IServiceProvider sp,
         string url = "https://nominatim.openstreetmap.org") =>
-        sp.RegisterBotCommand<FindLocationsCommand, FindLocationsCommandProcessor<InlineKeyboardMarkup>, TelegramBot>()
-          .RegisterBotCommand<MapCommand, MapCommandProcessor<ReplyKeyboardMarkup>, TelegramBot>();
+        sp.RegisterBotCommand<FindLocationsCommandProcessor<InlineKeyboardMarkup>, TelegramBot>()
+          .RegisterBotCommand<MapCommandProcessor<ReplyKeyboardMarkup>, TelegramBot>();
 }

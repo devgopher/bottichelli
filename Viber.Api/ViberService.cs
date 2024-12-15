@@ -4,9 +4,9 @@ using System.IO;
 using System.Net;
 using System.Net.Http;
 using System.Net.Http.Json;
+using System.Text.Json;
 using System.Threading;
 using System.Threading.Tasks;
-using Newtonsoft.Json;
 using Viber.Api.Exceptions;
 using Viber.Api.Requests;
 using Viber.Api.Responses;
@@ -39,7 +39,7 @@ namespace Viber.Api
             _httpListener.Start();
             Task.Run(() => ReceiveMessages());
 
-            SetWebHook(new SetWebHookRequest
+            _ = SetWebHook(new SetWebHookRequest
             {
                 Url = _settings.HookUrl,
                 AuthToken = _settings.ViberToken,
@@ -107,11 +107,11 @@ namespace Viber.Api
                     {
                         using var sr = new StreamReader(context.Response.OutputStream);
                         var content = await sr.ReadToEndAsync();
-                        var deserialized = JsonConvert.DeserializeObject<GetWebHookEvent>(content);
+                        var deserialized = JsonSerializer.Deserialize<GetWebHookEvent>(content);
 
                         if (deserialized == default) continue;
 
-                        if (GotMessage != default) GotMessage(deserialized);
+                        GotMessage?.Invoke(deserialized);
                     }
                     else
                     {
@@ -140,9 +140,7 @@ namespace Viber.Api
                 throw new ViberClientException(
                     $"Error sending request {nameof(SetWebHook)}: {httpResponse.StatusCode}!");
 
-            var responseJson = await httpResponse.Content.ReadAsStringAsync();
-
-            return JsonConvert.DeserializeObject<TResp>(responseJson);
+            return await httpResponse.Content.ReadFromJsonAsync<TResp>(cancellationToken: cancellationToken);
         }
     }
 }

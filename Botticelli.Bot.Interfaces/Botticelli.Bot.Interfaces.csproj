@@ -3,8 +3,8 @@
     <PropertyGroup>
         <TargetFramework>net8.0</TargetFramework>
         <ImplicitUsings>enable</ImplicitUsings>
-        <Nullable>disable</Nullable>
-        <Version>0.5.0</Version>
+        <Nullable>enable</Nullable>
+        <Version>0.6.0</Version>
         <Company>Botticelli</Company>
         <Copyright>Igor Evdokimov</Copyright>
         <PackageProjectUrl>https://github.com/devgopher/botticelli</PackageProjectUrl>
@@ -19,7 +19,7 @@
         </None>
     </ItemGroup>
     <ItemGroup>
-        <PackageReference Include="Microsoft.Extensions.Hosting.Abstractions" Version="8.0.0"/>
+        <PackageReference Include="Microsoft.Extensions.Hosting.Abstractions" Version="8.0.1" />
     </ItemGroup>
 
     <ItemGroup>

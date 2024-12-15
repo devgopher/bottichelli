@@ -9,7 +9,7 @@ sudo apt-get install -y dotnet-sdk-8.0 dotnet-runtime-8.0 aspnetcore-runtime-8.0
 rm -rf botticelli``/
 git clone https://github.com/devgopher/botticelli.git
 pushd botticelli/
-git checkout release/0.5
+git checkout release/0.6
 git pull
 
 pushd Botticelli
@@ -23,6 +23,7 @@ check_and_setup email_smtp_port "(example:465)"
 check_and_setup email_smtp_pwd "(smtp server/application password)"
 check_and_setup email_use_ssl "(true/false)"
 check_and_setup requires_authentification "(true/false)"
+check_and_setup bot_info_db "(example: /data/)"
 
 export ASPNETCORE_ENVIRONMENT=Release
 export ASPNETCORE_URLS="https://0.0.0.0:$https_port;http://0.0.0.0:$http_port"
@@ -41,6 +42,7 @@ export ServerSettings__SmtpClientOptions__MailPickupDirectory=C:\\Temp
 export ServerSettings__SmtpClientOptions__SocketOptions=2
 export ServerSettings__ServerEmail=$email
 export ServerSettings__ServerUrl=$email_smtp_server
+export ServerSettings__BotInfoDb=$bot_info_db
 
 nohup dotnet run Botticelli.Server.csproj & >/dev/null 2>&1
 

@@ -1,9 +1,11 @@
-﻿namespace Botticelli.Framework.Commands.Validators;
+﻿using Botticelli.Shared.ValueObjects;
+
+namespace Botticelli.Framework.Commands.Validators;
 
 public class PassValidator<TCommand> : ICommandValidator<TCommand>
     where TCommand : ICommand
 {
-    public Task<bool> Validate(List<string> chatId, string args) => Task.FromResult(true);
+    public Task<bool> Validate(Message message) => Task.FromResult(true);
 
     public string Help() => string.Empty;
 }

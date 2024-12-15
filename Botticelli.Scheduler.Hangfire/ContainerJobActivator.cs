@@ -19,6 +19,8 @@ public class ContainerJobActivator(IServiceCollection services) : JobActivator
                                      .ContainsStrings("ibot`", $"{type.Name.ToLowerInvariant()}"));
 
 
+        realTypeDescriptor.NotNull();
+        
         return services.BuildServiceProvider().GetRequiredService(realTypeDescriptor.ServiceType);
     }
 }

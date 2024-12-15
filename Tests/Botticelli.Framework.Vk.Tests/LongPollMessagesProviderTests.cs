@@ -1,7 +1,6 @@
 ﻿using Botticelli.Framework.Vk.Messages;
 using Botticelli.Framework.Vk.Messages.Options;
-using Botticelli.Framework.Vk.Tests.Settings;
-using Botticelli.SecureStorage.Settings;
+using Botticelli.Shared.Utils;
 using Microsoft.Extensions.Configuration;
 using Shared;
 using NUnit.Framework;
@@ -14,23 +13,12 @@ public class LongPollMessagesProviderTests
     [SetUp]
     public void Setup()
     {
-        var config = new ConfigurationBuilder()
-            .AddJsonFile("appsettings.json")
-            .Build();
-
-        var settings = config.GetSection(nameof(SampleSettings))
-            .Get<SampleSettings>();
-
         _provider = new LongPollMessagesProvider(new OptionsMonitorMock<VkBotSettings>(new VkBotSettings
                                                  {
-                                                     SecureStorageSettings = new SecureStorageSettings
-                                                     {
-                                                         ConnectionString = settings.SecureStorageConnectionString
-                                                     },
                                                      Name = "test",
                                                      PollIntervalMs = 500,
                                                      GroupId = 221973506
-                                                 }),
+                                                 }).CurrentValue,
             new TestHttpClientFactory(),
             LoggerMocks.CreateConsoleLogger<LongPollMessagesProvider>());
     }
@@ -40,6 +28,7 @@ public class LongPollMessagesProviderTests
     [Test]
     public async Task StartTest()
     {
+        _provider.NotNull();
         await _provider.Stop();
         _provider.SetApiKey(EnvironmentDataProvider.GetApiKey());
 
@@ -53,7 +42,7 @@ public class LongPollMessagesProviderTests
     [Test]
     public void StopTest()
     {
-        var task = _provider.Start(CancellationToken.None);
+        _ = _provider.Start(CancellationToken.None);
 
         Thread.Sleep(2000);
 

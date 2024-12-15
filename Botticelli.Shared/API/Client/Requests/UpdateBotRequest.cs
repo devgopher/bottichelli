@@ -2,7 +2,7 @@
 
 public class UpdateBotRequest
 {
-    public string BotId { get; set; }
-    public string BotKey { get; set; }
-    public string BotName { get; set; }
+    public required string BotId { get; init; }
+    public required string BotKey { get; init; }
+    public required string BotName { get; init; }
 }

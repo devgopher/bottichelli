@@ -10,11 +10,12 @@ var builder = WebApplication.CreateBuilder(args);
 
 builder.Configuration
     .AddJsonFile("appsettings.json")
+    .AddJsonFile($"appsettings.{Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT")}.json")
     .AddEnvironmentVariables();
 
 var analyticsSettings = builder.Configuration
-    .GetSection(nameof(AnalyticsSettings))
-    .Get<AnalyticsSettings>();
+    .GetSection(nameof(AnalyticsServerSettings))
+    .Get<AnalyticsServerSettings>();
 
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen(options =>
@@ -39,7 +40,7 @@ builder.Services
     .AddSingleton<IMapper, Mapper>()
     .AddScoped<MetricsReaderWriter>()
     .AddDbContext<MetricsContext>(c => c.UseNpgsql(analyticsSettings.ConnectionString))
-    .AddMetrics(analyticsSettings);
+    .AddAnalytics(analyticsSettings);
 
 builder.Services.AddControllers();
 
@@ -56,7 +57,7 @@ if (app.Environment.IsDevelopment())
 
 app.MapControllers();
 
-app.UseCors(builder => builder.AllowAnyMethod()
+app.UseCors(cors => cors.AllowAnyMethod()
     .AllowAnyOrigin()
     .AllowAnyHeader());
 app.Run();
