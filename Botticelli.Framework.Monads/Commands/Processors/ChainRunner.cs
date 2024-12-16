@@ -30,6 +30,5 @@ public class ChainRunner<TCommand>(List<IChainProcessor<TCommand>> chain, ILogge
         logger.LogInformation("Chain processing for {TCommand} finished: success", typeof(TCommand).Name);
 
         return output;
-        ;
     }
 }

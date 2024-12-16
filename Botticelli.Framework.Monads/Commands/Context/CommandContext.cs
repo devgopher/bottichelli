@@ -12,24 +12,24 @@ public class CommandContext : ICommandContext
 
     public T? Get<T>(string name)
     {
-        if (_parameters.TryGetValue(name, out var parameter))
+        if (!_parameters.TryGetValue(name, out var parameter)) 
+            return default;
+        
+        var type = typeof(T);
+        if (type == typeof(double) || type == typeof(float) || type == typeof(decimal))
         {
-            var type = typeof(T);
-            if (type == typeof(double) || type == typeof(float) || type == typeof(decimal))
-            {
-                var chunk = parameter.Replace('.', ',');
+            var chunk = parameter.Replace('.', ',');
 
-                if (type == typeof(double))
-                    return (T?)(object)double.Parse(chunk);
-                if (type == typeof(float))
-                    return (T?)(object)float.Parse(chunk);
-                if (type == typeof(decimal))
-                    return (T?)(object)decimal.Parse(chunk);
-            }
-            else
-            {
-                return JsonSerializer.Deserialize<T>(parameter);
-            }
+            if (type == typeof(double))
+                return (T?)(object)double.Parse(chunk);
+            if (type == typeof(float))
+                return (T?)(object)float.Parse(chunk);
+            if (type == typeof(decimal))
+                return (T?)(object)decimal.Parse(chunk);
+        }
+        else
+        {
+            return JsonSerializer.Deserialize<T>(parameter);
         }
 
         return default;

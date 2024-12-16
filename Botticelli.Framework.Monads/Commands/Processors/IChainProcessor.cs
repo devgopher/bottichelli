@@ -8,8 +8,7 @@ namespace Botticelli.Framework.Monads.Commands.Processors;
 /// <summary>
 ///     Chain processor
 /// </summary>
-/// <typeparam name="TCommand"></typeparam>
-/// <typeparam name="TBot"></typeparam>
+/// <typeparam name="TCommand"/>
 public interface IChainProcessor<TCommand> where TCommand : IChainCommand
 {
     public IBot? Bot { get; }
