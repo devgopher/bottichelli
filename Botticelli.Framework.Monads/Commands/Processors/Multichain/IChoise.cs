@@ -1,6 +1,8 @@
+using Botticelli.Framework.Commands;
+
 namespace Botticelli.Framework.Monads.Commands.Processors.Multichain;
 
-public interface IChoise
+public interface IChoise : ICommand
 {
     /// <summary>
     ///     None value?

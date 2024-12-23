@@ -6,19 +6,19 @@ namespace Botticelli.Framework.Monads.Commands.Context;
 ///     Resolved a choice by type
 /// </summary>
 /// <typeparam name="TNeededType">A needed type</typeparam>
-public class ChoiseTypeResolver<TNeededType> : IChoiseResolver<IChoise>
+public class ChoiseTypeResolver<TNeededType> : IChoiseResolver
 {
     /// <summary>
-    ///     Resolves a choice, compraing every argument with a tye, checks if
+    ///     Resolves a choise, comparing every argument with a needed type, checks if
     ///     value is transmitted and if so => true, in other cases => false
     /// </summary>
-    /// <param name="choice"></param>
+    /// <param name="choise"></param>
     /// <returns></returns>
     /// <exception cref="Exception"></exception>
-    public bool Resolve(IChoise choice)
+    public bool Resolve(IChoise choise)
     {
-        var choiceType = choice.GetType();
-        var choiceArgsTypes = choice.GetType().GetGenericArguments();
+        var choiceType = choise.GetType();
+        var choiceArgsTypes = choise.GetType().GetGenericArguments();
         var choiceArgsCount = choiceArgsTypes.Length;
 
         if (choiceArgsCount > 4)
@@ -26,7 +26,7 @@ public class ChoiseTypeResolver<TNeededType> : IChoiseResolver<IChoise>
 
         foreach (var choiceArg in choiceArgsTypes)
             if (choiceArg == typeof(TNeededType))
-                return choice.GetValue() is not null;
+                return choise.GetValue() is not null;
 
         return false;
     }

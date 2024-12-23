@@ -54,6 +54,11 @@ public class Choise<T1, T2> : IChoise
         if (Valid != 1)
             throw new ArgumentException("Choise must contain only one value!");
     }
+
+    /// <summary>
+    /// Command Id
+    /// </summary>
+    public Guid Id { get; }
 }
 
 /// <inheritdoc />
