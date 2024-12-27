@@ -222,7 +222,7 @@ public sealed class TelegramBot : BaseBot<TelegramBot>
 
                     message = await _client.SendPollAsync(link.chatId,
                         request.Message.Poll.Question,
-                        request.Message.Poll.Variants,
+                        request.Message.Poll.Variants.Select(v => v.option),
                         isAnonymous: request.Message.Poll.IsAnonymous,
                         type: type,
                         correctOptionId: request.Message.Poll?.CorrectAnswerId,
@@ -231,7 +231,21 @@ public sealed class TelegramBot : BaseBot<TelegramBot>
                             : default,
                         replyMarkup: replyMarkup,
                         cancellationToken: token);
+                    
                     AddChatIdInnerIdLink(response, link.chatId, message);
+                    
+                    if (message.Poll == null)
+                        throw new BotException("Poll returned null!");
+                    
+                    response.Message.Poll = new Poll
+                    {
+                        Id = message.Poll.Id,
+                        IsAnonymous = message.Poll.IsAnonymous,
+                        Question = message.Poll.Question,
+                        Type = message.Poll.Type.ToLower() == "regular" ? Poll.PollType.Regular : Poll.PollType.Quiz,
+                        Variants = message.Poll.Options.Select(o => new ValueTuple<string, int>(o.Text, o.VoterCount)),
+                        CorrectAnswerId = message.Poll.CorrectOptionId
+                    };
                 }
 
                 if (request.Message.Contact != default)

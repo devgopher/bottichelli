@@ -7,9 +7,10 @@ public class Poll
         Quiz,
         Regular
     }
-
+    
+    public string? Id { get; set; }
     public string? Question { get; set; }
-    public IEnumerable<string>? Variants { get; set; }
+    public IEnumerable<(string option, int votersCount)>? Variants { get; set; }
     public int? CorrectAnswerId { get; set; }
     public bool IsAnonymous { get; set; }
     public PollType Type { get; set; }

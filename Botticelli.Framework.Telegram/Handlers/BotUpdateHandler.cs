@@ -6,6 +6,7 @@ using Microsoft.Extensions.Logging;
 using Telegram.Bot;
 using Telegram.Bot.Types;
 using Message = Botticelli.Shared.ValueObjects.Message;
+using Poll = Botticelli.Shared.ValueObjects.Poll;
 using User = Botticelli.Shared.ValueObjects.User;
 
 namespace Botticelli.Framework.Telegram.Handlers;
@@ -69,8 +70,25 @@ public class BotUpdateHandler : IBotUpdateHandler
                             NickName = botMessage.From?.Username
                         },
                     };
-                }
-                else
+                } 
+                
+                if (update.Poll != null)
+                {
+                    botticelliMessage = new Message
+                    {
+                        Subject = string.Empty,
+                        Body = string.Empty,
+                        Poll = new Poll
+                        {
+                            Id = update.Poll.Id,
+                            IsAnonymous = update.Poll.IsAnonymous,
+                            Question = update.Poll.Question,
+                            Type = update.Poll.Type.ToLower() == "regular" ? Poll.PollType.Regular : Poll.PollType.Quiz,
+                            Variants = update.Poll.Options.Select(o =>  new ValueTuple<string, int>(o.Text, o.VoterCount)),
+                            CorrectAnswerId = update.Poll.CorrectOptionId
+                        }
+                    };
+                } else 
                     return;
             }
             else
