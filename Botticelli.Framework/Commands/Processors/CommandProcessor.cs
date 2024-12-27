@@ -48,6 +48,14 @@ public abstract class CommandProcessor<TCommand> : ICommandProcessor
                 return;
             }
 
+            if (message.Poll != default)
+            {
+                await InnerProcessPoll(message, token);
+
+                return;
+            }
+
+
             if (message.From!.Id!.Equals(Bot.BotUserId, StringComparison.InvariantCulture)) return;
 
             Classify(ref message);
@@ -78,8 +86,7 @@ public abstract class CommandProcessor<TCommand> : ICommandProcessor
 
                 if (commandName != _command) return;
 
-                await ValidateAndProcess(message,
-                    token);
+                await ValidateAndProcess(message, token);
 
                 SendMetric(MetricNames.CommandReceived);
             }
@@ -94,8 +101,7 @@ public abstract class CommandProcessor<TCommand> : ICommandProcessor
 
                 if (commandName != _command) return;
 
-                await ValidateAndProcess(message,
-                    token);
+                await ValidateAndProcess(message, token);
 
                 SendMetric(MetricNames.CommandReceived);
             }
@@ -107,7 +113,6 @@ public abstract class CommandProcessor<TCommand> : ICommandProcessor
             }
 
             if (message.Location != default) await InnerProcessLocation(message, token);
-            if (message.Poll != default) await InnerProcessPoll(message, token);
             if (message.Contact != default) await InnerProcessContact(message, token);
         }
         catch (Exception ex)
