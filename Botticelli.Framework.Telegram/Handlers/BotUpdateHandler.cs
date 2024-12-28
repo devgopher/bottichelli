@@ -40,7 +40,7 @@ public class BotUpdateHandler : IBotUpdateHandler
             _logger.LogDebug($"{nameof(HandleUpdateAsync)}() started...");
 
             var botMessage = update.Message;
-            Message botticelliMessage;
+            Message botticelliMessage = null;
 
             if (botMessage == null)
             {
@@ -88,8 +88,7 @@ public class BotUpdateHandler : IBotUpdateHandler
                             CorrectAnswerId = update.Poll.CorrectOptionId
                         }
                     };
-                } else 
-                    return;
+                } 
             }
             else
             {
@@ -131,6 +130,9 @@ public class BotUpdateHandler : IBotUpdateHandler
                 };
             }
 
+            if (botticelliMessage == null)
+                throw new NullReferenceException("botticelliMessage");
+            
             await Process(botticelliMessage, cancellationToken);
 
             MessageReceived?.Invoke(this, new MessageReceivedBotEventArgs
