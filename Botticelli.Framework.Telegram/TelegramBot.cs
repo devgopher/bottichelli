@@ -19,8 +19,10 @@ using Botticelli.Shared.Utils;
 using Botticelli.Shared.ValueObjects;
 using Microsoft.Extensions.Logging;
 using Telegram.Bot;
+using Telegram.Bot.Exceptions;
 using Telegram.Bot.Types;
 using Telegram.Bot.Types.Enums;
+using Telegram.Bot.Types.InlineQueryResults;
 using Telegram.Bot.Types.ReplyMarkups;
 using Exception = System.Exception;
 using Message = Telegram.Bot.Types.Message;
@@ -149,7 +151,7 @@ public sealed class TelegramBot : BaseBot<TelegramBot>
 
         try
         {
-            if (request?.Message == default) throw new BotException("request/message is null!");
+            if (request.Message == default) throw new BotException("request/message is null!");
 
             var text = new StringBuilder($"{request.Message.Subject} {request.Message.Body}");
             var retText = _textTransformer.Escape(text).ToString();
@@ -185,25 +187,18 @@ public sealed class TelegramBot : BaseBot<TelegramBot>
                     {
                         if (!isUpdate)
                         {
-                            var sentMessage = await _client.SendTextMessageAsync(link.chatId,
-                                sendText,
-                                parseMode: ParseMode.MarkdownV2,
-                                replyToMessageId: request.Message?.ReplyToMessageUid != default
-                                    ? int.Parse(request.Message.ReplyToMessageUid)
-                                    : default,
-                                replyMarkup: replyMarkup,
-                                cancellationToken: token);
-
-                            link.innerId = sentMessage.MessageId.ToString();
+                            await TrySend(request, token, sendText, replyMarkup, link);
                         }
                         else
                         {
-                            await _client.EditMessageTextAsync(chatId: link.chatId,
-                                messageId: int.Parse(link.innerId),
-                                sendText,
-                                parseMode: ParseMode.MarkdownV2,
-                                replyMarkup: replyMarkup as InlineKeyboardMarkup,
-                                cancellationToken: token);
+                            try
+                            {
+                                await TryUpdate(token, link, sendText, replyMarkup);
+                            }
+                            catch (ApiRequestException ex)
+                            {
+                                await TrySend(request, token, sendText, replyMarkup, link);
+                            }
                         }
                     }
                 }
@@ -379,6 +374,32 @@ public sealed class TelegramBot : BaseBot<TelegramBot>
         }
 
         return response;
+    }
+
+    private async Task TryUpdate(CancellationToken token, (string chatId, string innerId) link, string sendText,
+        IReplyMarkup? replyMarkup)
+    {
+        await _client.EditMessageTextAsync(chatId: link.chatId,
+            messageId: int.Parse(link.innerId),
+            sendText,
+            parseMode: ParseMode.MarkdownV2,
+            replyMarkup: replyMarkup as InlineKeyboardMarkup,
+            cancellationToken: token);
+    }
+
+    private async Task TrySend(SendMessageRequest request, CancellationToken token, string sendText,
+        IReplyMarkup? replyMarkup, (string chatId, string innerId) link)
+    {
+        var sentMessage = await _client.SendTextMessageAsync(link.chatId,
+            sendText,
+            parseMode: ParseMode.MarkdownV2,
+            replyToMessageId: request.Message.ReplyToMessageUid != null
+                ? int.Parse(request.Message.ReplyToMessageUid)
+                : 0,
+            replyMarkup: replyMarkup,
+            cancellationToken: token);
+
+        link.innerId = sentMessage.MessageId.ToString();
     }
 
     private static void AddChatIdInnerIdLink(SendMessageResponse response, string chatId, Message message)
