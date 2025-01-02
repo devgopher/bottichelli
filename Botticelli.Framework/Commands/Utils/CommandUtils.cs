@@ -15,8 +15,8 @@ public static class CommandUtils
         var match = ArgsCommandRegex.Matches(body)
                         .FirstOrDefault();
 
-        if (match == default) return string.Empty;
-
-        return match.Groups[2].Value;
+        return match == null ? string.Empty : match.Groups[2].Value;
     }
+
+    public static string[] GetArguments(this string? body, char separator) => GetArguments(body).Split(separator);
 }

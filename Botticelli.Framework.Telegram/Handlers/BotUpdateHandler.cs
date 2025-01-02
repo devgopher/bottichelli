@@ -62,12 +62,12 @@ public class BotUpdateHandler : IBotUpdateHandler
                         LastModifiedAt = update.Message?.Date ?? DateTime.Now,
                         From = new User
                         {
-                            Id = botMessage.From?.Id.ToString(),
-                            Name = botMessage.From?.FirstName,
-                            Surname = botMessage.From?.LastName,
+                            Id = update.CallbackQuery?.From.Id.ToString(),
+                            Name = update.CallbackQuery?.From.FirstName,
+                            Surname = update.CallbackQuery?.From.LastName,
                             Info = string.Empty,
-                            IsBot = botMessage.From?.IsBot,
-                            NickName = botMessage.From?.Username
+                            IsBot = update.CallbackQuery?.From.IsBot,
+                            NickName = update.CallbackQuery?.From.Username
                         },
                     };
                 } 
