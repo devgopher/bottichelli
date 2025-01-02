@@ -70,7 +70,7 @@ public sealed class TelegramBot : BaseBot<TelegramBot>
     {
         request.NotNull();
         request.Uid.NotNull();
-        request.ChatId.NotNull();
+        request.Message.NotNull();
         
         if (!BotStatusKeeper.IsStarted)
         {
@@ -88,9 +88,13 @@ public sealed class TelegramBot : BaseBot<TelegramBot>
         {
             if (string.IsNullOrWhiteSpace(request.Uid)) throw new BotException("request/message is null!");
 
-            await _client.DeleteMessageAsync(request.ChatId,
-                int.Parse(request.Uid),
-                token);
+            foreach (var innerId in request.Message.ChatIdInnerIdLinks.SelectMany(link => link.Value))
+            {
+                await _client.DeleteMessageAsync(innerId,
+                    int.Parse(request.Uid),
+                    token);                
+            }
+            
             response.MessageRemovedStatus = MessageRemovedStatus.Ok;
         }
         catch
