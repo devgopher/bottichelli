@@ -232,9 +232,9 @@ public class TelegramBot : BaseBot<TelegramBot>
                         _ => throw new ArgumentOutOfRangeException()
                     };
 
-                    message = await _client.SendPollAsync(link.chatId,
-                        request.Message.Poll.Question,
-                        request.Message.Poll.Variants.Select(v => v.option),
+                    message = await _client.SendPoll(link.chatId,
+                        request.Message.Poll.Question ?? "no_question",
+                        request.Message.Poll.Variants?.Select(v => new InputPollOption(v.option)) ?? [],
                         isAnonymous: request.Message.Poll.IsAnonymous,
                         type: type,
                         correctOptionId: request.Message.Poll?.CorrectAnswerId,
