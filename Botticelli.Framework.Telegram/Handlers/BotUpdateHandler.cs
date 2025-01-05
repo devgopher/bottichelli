@@ -1,5 +1,6 @@
 ﻿using Botticelli.Framework.Commands.Processors;
 using Botticelli.Framework.Events;
+using Botticelli.Shared.Utils;
 using Botticelli.Shared.ValueObjects;
 using Microsoft.Extensions.Logging;
 using Telegram.Bot;
@@ -21,7 +22,7 @@ public class BotUpdateHandler : IBotUpdateHandler
         _logger = logger;
         _processorFactory = processorFactory;
     }
-
+    
     public async Task HandleUpdateAsync(ITelegramBotClient botClient,
         Update update,
         CancellationToken cancellationToken)
@@ -31,7 +32,7 @@ public class BotUpdateHandler : IBotUpdateHandler
             _logger.LogDebug($"{nameof(HandleUpdateAsync)}() started...");
 
             var botMessage = update.Message;
-            Message botticelliMessage;
+            Message botticelliMessage = null;
 
             if (botMessage == null)
             {
@@ -53,12 +54,12 @@ public class BotUpdateHandler : IBotUpdateHandler
                         LastModifiedAt = update.Message?.Date ?? DateTime.Now,
                         From = new User
                         {
-                            Id = botMessage.From?.Id.ToString(),
-                            Name = botMessage.From?.FirstName,
-                            Surname = botMessage.From?.LastName,
+                            Id = update.CallbackQuery?.From.Id.ToString(),
+                            Name = update.CallbackQuery?.From.FirstName,
+                            Surname = update.CallbackQuery?.From.LastName,
                             Info = string.Empty,
-                            IsBot = botMessage.From?.IsBot,
-                            NickName = botMessage.From?.Username
+                            IsBot = update.CallbackQuery?.From.IsBot,
+                            NickName = update.CallbackQuery?.From.Username
                         }
                     };
                 } 
@@ -79,8 +80,7 @@ public class BotUpdateHandler : IBotUpdateHandler
                             CorrectAnswerId = update.Poll.CorrectOptionId
                         }
                     };
-                } else 
-                    return;
+                } 
             }
             else
             {
@@ -122,6 +122,9 @@ public class BotUpdateHandler : IBotUpdateHandler
                 };
             }
 
+            if (botticelliMessage == null)
+                throw new NullReferenceException("botticelliMessage");
+            
             await Process(botticelliMessage, cancellationToken);
 
             MessageReceived?.Invoke(this, new MessageReceivedBotEventArgs

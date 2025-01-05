@@ -18,8 +18,10 @@ using Botticelli.Shared.Utils;
 using Botticelli.Shared.ValueObjects;
 using Microsoft.Extensions.Logging;
 using Telegram.Bot;
+using Telegram.Bot.Exceptions;
 using Telegram.Bot.Types;
 using Telegram.Bot.Types.Enums;
+using Telegram.Bot.Types.InlineQueryResults;
 using Telegram.Bot.Types.ReplyMarkups;
 using Exception = System.Exception;
 using Message = Telegram.Bot.Types.Message;
@@ -67,7 +69,7 @@ public class TelegramBot : BaseBot<TelegramBot>
     {
         request.NotNull();
         request.Uid.NotNull();
-        request.ChatId.NotNull();
+        request.Message.NotNull();
         
         if (!BotStatusKeeper.IsStarted)
         {
@@ -85,9 +87,13 @@ public class TelegramBot : BaseBot<TelegramBot>
         {
             if (string.IsNullOrWhiteSpace(request.Uid)) throw new BotException("request/message is null!");
 
-            await _client.DeleteMessageAsync(request.ChatId,
-                int.Parse(request.Uid),
-                token);
+            foreach (var innerId in request.Message.ChatIdInnerIdLinks.SelectMany(link => link.Value))
+            {
+                await _client.DeleteMessageAsync(innerId,
+                    int.Parse(request.Uid),
+                    token);                
+            }
+            
             response.MessageRemovedStatus = MessageRemovedStatus.Ok;
         }
         catch
@@ -192,6 +198,7 @@ public class TelegramBot : BaseBot<TelegramBot>
                                 cancellationToken: token);
 
                             link.innerId = sentMessage.MessageId.ToString();
+                            await TrySend(request, token, sendText, replyMarkup, link);
                         }
                         else
                         {
@@ -201,6 +208,14 @@ public class TelegramBot : BaseBot<TelegramBot>
                                 ParseMode.MarkdownV2,
                                 replyMarkup: replyMarkup as InlineKeyboardMarkup,
                                 cancellationToken: token);
+                            try
+                            {
+                                await TryUpdate(token, link, sendText, replyMarkup);
+                            }
+                            catch (ApiRequestException ex)
+                            {
+                                await TrySend(request, token, sendText, replyMarkup, link);
+                            }
                         }
                     }
                 }
@@ -217,11 +232,11 @@ public class TelegramBot : BaseBot<TelegramBot>
                         _ => throw new ArgumentOutOfRangeException()
                     };
 
-                    message = await _client.SendPoll(link.chatId,
-                        request.Message.Poll?.Question ?? "No question",
-                        GetPollOptions(request),
-                        request.Message.Poll?.IsAnonymous ?? false,
-                        type,
+                    message = await _client.SendPollAsync(link.chatId,
+                        request.Message.Poll.Question,
+                        request.Message.Poll.Variants.Select(v => v.option),
+                        isAnonymous: request.Message.Poll.IsAnonymous,
+                        type: type,
                         correctOptionId: request.Message.Poll?.CorrectAnswerId,
                         replyParameters: GetReplyParameters(request, link.chatId),
                         replyMarkup: replyMarkup,
@@ -369,6 +384,32 @@ public class TelegramBot : BaseBot<TelegramBot>
                     Text = po
                 })
             .ToArray() ?? [];
+    }
+
+    private async Task TryUpdate(CancellationToken token, (string chatId, string innerId) link, string sendText,
+        IReplyMarkup? replyMarkup)
+    {
+        await _client.EditMessageTextAsync(chatId: link.chatId,
+            messageId: int.Parse(link.innerId),
+            sendText,
+            parseMode: ParseMode.MarkdownV2,
+            replyMarkup: replyMarkup as InlineKeyboardMarkup,
+            cancellationToken: token);
+    }
+
+    private async Task TrySend(SendMessageRequest request, CancellationToken token, string sendText,
+        IReplyMarkup? replyMarkup, (string chatId, string innerId) link)
+    {
+        var sentMessage = await _client.SendTextMessageAsync(link.chatId,
+            sendText,
+            parseMode: ParseMode.MarkdownV2,
+            replyToMessageId: request.Message.ReplyToMessageUid != null
+                ? int.Parse(request.Message.ReplyToMessageUid)
+                : 0,
+            replyMarkup: replyMarkup,
+            cancellationToken: token);
+
+        link.innerId = sentMessage.MessageId.ToString();
     }
 
     private static void AddChatIdInnerIdLink(SendMessageResponse response, string chatId, Message message)

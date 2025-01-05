@@ -113,7 +113,7 @@ public abstract class BaseBot<T> : BaseBot, IBot<T>
     }
 
     public Task<SendMessageResponse> UpdateMessageAsync(SendMessageRequest request, CancellationToken token)
-        => SendMessageAsync<object>(request, null, token);
+        => UpdateMessageAsync<object>(request, null, token);
 
     public async Task<SendMessageResponse> UpdateMessageAsync<TSendOptions>(SendMessageRequest request,
         ISendOptionsBuilder<TSendOptions>? optionsBuilder, CancellationToken token)
