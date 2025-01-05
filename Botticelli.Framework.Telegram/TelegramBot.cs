@@ -212,7 +212,7 @@ public class TelegramBot : BaseBot<TelegramBot>
                             {
                                 await TryUpdate(token, link, sendText, replyMarkup);
                             }
-                            catch (ApiRequestException ex)
+                            catch (ApiRequestException)
                             {
                                 await TrySend(request, token, sendText, replyMarkup, link);
                             }
@@ -220,7 +220,7 @@ public class TelegramBot : BaseBot<TelegramBot>
                     }
                 }
 
-                if (request.Message?.Poll != default)
+                if (request.Message.Poll != default)
                 {
                     request.Message.Poll.Question.NotNull();
                     request.Message.Poll.Variants.NotNull();
@@ -234,7 +234,7 @@ public class TelegramBot : BaseBot<TelegramBot>
 
                     message = await _client.SendPoll(link.chatId,
                         request.Message.Poll.Question ?? "no_question",
-                        request.Message.Poll.Variants?.Select(v => new InputPollOption(v.option)) ?? [],
+                        GetPollOptions(request),
                         isAnonymous: request.Message.Poll.IsAnonymous,
                         type: type,
                         correctOptionId: request.Message.Poll?.CorrectAnswerId,
@@ -381,7 +381,8 @@ public class TelegramBot : BaseBot<TelegramBot>
         return request.Message.Poll?.Variants?.Select(po =>
                 new InputPollOption
                 {
-                    Text = po
+                    Text = po.option,
+                    TextParseMode = ParseMode.MarkdownV2
                 })
             .ToArray() ?? [];
     }
@@ -389,7 +390,7 @@ public class TelegramBot : BaseBot<TelegramBot>
     private async Task TryUpdate(CancellationToken token, (string chatId, string innerId) link, string sendText,
         IReplyMarkup? replyMarkup)
     {
-        await _client.EditMessageTextAsync(chatId: link.chatId,
+        await _client.EditMessageText(chatId: link.chatId,
             messageId: int.Parse(link.innerId),
             sendText,
             parseMode: ParseMode.MarkdownV2,
@@ -400,12 +401,10 @@ public class TelegramBot : BaseBot<TelegramBot>
     private async Task TrySend(SendMessageRequest request, CancellationToken token, string sendText,
         IReplyMarkup? replyMarkup, (string chatId, string innerId) link)
     {
-        var sentMessage = await _client.SendTextMessageAsync(link.chatId,
+        var sentMessage = await _client.SendMessage(link.chatId,
             sendText,
             parseMode: ParseMode.MarkdownV2,
-            replyToMessageId: request.Message.ReplyToMessageUid != null
-                ? int.Parse(request.Message.ReplyToMessageUid)
-                : 0,
+            replyParameters: GetReplyParameters(request, link.chatId),
             replyMarkup: replyMarkup,
             cancellationToken: token);
 
