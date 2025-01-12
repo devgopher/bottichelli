@@ -19,11 +19,11 @@
         </None>
     </ItemGroup>
     <ItemGroup>
-        <PackageReference Include="Telegram.Bot" Version="19.0.0"/>
+        <PackageReference Include="Telegram.Bot" Version="22.3.0" />
     </ItemGroup>
 
     <ItemGroup>
-        <Folder Include="Interfaces\"/>
+        <Folder Include="Interfaces\" />
     </ItemGroup>
     <ItemGroup>
         <None Include="..\logo.jpg">
@@ -33,6 +33,12 @@
     </ItemGroup>
     <ItemGroup>
         <ProjectReference Include="..\Botticelli.Bus\Botticelli.Bus.None.csproj"/>
+    </ItemGroup>
+    <ItemGroup>
+      <None Include="..\3dParty\currency\currencies.json">
+        <Link>Currencies\currencies.json</Link>
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </None>
     </ItemGroup>
 
 </Project>

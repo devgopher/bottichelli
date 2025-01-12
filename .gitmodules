@@ -1,3 +1,6 @@
 [submodule "3dParty/FileSignatures"]
 	path = 3dParty/FileSignatures
 	url = https://github.com/devgopher/FileSignatures
+[submodule "3dParty/currency"]
+	path = 3dParty/currency
+	url = https://github.com/ourworldincode/currency.git
