@@ -13,23 +13,12 @@
         <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
     </PropertyGroup>
     <ItemGroup>
-        <None Include="..\logo.jpg">
-            <Pack>True</Pack>
-            <PackagePath>\</PackagePath>
-        </None>
-    </ItemGroup>
-    <ItemGroup>
         <PackageReference Include="Telegram.Bot" Version="22.3.0" />
     </ItemGroup>
 
     <ItemGroup>
         <Folder Include="Interfaces\" />
-    </ItemGroup>
-    <ItemGroup>
-        <None Include="..\logo.jpg">
-            <Pack>True</Pack>
-            <PackagePath>\</PackagePath>
-        </None>
+        <Folder Include="Handlers\" />
     </ItemGroup>
     <ItemGroup>
         <ProjectReference Include="..\Botticelli.Bus\Botticelli.Bus.None.csproj"/>

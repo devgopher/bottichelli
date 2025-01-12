@@ -1,3 +1,5 @@
+using Telegram.Bot.Types.Payments;
+
 namespace Botticelli.Pay.Models;
 
 /// <summary>
@@ -23,7 +25,7 @@ public class Invoice
     /// <summary>
     ///     Currency
     /// </summary>
-    public required string Currency { get; set; }
+    public required Currency Currency { get; set; }
 
     /// <summary>
     ///     Total amount in format: 11.50
