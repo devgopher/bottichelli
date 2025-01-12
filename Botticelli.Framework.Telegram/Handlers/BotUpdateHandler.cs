@@ -29,7 +29,7 @@ public class BotUpdateHandler : IBotUpdateHandler
         try
         {
             _logger.LogDebug($"{nameof(HandleUpdateAsync)}() started...");
-
+            
             var botMessage = update.Message;
             Message botticelliMessage;
 
@@ -90,7 +90,7 @@ public class BotUpdateHandler : IBotUpdateHandler
                         { { botMessage.Chat.Id.ToString(), [botMessage.MessageId.ToString()] } },
                     ChatIds = [botMessage.Chat.Id.ToString()],
                     Subject = string.Empty,
-                    Body = botMessage?.Text ?? string.Empty,
+                    Body = botMessage.Text ?? string.Empty,
                     LastModifiedAt = botMessage.Date,
                     Attachments = new List<BaseAttachment>(5),
                     CreatedAt = botMessage.Date,

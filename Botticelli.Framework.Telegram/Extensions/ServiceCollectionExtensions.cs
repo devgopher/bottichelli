@@ -5,6 +5,7 @@ using Botticelli.Framework.Controls.Parsers;
 using Botticelli.Framework.Options;
 using Botticelli.Framework.Telegram.Builders;
 using Botticelli.Framework.Telegram.Decorators;
+using Botticelli.Framework.Telegram.Handlers;
 using Botticelli.Framework.Telegram.Layout;
 using Botticelli.Framework.Telegram.Options;
 using Botticelli.Interfaces;
@@ -23,6 +24,8 @@ public static class ServiceCollectionExtensions
         new();
 
     private static readonly DataAccessSettingsBuilder<DataAccessSettings> DataAccessSettingsBuilder = new();
+    
+    private static readonly ExtendableBotUpdateHandlerBuilder ExtendableBotUpdateHandlerBuilder = ExtendableBotUpdateHandlerBuilder.Instance()
 
     public static IServiceCollection AddTelegramBot(this IServiceCollection services, IConfiguration configuration)
     {
@@ -79,7 +82,8 @@ public static class ServiceCollectionExtensions
         Action<BotSettingsBuilder<TelegramBotSettings>> optionsBuilderFunc,
         Action<AnalyticsClientSettingsBuilder<AnalyticsClientSettings>> analyticsOptionsBuilderFunc,
         Action<ServerSettingsBuilder<ServerSettings>> serverSettingsBuilderFunc,
-        Action<DataAccessSettingsBuilder<DataAccessSettings>> dataAccessSettingsBuilderFunc)
+        Action<DataAccessSettingsBuilder<DataAccessSettings>> dataAccessSettingsBuilderFunc,
+        Action<ExtendableBotUpdateHandlerBuilder> extendableBotUpdateHandlerBuilderFunc)
     {
         optionsBuilderFunc(SettingsBuilder);
         serverSettingsBuilderFunc(ServerSettingsBuilder);
@@ -93,7 +97,9 @@ public static class ServiceCollectionExtensions
                 SettingsBuilder,
                 DataAccessSettingsBuilder,
                 AnalyticsClientOptionsBuilder)
+            .AddHandler<BotUpdateHandler>()
             .AddClient(clientBuilder);
+        
         var bot = botBuilder.Build();
         return services.AddSingleton<IBot<TelegramBot>>(bot)
             .AddSingleton<IBot>(bot)

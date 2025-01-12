@@ -18,6 +18,7 @@ using Botticelli.Framework.Telegram.Layout;
 using Botticelli.Framework.Telegram.Options;
 using Botticelli.Framework.Telegram.Utils;
 using Botticelli.Interfaces;
+using Botticelli.Shared.Utils;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
@@ -29,6 +30,7 @@ public class TelegramBotBuilder : BotBuilder<TelegramBotBuilder, TelegramBot>
 {
     private TelegramClientDecoratorBuilder _builder = null!;
     private TelegramClientDecorator _client = null!;
+    private ExtendableBotUpdateHandlerBuilder? _extendableBotUpdateHandlerBuilder;
 
     private TelegramBotSettings? BotSettings { get; set; }
 
@@ -36,13 +38,15 @@ public class TelegramBotBuilder : BotBuilder<TelegramBotBuilder, TelegramBot>
         ServerSettingsBuilder<ServerSettings> serverSettingsBuilder,
         BotSettingsBuilder<TelegramBotSettings> settingsBuilder,
         DataAccessSettingsBuilder<DataAccessSettings> dataAccessSettingsBuilder,
-        AnalyticsClientSettingsBuilder<AnalyticsClientSettings> analyticsClientSettingsBuilder) =>
-        new TelegramBotBuilder()
+        AnalyticsClientSettingsBuilder<AnalyticsClientSettings> analyticsClientSettingsBuilder)
+    {
+        return new TelegramBotBuilder()
             .AddServices(services)
             .AddServerSettings(serverSettingsBuilder)
             .AddAnalyticsSettings(analyticsClientSettingsBuilder)
             .AddBotDataAccessSettings(dataAccessSettingsBuilder)
             .AddBotSettings(settingsBuilder);
+    }
 
     public TelegramBotBuilder AddClient(TelegramClientDecoratorBuilder builder)
     {
@@ -51,6 +55,17 @@ public class TelegramBotBuilder : BotBuilder<TelegramBotBuilder, TelegramBot>
         return this;
     }
 
+    public TelegramBotBuilder AddHandler<T>()
+    where T : class, IBotUpdateHandler
+    {
+        Services.NotNull();
+        _extendableBotUpdateHandlerBuilder ??= ExtendableBotUpdateHandlerBuilder.Instance(Services);
+        _extendableBotUpdateHandlerBuilder.AddHandler<T>();
+        
+        return this;
+    }
+
+    
     protected override TelegramBot InnerBuild()
     {
         Services!.AddSingleton(ServerSettingsBuilder.Build());
