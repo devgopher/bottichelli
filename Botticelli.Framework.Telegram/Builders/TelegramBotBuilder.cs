@@ -48,13 +48,6 @@ public class TelegramBotBuilder : BotBuilder<TelegramBotBuilder, TelegramBot>
             .AddBotSettings(settingsBuilder);
     }
 
-    public TelegramBotBuilder AddClient(TelegramClientDecoratorBuilder builder)
-    {
-        _builder = builder;
-
-        return this;
-    }
-
     public TelegramBotBuilder AddHandler<T>()
     where T : class, IBotUpdateHandler
     {

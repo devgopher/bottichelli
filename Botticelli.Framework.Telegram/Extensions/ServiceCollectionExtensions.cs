@@ -77,28 +77,28 @@ public static class ServiceCollectionExtensions
     /// <param name="analyticsOptionsBuilderFunc"></param>
     /// <param name="serverSettingsBuilderFunc"></param>
     /// <param name="dataAccessSettingsBuilderFunc"></param>
+    /// <param name="telegramBotBuilderFunc"></param>
     /// <returns></returns>
     public static IServiceCollection AddTelegramBot(this IServiceCollection services,
         Action<BotSettingsBuilder<TelegramBotSettings>> optionsBuilderFunc,
         Action<AnalyticsClientSettingsBuilder<AnalyticsClientSettings>> analyticsOptionsBuilderFunc,
         Action<ServerSettingsBuilder<ServerSettings>> serverSettingsBuilderFunc,
         Action<DataAccessSettingsBuilder<DataAccessSettings>> dataAccessSettingsBuilderFunc,
-        Action<ExtendableBotUpdateHandlerBuilder> extendableBotUpdateHandlerBuilderFunc)
+        Action<TelegramBotBuilder>? telegramBotBuilderFunc = null)
     {
         optionsBuilderFunc(SettingsBuilder);
         serverSettingsBuilderFunc(ServerSettingsBuilder);
         analyticsOptionsBuilderFunc(AnalyticsClientOptionsBuilder);
         dataAccessSettingsBuilderFunc(DataAccessSettingsBuilder);
 
-        var clientBuilder = TelegramClientDecoratorBuilder.Instance(services, SettingsBuilder);
-
         var botBuilder = TelegramBotBuilder.Instance(services,
                 ServerSettingsBuilder,
                 SettingsBuilder,
                 DataAccessSettingsBuilder,
                 AnalyticsClientOptionsBuilder)
-            .AddHandler<BotUpdateHandler>()
-            .AddClient(clientBuilder);
+            .AddHandler<BotUpdateHandler>();
+        
+        telegramBotBuilderFunc?.Invoke(botBuilder);
         
         var bot = botBuilder.Build();
         return services.AddSingleton<IBot<TelegramBot>>(bot)
