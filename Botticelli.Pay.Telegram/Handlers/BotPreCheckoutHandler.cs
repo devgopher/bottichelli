@@ -1,8 +1,9 @@
-using Botticelli.Framework.Commands.Processors;
 using Botticelli.Framework.Events;
 using Botticelli.Framework.Telegram.Handlers;
+using Botticelli.Pay.Handlers;
 using Botticelli.Pay.Message;
 using Botticelli.Pay.Models;
+using Botticelli.Pay.Processors;
 using Botticelli.Shared.Utils;
 using Microsoft.Extensions.Logging;
 using Telegram.Bot;
@@ -12,15 +13,15 @@ using User = Botticelli.Shared.ValueObjects.User;
 
 namespace Botticelli.Pay.Telegram.Handlers;
 
-public class BotPreCheckoutHandler : IBotUpdateHandler
+public class BotPreCheckoutHandler : IBotUpdateHandler, IPreCheckoutHandler
 {
     private readonly ILogger<BotPreCheckoutHandler> _logger;
-    private readonly ClientProcessorFactory _processorFactory;
+    private readonly PreCheckoutChainRunner<BotPreCheckoutHandler> _runner;
 
-    public BotPreCheckoutHandler(ILogger<BotPreCheckoutHandler> logger, ClientProcessorFactory processorFactory)
+    public BotPreCheckoutHandler(ILogger<BotPreCheckoutHandler> logger, PreCheckoutChainRunner<BotPreCheckoutHandler> runner)
     {
         _logger = logger;
-        _processorFactory = processorFactory;
+        _runner = runner;
     }
 
     public async Task HandleUpdateAsync(ITelegramBotClient botClient, Update update,
@@ -33,33 +34,28 @@ public class BotPreCheckoutHandler : IBotUpdateHandler
             update.PreCheckoutQuery!.InvoicePayload.NotNullOrEmpty();
             
             _logger.LogDebug($"{nameof(HandleUpdateAsync)}() started...");
-            var message = new PayPreCheckoutMessage
+            
+            
+            var preCheckoutQuery = new PreCheckoutQuery
             {
-                Type = Shared.ValueObjects.Message.MessageType.Extended,
-                PreCheckoutQuery = new PreCheckoutQuery
+                Id = update.PreCheckoutQuery.Id,
+                From = new User
                 {
-                    Id = update.PreCheckoutQuery.Id,
-                    From = new User
-                    {
-                        Id = update.PreCheckoutQuery.From.Id.ToString(),
-                        Name = update.PreCheckoutQuery.From.FirstName,
-                        Surname = update.PreCheckoutQuery.From.LastName,
-                        Info = string.Empty,
-                        NickName = update.PreCheckoutQuery.From.Username,
-                        IsBot = update.PreCheckoutQuery.From.IsBot
-                    },
-                    Currency = null,
-                    TotalAmount = 0,
-                    InvoicePayload = null
-                }
+                    Id = update.PreCheckoutQuery.From.Id.ToString(),
+                    Name = update.PreCheckoutQuery.From.FirstName,
+                    Surname = update.PreCheckoutQuery.From.LastName,
+                    Info = string.Empty,
+                    NickName = update.PreCheckoutQuery.From.Username,
+                    IsBot = update.PreCheckoutQuery.From.IsBot
+                },
+                Currency = update.PreCheckoutQuery.Currency,
+                TotalAmount = update.PreCheckoutQuery.TotalAmount,
+                InvoicePayload =update.PreCheckoutQuery.InvoicePayload,
             };
             
-            MessageReceived?.Invoke(this, new MessageReceivedBotEventArgs
-            {
-                Message = message
-            });
+            var procResult = await _runner.Run(preCheckoutQuery, cancellationToken);
             
-            await Process(message, cancellationToken);
+            await botClient.AnswerPreCheckoutQuery(preCheckoutQuery.Id, procResult.isSuccessful ? string.Empty : procResult.errorMessage, cancellationToken: cancellationToken);
             
             _logger.LogDebug($"{nameof(HandleUpdateAsync)}() finished...");
         }
@@ -73,32 +69,5 @@ public class BotPreCheckoutHandler : IBotUpdateHandler
         CancellationToken cancellationToken) =>
         throw new NotImplementedException();
 
-    /// <summary>
-    ///     Processes requests
-    /// </summary>
-    /// <param name="request"></param>
-    /// <param name="token"></param>
-    protected async Task Process(Shared.ValueObjects.Message request, CancellationToken token)
-    {
-        _logger.LogDebug($"{nameof(Process)}({request.Uid}) started...");
-
-        if (token is { CanBeCanceled: true, IsCancellationRequested: true })
-            return;
-
-        var clientNonChainedTasks = _processorFactory
-            .GetProcessors()
-            .Select(p => p.ProcessAsync(request, token));
-
-        var clientChainedTasks = _processorFactory
-            .GetCommandChainProcessors()
-            .Select(p => p.ProcessAsync(request, token));
-
-        var clientTasks = clientNonChainedTasks.Concat(clientChainedTasks).ToArray();
-
-        await Parallel.ForEachAsync(clientTasks, token, async (t, ct) => await t.WaitAsync(ct));
-
-        _logger.LogDebug($"{nameof(Process)}({request.Uid}) finished...");
-    }
-    
     public event IBotUpdateHandler.MsgReceivedEventHandler? MessageReceived;
 }
