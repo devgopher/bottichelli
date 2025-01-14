@@ -19,7 +19,12 @@ public class Message
         /// <summary>
         ///     A command message
         /// </summary>
-        Command
+        Command,
+
+        /// <summary>
+        ///     A specific type with some type extensions
+        /// </summary>
+        Extended
     }
 
     public Message()

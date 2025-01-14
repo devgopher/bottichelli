@@ -4,7 +4,6 @@ using Botticelli.Client.Analytics.Settings;
 using Botticelli.Framework.Controls.Parsers;
 using Botticelli.Framework.Options;
 using Botticelli.Framework.Telegram.Builders;
-using Botticelli.Framework.Telegram.Decorators;
 using Botticelli.Framework.Telegram.Handlers;
 using Botticelli.Framework.Telegram.Layout;
 using Botticelli.Framework.Telegram.Options;
@@ -24,8 +23,6 @@ public static class ServiceCollectionExtensions
         new();
 
     private static readonly DataAccessSettingsBuilder<DataAccessSettings> DataAccessSettingsBuilder = new();
-    
-    private static readonly ExtendableBotUpdateHandlerBuilder ExtendableBotUpdateHandlerBuilder = ExtendableBotUpdateHandlerBuilder.Instance()
 
     public static IServiceCollection AddTelegramBot(this IServiceCollection services, IConfiguration configuration)
     {

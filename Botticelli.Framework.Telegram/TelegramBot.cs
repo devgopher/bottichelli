@@ -139,7 +139,7 @@ public class TelegramBot : BaseBot<TelegramBot>
 
         IReplyMarkup? replyMarkup;
 
-        if (optionsBuilder == default)
+        if (optionsBuilder == null)
             replyMarkup = null;
         else if (optionsBuilder.Build() is IReplyMarkup)
             replyMarkup = optionsBuilder.Build() as IReplyMarkup;
@@ -148,7 +148,7 @@ public class TelegramBot : BaseBot<TelegramBot>
 
         try
         {
-            if (request.Message == default) throw new BotException("request/message is null!");
+            if (request.Message == null) throw new BotException("request/message is null!");
 
             var text = new StringBuilder($"{request.Message.Subject} {request.Message.Body}");
             var retText = _textTransformer.Escape(text).ToString();
@@ -205,7 +205,7 @@ public class TelegramBot : BaseBot<TelegramBot>
                     }
                 }
 
-                if (request.Message?.Poll != default)
+                if (request.Message.Poll != null)
                 {
                     request.Message.Poll.Question.NotNull();
                     request.Message.Poll.Variants.NotNull();
@@ -243,7 +243,7 @@ public class TelegramBot : BaseBot<TelegramBot>
                     };
                 }
 
-                if (request.Message.Contact != default)
+                if (request.Message.Contact != null)
                     await SendContact(request,
                         response,
                         token,

@@ -241,6 +241,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "CommandChains", "CommandCha
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Messaging", "Messaging", "{DEC72475-9783-4BD9-B31E-F77758269476}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Botticelli.Pay.Telegram", "Botticelli.Pay.Telegram\Botticelli.Pay.Telegram.csproj", "{949C67AD-CF8F-4357-A3EF-D3DA407B525E}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -483,6 +485,10 @@ Global
 		{D159BBC6-8D73-44AB-A17B-B14AB7D56A0D}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{D159BBC6-8D73-44AB-A17B-B14AB7D56A0D}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{D159BBC6-8D73-44AB-A17B-B14AB7D56A0D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{949C67AD-CF8F-4357-A3EF-D3DA407B525E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{949C67AD-CF8F-4357-A3EF-D3DA407B525E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{949C67AD-CF8F-4357-A3EF-D3DA407B525E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{949C67AD-CF8F-4357-A3EF-D3DA407B525E}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -577,6 +583,7 @@ Global
 		{195344A3-DE14-4283-B7FB-3A5822C5C0FC} = {DEC72475-9783-4BD9-B31E-F77758269476}
 		{8A5ECE73-1529-4B53-8907-735ADA05C20A} = {8300ACD9-51DA-4B69-B7DF-FB2E5CC63F73}
 		{CB97DC2A-EE66-43A6-977F-6CB82C030D7A} = {DEC72475-9783-4BD9-B31E-F77758269476}
+		{949C67AD-CF8F-4357-A3EF-D3DA407B525E} = {8DA4E10C-3EF4-42CD-BB51-A6562A7A0633}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {2012E26A-91F8-40F9-9118-457668C6B7BA}

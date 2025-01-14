@@ -121,7 +121,7 @@ public class BotUpdateHandler : IBotUpdateHandler
                         : null
                 };
             }
-
+            
             await Process(botticelliMessage, cancellationToken);
 
             MessageReceived?.Invoke(this, new MessageReceivedBotEventArgs
