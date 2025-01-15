@@ -1,9 +1,8 @@
-using Botticelli.Framework.Events;
 using Botticelli.Framework.Telegram.Handlers;
 using Botticelli.Pay.Handlers;
-using Botticelli.Pay.Message;
 using Botticelli.Pay.Models;
 using Botticelli.Pay.Processors;
+using Botticelli.Pay.Utils;
 using Botticelli.Shared.Utils;
 using Microsoft.Extensions.Logging;
 using Telegram.Bot;
@@ -18,7 +17,8 @@ public class BotPreCheckoutHandler : IBotUpdateHandler, IPreCheckoutHandler
     private readonly ILogger<BotPreCheckoutHandler> _logger;
     private readonly PreCheckoutChainRunner<BotPreCheckoutHandler> _runner;
 
-    public BotPreCheckoutHandler(ILogger<BotPreCheckoutHandler> logger, PreCheckoutChainRunner<BotPreCheckoutHandler> runner)
+    public BotPreCheckoutHandler(ILogger<BotPreCheckoutHandler> logger,
+        PreCheckoutChainRunner<BotPreCheckoutHandler> runner)
     {
         _logger = logger;
         _runner = runner;
@@ -26,16 +26,15 @@ public class BotPreCheckoutHandler : IBotUpdateHandler, IPreCheckoutHandler
 
     public async Task HandleUpdateAsync(ITelegramBotClient botClient, Update update,
         CancellationToken cancellationToken)
-    { 
+    {
         try
         {
             update.NotNull();
             update.PreCheckoutQuery.NotNull();
             update.PreCheckoutQuery!.InvoicePayload.NotNullOrEmpty();
-            
+
             _logger.LogDebug($"{nameof(HandleUpdateAsync)}() started...");
-            
-            
+
             var preCheckoutQuery = new PreCheckoutQuery
             {
                 Id = update.PreCheckoutQuery.Id,
@@ -48,15 +47,16 @@ public class BotPreCheckoutHandler : IBotUpdateHandler, IPreCheckoutHandler
                     NickName = update.PreCheckoutQuery.From.Username,
                     IsBot = update.PreCheckoutQuery.From.IsBot
                 },
-                Currency = update.PreCheckoutQuery.Currency,
+                Currency = CurrencySelector.SelectCurrency(update.PreCheckoutQuery.Currency),
                 TotalAmount = update.PreCheckoutQuery.TotalAmount,
-                InvoicePayload =update.PreCheckoutQuery.InvoicePayload,
+                InvoicePayload = update.PreCheckoutQuery.InvoicePayload
             };
-            
+
             var procResult = await _runner.Run(preCheckoutQuery, cancellationToken);
-            
-            await botClient.AnswerPreCheckoutQuery(preCheckoutQuery.Id, procResult.isSuccessful ? string.Empty : procResult.errorMessage, cancellationToken: cancellationToken);
-            
+
+            await botClient.AnswerPreCheckoutQuery(preCheckoutQuery.Id,
+                procResult.isSuccessful ? string.Empty : procResult.errorMessage, cancellationToken);
+
             _logger.LogDebug($"{nameof(HandleUpdateAsync)}() finished...");
         }
         catch (Exception ex)
