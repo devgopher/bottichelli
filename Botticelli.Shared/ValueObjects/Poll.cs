@@ -14,4 +14,6 @@ public class Poll
     public int? CorrectAnswerId { get; set; }
     public bool IsAnonymous { get; set; }
     public PollType Type { get; set; }
+    
+    public bool AllowsMultipleChoice { get; set; }
 }

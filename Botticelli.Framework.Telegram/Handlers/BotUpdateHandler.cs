@@ -84,6 +84,7 @@ public class BotUpdateHandler : IBotUpdateHandler
                             IsAnonymous = update.Poll.IsAnonymous,
                             Question = update.Poll.Question,
                             Type = update.Poll.Type.ToLower() == "regular" ? Poll.PollType.Regular : Poll.PollType.Quiz,
+                            AllowsMultipleChoice = update.Poll.AllowsMultipleAnswers,
                             Variants = update.Poll.Options.Select(o =>  new ValueTuple<string, int>(o.Text, o.VoterCount)),
                             CorrectAnswerId = update.Poll.CorrectOptionId
                         }

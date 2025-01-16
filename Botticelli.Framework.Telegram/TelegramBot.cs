@@ -207,7 +207,7 @@ public sealed class TelegramBot : BaseBot<TelegramBot>
                     }
                 }
 
-                if (request.Message?.Poll != default)
+                if (request.Message.Poll != null)
                 {
                     request.Message.Poll.Question.NotNull();
                     request.Message.Poll.Variants.NotNull();
@@ -223,12 +223,13 @@ public sealed class TelegramBot : BaseBot<TelegramBot>
                         request.Message.Poll.Question,
                         request.Message.Poll.Variants.Select(v => v.option),
                         isAnonymous: request.Message.Poll.IsAnonymous,
-                        type: type,
+                        type: request.Message.Poll.AllowsMultipleChoice ? PollType.Regular : type,
                         correctOptionId: request.Message.Poll?.CorrectAnswerId,
-                        replyToMessageId: request.Message.ReplyToMessageUid != default
+                        replyToMessageId: request.Message.ReplyToMessageUid != null
                             ? int.Parse(request.Message.ReplyToMessageUid)
-                            : default,
+                            : 0,
                         replyMarkup: replyMarkup,
+                        allowsMultipleAnswers: request.Message.Poll?.AllowsMultipleChoice,
                         cancellationToken: token);
                     
                     AddChatIdInnerIdLink(response, link.chatId, message);
