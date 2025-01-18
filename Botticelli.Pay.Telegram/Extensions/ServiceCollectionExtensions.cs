@@ -3,7 +3,11 @@ using Botticelli.Client.Analytics.Settings;
 using Botticelli.Framework.Options;
 using Botticelli.Framework.Telegram.Extensions;
 using Botticelli.Framework.Telegram.Options;
+using Botticelli.Pay.Extensions;
+using Botticelli.Pay.Handlers;
+using Botticelli.Pay.Processors;
 using Botticelli.Pay.Telegram.Handlers;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace Botticelli.Pay.Telegram.Extensions;
@@ -19,14 +23,34 @@ public static class ServiceCollectionExtensions
     /// <param name="serverSettingsBuilderFunc"></param>
     /// <param name="dataAccessSettingsBuilderFunc"></param>
     /// <returns></returns>
-    public static IServiceCollection AddTelegramPayBot(this IServiceCollection services,
+    public static IServiceCollection AddTelegramPayBot<THandler>(this IServiceCollection services,
         Action<BotSettingsBuilder<TelegramBotSettings>> optionsBuilderFunc,
         Action<AnalyticsClientSettingsBuilder<AnalyticsClientSettings>> analyticsOptionsBuilderFunc,
         Action<ServerSettingsBuilder<ServerSettings>> serverSettingsBuilderFunc,
-        Action<DataAccessSettingsBuilder<DataAccessSettings>> dataAccessSettingsBuilderFunc) => services.AddTelegramBot(
-        optionsBuilderFunc,
-        analyticsOptionsBuilderFunc,
-        serverSettingsBuilderFunc,
-        dataAccessSettingsBuilderFunc,
-        o => o.AddHandler<BotPreCheckoutHandler>());
+        Action<DataAccessSettingsBuilder<DataAccessSettings>> dataAccessSettingsBuilderFunc)
+        where THandler : IPreCheckoutHandler, new()
+    {
+        services.AddPayments<THandler>();
+        
+        return services.AddTelegramBot(
+            optionsBuilderFunc,
+            analyticsOptionsBuilderFunc,
+            serverSettingsBuilderFunc,
+            dataAccessSettingsBuilderFunc,
+            o => o.AddHandler<BotPreCheckoutHandler>());
+    }
+
+    /// <summary>
+    ///     Adds a Telegram bot with a payment function
+    /// </summary>
+    /// <param name="services"></param>
+    /// <param name="configuration"></param>
+    /// <returns></returns>
+    public static IServiceCollection AddTelegramPayBot<THandler>(this IServiceCollection services, IConfiguration configuration)
+        where THandler : IPreCheckoutHandler, new()
+    {
+        services.AddPayments<THandler>();
+        
+        return services.AddTelegramBot(configuration);
+    }
 }

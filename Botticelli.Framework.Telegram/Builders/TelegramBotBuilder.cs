@@ -28,7 +28,7 @@ namespace Botticelli.Framework.Telegram.Builders;
 
 public class TelegramBotBuilder : BotBuilder<TelegramBotBuilder, TelegramBot>
 {
-    private TelegramClientDecoratorBuilder _builder = null!;
+    private readonly TelegramClientDecoratorBuilder _builder = null!;
     private TelegramClientDecorator _client = null!;
     private ExtendableBotUpdateHandlerBuilder? _extendableBotUpdateHandlerBuilder;
 

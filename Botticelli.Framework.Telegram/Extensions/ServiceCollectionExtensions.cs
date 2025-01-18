@@ -24,7 +24,9 @@ public static class ServiceCollectionExtensions
 
     private static readonly DataAccessSettingsBuilder<DataAccessSettings> DataAccessSettingsBuilder = new();
 
-    public static IServiceCollection AddTelegramBot(this IServiceCollection services, IConfiguration configuration)
+    public static IServiceCollection AddTelegramBot(this IServiceCollection services, 
+        IConfiguration configuration,
+        Action<TelegramBotBuilder>? telegramBotBuilderFunc = null)
     {
         var telegramBotSettings = configuration
                                       .GetSection(TelegramBotSettings.Section)
@@ -53,18 +55,21 @@ public static class ServiceCollectionExtensions
         return services.AddTelegramBot(telegramBotSettings,
             analyticsClientSettings,
             serverSettings,
-            dataAccessSettings);
+            dataAccessSettings,
+            telegramBotBuilderFunc);
     }
 
     public static IServiceCollection AddTelegramBot(this IServiceCollection services,
         TelegramBotSettings botSettings,
         AnalyticsClientSettings analyticsClientSettings,
         ServerSettings serverSettings,
-        DataAccessSettings dataAccessSettings) =>
+        DataAccessSettings dataAccessSettings,
+        Action<TelegramBotBuilder>? telegramBotBuilderFunc = null) =>
         services.AddTelegramBot(o => o.Set(botSettings),
             o => o.Set(analyticsClientSettings),
             o => o.Set(serverSettings),
-            o => o.Set(dataAccessSettings));
+            o => o.Set(dataAccessSettings),
+           telegramBotBuilderFunc);
 
     /// <summary>
     ///     Adds a Telegram bot

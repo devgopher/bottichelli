@@ -83,8 +83,8 @@ public class StartCommandProcessor<TReplyMarkup> : CommandProcessor<StartCommand
                     Question = "To be or not to be?",
                     Variants =
                     [
-                        "To be!",
-                        "Not to be!"
+                        ("To be!", 0),
+                        ("Not to be!", 0)
                     ],
                     CorrectAnswerId = 0,
                     IsAnonymous = false,
