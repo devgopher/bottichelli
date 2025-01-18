@@ -16,6 +16,7 @@
 - reliable
 - easy to use
 - easy to deploy
+- easy to manage/administrate bots
 - easy to integrate with **databases**
 - easy to integrate with **AI** (**ChatGPT**, **YandexGPT**, **DeepSeek**) solutions (Botticelli.AI)
 - easy to integrate with **speech synthesizers** (Botticelli.Talks)
