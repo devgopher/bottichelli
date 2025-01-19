@@ -15,8 +15,13 @@ public class Invoice
     /// <summary>
     ///     Description
     /// </summary>
-    public string? Description { get; set; }
+    public required string Description { get; set; }
 
+    /// <summary>
+    ///     Payload
+    /// </summary>
+    public required string Payload { get; set; }
+    
     /// <summary>
     ///     Additional parameters for invoice
     /// </summary>
@@ -28,7 +33,12 @@ public class Invoice
     public required Currency Currency { get; set; }
 
     /// <summary>
+    ///     Prices item-by-item
+    /// </summary>
+    public required List<Price> Prices { get; set; }
+    
+    /// <summary>
     ///     Total amount in format: 11.50
     /// </summary>
-    public required decimal TotalAmount { get; set; }
+    public decimal TotalAmount => Prices?.Sum(x => x.Amount) ?? 0;
 }

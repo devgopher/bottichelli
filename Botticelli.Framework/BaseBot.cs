@@ -10,6 +10,7 @@ using Botticelli.Shared.API.Admin.Responses;
 using Botticelli.Shared.API.Client.Requests;
 using Botticelli.Shared.API.Client.Responses;
 using Botticelli.Shared.Constants;
+using Botticelli.Shared.ValueObjects;
 using Microsoft.Extensions.Logging;
 
 namespace Botticelli.Framework;
@@ -152,6 +153,19 @@ public abstract class BaseBot<T> : BaseBot, IBot<T>
 
     protected abstract Task<RemoveMessageResponse> InnerDeleteMessageAsync(RemoveMessageRequest request,
         CancellationToken token);
+
+    /// <summary>
+    ///     Additional message processing while sending a message
+    /// </summary>
+    /// <param name="message"></param>
+    /// <param name="optionsBuilder"></param>
+    /// <param name="isUpdate"></param>
+    /// <param name="token"></param>
+    /// <param name="chatId"></param>
+    /// <returns></returns>
+    protected abstract Task<Message> AdditionalProcessing<TSendOptions>(Message message,
+        ISendOptionsBuilder<TSendOptions>? optionsBuilder, bool isUpdate, CancellationToken token, string chatId)
+        where TSendOptions : class;
 
     public event StartedEventHandler Started;
     public event StoppedEventHandler Stopped;
