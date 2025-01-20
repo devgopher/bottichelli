@@ -6,34 +6,41 @@ using Botticelli.Pay.Utils;
 using Botticelli.Shared.Utils;
 using Microsoft.Extensions.Logging;
 using Telegram.Bot;
-using Telegram.Bot.Polling;
 using Telegram.Bot.Types;
 using User = Botticelli.Shared.ValueObjects.User;
 
 namespace Botticelli.Pay.Telegram.Handlers;
 
-public class BotPreCheckoutHandler : IBotUpdateHandler, IPreCheckoutHandler
+public class BotPreCheckoutSubHandler : IBotUpdateSubHandler, IPreCheckoutHandler
 {
-    private readonly ILogger<BotPreCheckoutHandler> _logger;
-    private readonly PreCheckoutChainRunner<BotPreCheckoutHandler> _runner;
+    private readonly ILogger<BotPreCheckoutSubHandler> _logger;
+    private readonly PreCheckoutChainRunner<BotPreCheckoutSubHandler> _runner;
 
-    public BotPreCheckoutHandler(ILogger<BotPreCheckoutHandler> logger,
-        PreCheckoutChainRunner<BotPreCheckoutHandler> runner)
+    public BotPreCheckoutSubHandler(ILogger<BotPreCheckoutSubHandler> logger)
+    {
+        _logger = logger;
+        _runner = new PreCheckoutChainRunner<BotPreCheckoutSubHandler>();
+    }
+    
+    public BotPreCheckoutSubHandler(ILogger<BotPreCheckoutSubHandler> logger,
+        PreCheckoutChainRunner<BotPreCheckoutSubHandler> runner)
     {
         _logger = logger;
         _runner = runner;
     }
 
-    public async Task HandleUpdateAsync(ITelegramBotClient botClient, Update update,
+    public async Task Process(ITelegramBotClient botClient, Update update,
         CancellationToken cancellationToken)
     {
         try
         {
             update.NotNull();
-            update.PreCheckoutQuery.NotNull();
+           if (update.PreCheckoutQuery is null)
+               return;
+           
             update.PreCheckoutQuery!.InvoicePayload.NotNullOrEmpty();
 
-            _logger.LogDebug($"{nameof(HandleUpdateAsync)}() started...");
+            _logger.LogDebug($"{nameof(Process)}() started...");
 
             var preCheckoutQuery = new PreCheckoutQuery
             {
@@ -57,17 +64,11 @@ public class BotPreCheckoutHandler : IBotUpdateHandler, IPreCheckoutHandler
             await botClient.AnswerPreCheckoutQuery(preCheckoutQuery.Id,
                 procResult.isSuccessful ? string.Empty : procResult.errorMessage, cancellationToken);
 
-            _logger.LogDebug($"{nameof(HandleUpdateAsync)}() finished...");
+            _logger.LogDebug($"{nameof(Process)}() finished...");
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, $"{nameof(HandleUpdateAsync)}() error");
+            _logger.LogError(ex, $"{nameof(Process)}() error");
         }
     }
-
-    public async Task HandleErrorAsync(ITelegramBotClient botClient, Exception exception, HandleErrorSource source,
-        CancellationToken cancellationToken) =>
-        throw new NotImplementedException();
-
-    public event IBotUpdateHandler.MsgReceivedEventHandler? MessageReceived;
 }

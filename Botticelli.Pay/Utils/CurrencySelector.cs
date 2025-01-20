@@ -13,7 +13,7 @@ public static class CurrencySelector
         if (!File.Exists(Path.Combine(AppContext.BaseDirectory, "Currencies", "currencies.json")))
             throw new FileNotFoundException("currencies.json could not be found!");
         
-        var currenciesJson = File.ReadAllText(Path.Combine(AppContext.BaseDirectory, "Currencies"));
+        var currenciesJson = File.ReadAllText(Path.Combine(AppContext.BaseDirectory, "Currencies", "currencies.json"));
 
         Currencies = JsonSerializer.Deserialize<Dictionary<string, Currency>>(currenciesJson)!;
         

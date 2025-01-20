@@ -32,12 +32,13 @@ public static class ServiceCollectionExtensions
     {
         services.AddPayments<THandler>();
         
-        return services.AddTelegramBot(
+        
+        return services.AddTelegramBot<TelegramPaymentBot>(
             optionsBuilderFunc,
             analyticsOptionsBuilderFunc,
             serverSettingsBuilderFunc,
             dataAccessSettingsBuilderFunc,
-            o => o.AddHandler<BotPreCheckoutHandler>());
+            o => o.AddSubHandler<BotPreCheckoutSubHandler>());
     }
 
     /// <summary>
@@ -50,7 +51,7 @@ public static class ServiceCollectionExtensions
         where THandler : IPreCheckoutHandler, new()
     {
         services.AddPayments<THandler>();
-        
-        return services.AddTelegramBot(configuration);
+
+        return services.AddTelegramBot<TelegramPaymentBot>(configuration, o => o.AddSubHandler<BotPreCheckoutSubHandler>());
     }
 }

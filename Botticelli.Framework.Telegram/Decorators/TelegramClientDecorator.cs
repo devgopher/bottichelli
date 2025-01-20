@@ -20,7 +20,7 @@ public class TelegramClientDecorator : ITelegramBotClient
         .WaitAndRetry(10, (i, _) => TimeSpan.FromSeconds(10 * Math.Exp(i)));
 
     private readonly IThrottler? _throttler;
-    private TelegramBotClient? _bot;
+    private TelegramBotClient? _innerClient;
     private TelegramBotClientOptions _options;
 
     internal TelegramClientDecorator(TelegramBotClientOptions options, IThrottler? throttler,
@@ -29,7 +29,7 @@ public class TelegramClientDecorator : ITelegramBotClient
         _throttler = throttler;
         _options = options;
         _httpClient = httpClient;
-        _bot = !string.IsNullOrWhiteSpace(options.Token) ? new TelegramBotClient(options, httpClient) : null;
+        _innerClient = !string.IsNullOrWhiteSpace(options.Token) ? new TelegramBotClient(options, httpClient) : null;
     }
 
 
@@ -42,10 +42,10 @@ public class TelegramClientDecorator : ITelegramBotClient
                 {
                     if (_throttler != null)
                         return await _throttler.Throttle(
-                            async () => await _bot?.SendRequest(request, cancellationToken)!,
+                            async () => await _innerClient?.SendRequest(request, cancellationToken)!,
                             cancellationToken);
 
-                    return await _bot?.SendRequest(request, cancellationToken)!;
+                    return await _innerClient?.SendRequest(request, cancellationToken)!;
                 })
                 .ConfigureAwait(false);
         }
@@ -78,8 +78,8 @@ public class TelegramClientDecorator : ITelegramBotClient
         {
             await _policy.Execute(async () =>
             {
-                if (_bot != null)
-                    await _bot?.DownloadFile(filePath, destination, cancellationToken)!;
+                if (_innerClient != null)
+                    await _innerClient?.DownloadFile(filePath, destination, cancellationToken)!;
             }).ConfigureAwait(false);
         }
         catch (ApiRequestException ex)
@@ -101,6 +101,6 @@ public class TelegramClientDecorator : ITelegramBotClient
     public void ChangeBotToken(string token)
     {
         _options = new TelegramBotClientOptions(token, _options.BaseUrl, _options.UseTestEnvironment);
-        _bot = new TelegramBotClient(_options, _httpClient);
+        _innerClient = new TelegramBotClient(_options, _httpClient);
     }
 }

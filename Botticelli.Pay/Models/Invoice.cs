@@ -36,6 +36,16 @@ public class Invoice
     ///     Prices item-by-item
     /// </summary>
     public required List<Price> Prices { get; set; }
+
+    /// <summary>
+    /// Payment provider token
+    /// </summary>
+    public required string ProviderToken{ get; set; }
+    
+    /// <summary>
+    /// Payment provider data
+    /// </summary>
+    public string? ProviderData { get; set; }
     
     /// <summary>
     ///     Total amount in format: 11.50

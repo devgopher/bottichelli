@@ -106,10 +106,9 @@ public class TelegramBot : BaseBot<TelegramBot>
         return response;
     }
 
-    protected override Task<Shared.ValueObjects.Message> AdditionalProcessing<TSendOptions>(
-        Shared.ValueObjects.Message message,
-        ISendOptionsBuilder<TSendOptions>? optionsBuilder, bool isUpdate, CancellationToken token, string chatId) =>
-        Task.FromResult(message);
+    protected override Task AdditionalProcessing<TSendOptions>(SendMessageRequest request,
+        ISendOptionsBuilder<TSendOptions>? optionsBuilder, bool isUpdate, string chatId, CancellationToken token)
+        => Task.CompletedTask;
 
     /// <summary>
     ///     Sends a message as a telegram bot
@@ -182,12 +181,12 @@ public class TelegramBot : BaseBot<TelegramBot>
                         token,
                         replyMarkup);
 
+                await AdditionalProcessing(request, optionsBuilder, isUpdate, link.chatId, token);
                 if (request.Message.Attachments == null) continue;
 
-                message = await ProcessAttachments(request, token, link, replyMarkup, response, message);
-                message = await AdditionalProcessing(request, optionsBuilder, isUpdate, token, TODO);
-
+                message = await ProcessAttachments(request, token, link, replyMarkup, response, message); 
                 message.NotNull();
+                
                 AddChatIdInnerIdLink(response, link.chatId, message);
             }
 

@@ -12,8 +12,6 @@ namespace TelegramPayBot.Commands.Processors;
 
 public class InfoCommandProcessor<TReplyMarkup> : CommandProcessor<InfoCommand> where TReplyMarkup : class
 {
-    private readonly SendOptionsBuilder<TReplyMarkup>? _options;
-
     public InfoCommandProcessor(ILogger<InfoCommandProcessor<TReplyMarkup>> logger,
         ICommandValidator<InfoCommand> commandValidator,
         MetricsProcessor metricsProcessor,
@@ -22,11 +20,6 @@ public class InfoCommandProcessor<TReplyMarkup> : CommandProcessor<InfoCommand> 
         IValidator<Message> messageValidator)
         : base(logger, commandValidator, metricsProcessor, messageValidator)
     {
-        var location = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location) ?? string.Empty;
-        var responseLayout = layoutParser.ParseFromFile(Path.Combine(location, "main_layout.json"));
-        var responseMarkup = layoutSupplier.GetMarkup(responseLayout);
-
-        _options = SendOptionsBuilder<TReplyMarkup>.CreateBuilder(responseMarkup);
     }
 
     protected override Task InnerProcessContact(Message message, CancellationToken token) => Task.CompletedTask;
@@ -43,10 +36,10 @@ public class InfoCommandProcessor<TReplyMarkup> : CommandProcessor<InfoCommand> 
             {
                 Uid = Guid.NewGuid().ToString(),
                 ChatIds = message.ChatIds,
-                Body = "This is a test bot.\nEnjoy!"
+                Body = "This is a test payment bot.\nEnjoy!"
             }
         };
 
-        await Bot?.SendMessageAsync(greetingMessageRequest, _options, token)!; // TODO: think about Bot mocks
+        await Bot?.SendMessageAsync(greetingMessageRequest, token)!; // TODO: think about Bot mocks
     }
 }

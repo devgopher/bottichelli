@@ -4,7 +4,7 @@ using Botticelli.Client.Analytics.Settings;
 using Botticelli.Framework.Controls.Parsers;
 using Botticelli.Framework.Options;
 using Botticelli.Framework.Telegram.Builders;
-using Botticelli.Framework.Telegram.Handlers;
+using Botticelli.Framework.Telegram.Decorators;
 using Botticelli.Framework.Telegram.Layout;
 using Botticelli.Framework.Telegram.Options;
 using Botticelli.Interfaces;
@@ -26,7 +26,13 @@ public static class ServiceCollectionExtensions
 
     public static IServiceCollection AddTelegramBot(this IServiceCollection services, 
         IConfiguration configuration,
-        Action<TelegramBotBuilder>? telegramBotBuilderFunc = null)
+        Action<TelegramBotBuilder<TelegramBot>>? telegramBotBuilderFunc = null) 
+        => AddTelegramBot<TelegramBot>(services, configuration, telegramBotBuilderFunc);
+    
+    public static IServiceCollection AddTelegramBot<TBot>(this IServiceCollection services, 
+        IConfiguration configuration,
+        Action<TelegramBotBuilder<TBot>>? telegramBotBuilderFunc = null) 
+        where TBot : TelegramBot
     {
         var telegramBotSettings = configuration
                                       .GetSection(TelegramBotSettings.Section)
@@ -52,19 +58,20 @@ public static class ServiceCollectionExtensions
                                  throw new ConfigurationErrorsException(
                                      $"Can't load configuration for {nameof(DataAccessSettings)}!");
 
-        return services.AddTelegramBot(telegramBotSettings,
+        return services.AddTelegramBot<TBot>(telegramBotSettings,
             analyticsClientSettings,
             serverSettings,
             dataAccessSettings,
             telegramBotBuilderFunc);
     }
 
-    public static IServiceCollection AddTelegramBot(this IServiceCollection services,
+    public static IServiceCollection AddTelegramBot<TBot>(this IServiceCollection services,
         TelegramBotSettings botSettings,
         AnalyticsClientSettings analyticsClientSettings,
         ServerSettings serverSettings,
         DataAccessSettings dataAccessSettings,
-        Action<TelegramBotBuilder>? telegramBotBuilderFunc = null) =>
+        Action<TelegramBotBuilder<TBot>>? telegramBotBuilderFunc = null) 
+        where TBot : TelegramBot =>
         services.AddTelegramBot(o => o.Set(botSettings),
             o => o.Set(analyticsClientSettings),
             o => o.Set(serverSettings),
@@ -81,24 +88,27 @@ public static class ServiceCollectionExtensions
     /// <param name="dataAccessSettingsBuilderFunc"></param>
     /// <param name="telegramBotBuilderFunc"></param>
     /// <returns></returns>
-    public static IServiceCollection AddTelegramBot(this IServiceCollection services,
+    public static IServiceCollection AddTelegramBot<TBot>(this IServiceCollection services,
         Action<BotSettingsBuilder<TelegramBotSettings>> optionsBuilderFunc,
         Action<AnalyticsClientSettingsBuilder<AnalyticsClientSettings>> analyticsOptionsBuilderFunc,
         Action<ServerSettingsBuilder<ServerSettings>> serverSettingsBuilderFunc,
         Action<DataAccessSettingsBuilder<DataAccessSettings>> dataAccessSettingsBuilderFunc,
-        Action<TelegramBotBuilder>? telegramBotBuilderFunc = null)
+        Action<TelegramBotBuilder<TBot>>? telegramBotBuilderFunc = null) 
+        where TBot : TelegramBot
     {
         optionsBuilderFunc(SettingsBuilder);
         serverSettingsBuilderFunc(ServerSettingsBuilder);
         analyticsOptionsBuilderFunc(AnalyticsClientOptionsBuilder);
         dataAccessSettingsBuilderFunc(DataAccessSettingsBuilder);
 
-        var botBuilder = TelegramBotBuilder.Instance(services,
+        var clientBuilder = TelegramClientDecoratorBuilder.Instance(services, SettingsBuilder);
+        
+        var botBuilder = TelegramBotBuilder<TBot>.Instance(services,
                 ServerSettingsBuilder,
                 SettingsBuilder,
                 DataAccessSettingsBuilder,
                 AnalyticsClientOptionsBuilder)
-            .AddHandler<BotUpdateHandler>();
+            .AddClient(clientBuilder);
         
         telegramBotBuilderFunc?.Invoke(botBuilder);
         

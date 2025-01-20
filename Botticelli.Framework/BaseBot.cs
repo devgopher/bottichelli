@@ -157,16 +157,15 @@ public abstract class BaseBot<T> : BaseBot, IBot<T>
     /// <summary>
     ///     Additional message processing while sending a message
     /// </summary>
-    /// <param name="message"></param>
+    /// <param name="request"></param>
     /// <param name="optionsBuilder"></param>
     /// <param name="isUpdate"></param>
-    /// <param name="token"></param>
     /// <param name="chatId"></param>
+    /// <param name="token"></param>
     /// <returns></returns>
-    protected abstract Task<Message> AdditionalProcessing<TSendOptions>(Message message,
-        ISendOptionsBuilder<TSendOptions>? optionsBuilder, bool isUpdate, CancellationToken token, string chatId)
-        where TSendOptions : class;
-
+    protected abstract Task AdditionalProcessing<TSendOptions>(SendMessageRequest request,
+        ISendOptionsBuilder<TSendOptions>? optionsBuilder, bool isUpdate, string chatId, CancellationToken token);
+    
     public event StartedEventHandler Started;
     public event StoppedEventHandler Stopped;
 }

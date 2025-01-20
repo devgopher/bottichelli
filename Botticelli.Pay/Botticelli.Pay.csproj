@@ -23,6 +23,12 @@
         <Link>Currencies\currencies.json</Link>
         <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       </None>
+      <None Include="..\logo.jpg">
+        <Pack>True</Pack>
+        <PackagePath>\</PackagePath>
+        <Link>logo.jpg</Link>
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </None>
     </ItemGroup>
 
 </Project>

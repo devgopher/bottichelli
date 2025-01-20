@@ -111,7 +111,6 @@ public static class StartupExtensions
             .AddProcessor<TCommandProcessor, TBot>(sp);
 
         return new CommandRegisterServices<TCommand, TBot>(sp);
-        ;
     }
 
     public static IServiceProvider RegisterFluentBotCommand<TCommandProcessor, TBot>(this IServiceProvider sp)

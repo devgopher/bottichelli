@@ -11,4 +11,13 @@
       <ProjectReference Include="..\Botticelli.Pay\Botticelli.Pay.csproj" />
     </ItemGroup>
 
+    <ItemGroup>
+      <None Include="..\logo.jpg">
+        <Pack>True</Pack>
+        <PackagePath>\</PackagePath>
+        <Link>logo.jpg</Link>
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </None>
+    </ItemGroup>
+
 </Project>

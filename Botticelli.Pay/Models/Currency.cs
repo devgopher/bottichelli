@@ -17,7 +17,7 @@ public class Currency
     public required string MajorPlural { get; set; }
 
     [JsonPropertyName("ISOnum")]
-    public int IsOnum { get; set; }
+    public int? IsOnum { get; set; }
 
     [JsonPropertyName("symbol")]
     public required string Symbol { get; set; }
@@ -32,11 +32,11 @@ public class Currency
     public required string MinorPlural { get; set; }
 
     [JsonPropertyName("ISOdigits")]
-    public int IsOdigits { get; set; }
+    public int? IsOdigits { get; set; }
 
     [JsonPropertyName("decimals")]
-    public int Decimals { get; set; }
+    public int? Decimals { get; set; }
 
     [JsonPropertyName("numToBasic")]
-    public int NumToBasic { get; set; }
+    public int? NumToBasic { get; set; }
 }

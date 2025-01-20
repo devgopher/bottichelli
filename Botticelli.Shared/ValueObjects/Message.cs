@@ -109,7 +109,7 @@ public class Message
     /// <summary>
     ///     GeoLocation
     /// </summary>
-    public GeoLocation Location { get; set; }
+    public GeoLocation? Location { get; set; }
 
     /// <summary>
     ///     Callback data if exists

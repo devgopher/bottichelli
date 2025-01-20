@@ -15,8 +15,10 @@ public class BotUpdateHandler : IBotUpdateHandler
 {
     private readonly ILogger<BotUpdateHandler> _logger;
     private readonly ClientProcessorFactory _processorFactory;
+    private readonly List<IBotUpdateSubHandler> _subHandlers = [];
 
-    public BotUpdateHandler(ILogger<BotUpdateHandler> logger, ClientProcessorFactory processorFactory)
+    public BotUpdateHandler(ILogger<BotUpdateHandler> logger, 
+        ClientProcessorFactory processorFactory)
     {
         _logger = logger;
         _processorFactory = processorFactory;
@@ -38,16 +40,24 @@ public class BotUpdateHandler : IBotUpdateHandler
                 if (update.CallbackQuery != null)
                 {
                     botMessage = update.CallbackQuery?.Message;
+
+                    if (botMessage == null)
+                    {
+                        _logger.LogError($"{nameof(HandleUpdateAsync)}() {nameof(botMessage)} is null!");
+                        
+                        return;
+                    }
+                    
                     botticelliMessage = new Message
                     {
                         ChatIdInnerIdLinks = new Dictionary<string, List<string>>
                         {
                             {
-                                update.CallbackQuery?.Message.Chat?.Id.ToString(),
-                                [update.CallbackQuery.Message?.MessageId.ToString()]
+                                botMessage.Chat.Id.ToString(),
+                                [botMessage.MessageId.ToString()]
                             }
                         },
-                        ChatIds = [update.CallbackQuery?.Message.Chat?.Id.ToString()],
+                        ChatIds = [botMessage.Chat.Id.ToString()],
                         CallbackData = update.CallbackQuery?.Data ?? string.Empty,
                         CreatedAt = update.Message?.Date ?? DateTime.Now,
                         LastModifiedAt = update.Message?.Date ?? DateTime.Now,
@@ -115,8 +125,8 @@ public class BotUpdateHandler : IBotUpdateHandler
                     Location = botMessage.Location != null
                         ? new GeoLocation
                         {
-                            Latitude = (decimal)botMessage.Location?.Latitude,
-                            Longitude = (decimal)botMessage.Location?.Longitude
+                            Latitude = (decimal)botMessage.Location.Latitude,
+                            Longitude = (decimal)botMessage.Location.Longitude
                         }
                         : null
                 };
@@ -124,6 +134,8 @@ public class BotUpdateHandler : IBotUpdateHandler
             
             await Process(botticelliMessage, cancellationToken);
 
+            foreach (var subHandler in _subHandlers) await subHandler.Process(botClient, update, cancellationToken);
+            
             MessageReceived?.Invoke(this, new MessageReceivedBotEventArgs
             {
                 Message = botticelliMessage
@@ -144,6 +156,9 @@ public class BotUpdateHandler : IBotUpdateHandler
 
         return Task.CompletedTask;
     }
+
+    public void AddSubHandler<T>(T subHandler) where T : IBotUpdateSubHandler
+        => _subHandlers.Add(subHandler);
 
     public event IBotUpdateHandler.MsgReceivedEventHandler? MessageReceived;
 

@@ -9,14 +9,14 @@ public abstract class BotBuilder<TBot>
 {
     protected abstract void Assert();
 
-    public TBot Build()
+    public TBot? Build()
     {
         Assert();
 
         return InnerBuild();
     }
 
-    protected abstract TBot InnerBuild();
+    protected abstract TBot? InnerBuild();
 }
 
 public abstract class BotBuilder<TBotBuilder, TBot> : BotBuilder<TBot>

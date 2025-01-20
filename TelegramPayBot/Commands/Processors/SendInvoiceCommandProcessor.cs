@@ -2,7 +2,6 @@ using System.Reflection;
 using Botticelli.Client.Analytics;
 using Botticelli.Framework.Commands.Processors;
 using Botticelli.Framework.Commands.Validators;
-using Botticelli.Framework.Controls.Parsers;
 using Botticelli.Framework.SendOptions;
 using Botticelli.Pay.Message;
 using Botticelli.Pay.Models;
@@ -13,23 +12,14 @@ using FluentValidation;
 
 namespace TelegramPayBot.Commands.Processors;
 
-public class SendInvoiceCommandProcessor<TReplyMarkup> : CommandProcessor<InfoCommand> where TReplyMarkup : class
+public class SendInvoiceCommandProcessor<TReplyMarkup> : CommandProcessor<SendInvoiceCommand> where TReplyMarkup : class
 {
-    private readonly SendOptionsBuilder<TReplyMarkup>? _options;
-
-    public SendInvoiceCommandProcessor(ILogger<InfoCommandProcessor<TReplyMarkup>> logger,
-        ICommandValidator<InfoCommand> commandValidator,
+    public SendInvoiceCommandProcessor(ILogger<SendInvoiceCommandProcessor<TReplyMarkup>> logger,
+        ICommandValidator<SendInvoiceCommand> commandValidator,
         MetricsProcessor metricsProcessor,
-        ILayoutSupplier<TReplyMarkup> layoutSupplier,
-        ILayoutParser layoutParser,
         IValidator<Message> messageValidator)
         : base(logger, commandValidator, metricsProcessor, messageValidator)
     {
-        var location = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location) ?? string.Empty;
-        var responseLayout = layoutParser.ParseFromFile(Path.Combine(location, "main_layout.json"));
-        var responseMarkup = layoutSupplier.GetMarkup(responseLayout);
-
-        _options = SendOptionsBuilder<TReplyMarkup>.CreateBuilder(responseMarkup);
     }
 
     protected override Task InnerProcessContact(Message message, CancellationToken token) => Task.CompletedTask;
@@ -42,7 +32,7 @@ public class SendInvoiceCommandProcessor<TReplyMarkup> : CommandProcessor<InfoCo
     {
         var sendInvoiceMessageRequest = new SendMessageRequest
         {
-            Message = new PayInvoiceMessage()
+            Message = new PayInvoiceMessage
             {
                 Uid = Guid.NewGuid().ToString(),
                 ChatIds = message.ChatIds,
@@ -51,11 +41,26 @@ public class SendInvoiceCommandProcessor<TReplyMarkup> : CommandProcessor<InfoCo
                 {
                     Title = "Test invoice (no real payment will be made)",
                     Currency = CurrencySelector.SelectCurrency("USD"),
-                    TotalAmount = 1550
+                    Description = "Test invoice",
+                    Payload = "Test payload",
+                    Prices =
+                    [
+                        new Price
+                        {
+                            Label = "Item 1",
+                            Amount = 120
+                        },
+                        new Price
+                        {
+                            Label = "Item 2",
+                            Amount = 150
+                        }
+                    ],
+                    ProviderToken = "1744374395:TEST:a6d6c82a4d0ceed9f9db"
                 }
             }
         };
 
-        await Bot?.SendMessageAsync(sendInvoiceMessageRequest, _options, token)!; // TODO: think about Bot mocks
+        await Bot?.SendMessageAsync(sendInvoiceMessageRequest, token)!; // TODO: think about Bot mocks
     }
 }
