@@ -88,6 +88,7 @@ public static class ServiceCollectionExtensions
                                                      AnalyticsClientOptionsBuilder)
                                            .AddClient(clientBuilder);
         var bot = botBuilder.Build();
+        
         return services.AddSingleton<IBot<TelegramBot>>(bot)
                        .AddSingleton<IBot>(bot)
                        .AddTelegramLayoutsSupport();
