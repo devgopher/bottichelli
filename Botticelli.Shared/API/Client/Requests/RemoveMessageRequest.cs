@@ -1,11 +1,10 @@
-﻿namespace Botticelli.Shared.API.Client.Requests;
+﻿using Botticelli.Shared.ValueObjects;
+
+namespace Botticelli.Shared.API.Client.Requests;
 
 public class RemoveMessageRequest : BaseRequest<RemoveMessageRequest>
 {
-    public RemoveMessageRequest(string? uid, string chatId) : base(uid)
-    {
-        ChatId = chatId;
-    }
+    public RemoveMessageRequest(Message message) : base(message.Uid) => Message = message;
 
-    public string? ChatId { get; set; }
+    public Message Message { get; set; }
 }

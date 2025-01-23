@@ -33,7 +33,7 @@ public abstract class CommandProcessor<TCommand> : ICommandProcessor
         _messageValidator = messageValidator;
         _command = GetOldFashionedCommandName(typeof(TCommand).Name);
     }
-
+    
     public virtual async Task ProcessAsync(Message message, CancellationToken token)
     {
         try
@@ -54,7 +54,6 @@ public abstract class CommandProcessor<TCommand> : ICommandProcessor
 
                 return;
             }
-
 
             if (message.From!.Id!.Equals(Bot.BotUserId, StringComparison.InvariantCulture)) return;
 
@@ -78,7 +77,7 @@ public abstract class CommandProcessor<TCommand> : ICommandProcessor
             if (CommandUtils.SimpleCommandRegex.IsMatch(body))
             {
                 var match = CommandUtils.SimpleCommandRegex.Matches(body)
-                    .FirstOrDefault();
+                                        .FirstOrDefault();
 
                 if (match == default) return;
 
@@ -109,10 +108,11 @@ public abstract class CommandProcessor<TCommand> : ICommandProcessor
             {
                 if (GetType().IsAssignableTo(typeof(CommandChainProcessor<TCommand>)))
                     await ValidateAndProcess(message,
-                        token);
+                                             token);
             }
 
             if (message.Location != default) await InnerProcessLocation(message, token);
+            if (message.Poll != default) await InnerProcessPoll(message,  token);
             if (message.Contact != default) await InnerProcessContact(message, token);
         }
         catch (Exception ex)
