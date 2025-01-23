@@ -20,5 +20,12 @@ public static class CurrencySelector
         Currencies.NotNullOrEmpty();
     }
 
-    public static Currency SelectCurrency(string currency3Letters) => Currencies[currency3Letters];
+    public static Currency SelectCurrency(string iso)
+    {
+        if (!Currencies.TryGetValue(iso, out var currency))
+            throw new KeyNotFoundException("iso could not be found!");
+            
+        currency.Iso = iso;
+        return Currencies[iso];
+    }
 }

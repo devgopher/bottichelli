@@ -40,7 +40,7 @@ public class SendInvoiceCommandProcessor<TReplyMarkup> : CommandProcessor<SendIn
                 Invoice = new Invoice
                 {
                     Title = "Test invoice (no real payment will be made)",
-                    Currency = CurrencySelector.SelectCurrency("USD"),
+                    Currency = CurrencySelector.SelectCurrency("RUB"),
                     Description = "Test invoice",
                     Payload = "Test payload",
                     Prices =
@@ -56,7 +56,7 @@ public class SendInvoiceCommandProcessor<TReplyMarkup> : CommandProcessor<SendIn
                             Amount = 150
                         }
                     ],
-                    ProviderToken = "1744374395:TEST:a6d6c82a4d0ceed9f9db"
+                    ProviderToken = ""
                 }
             }
         };
