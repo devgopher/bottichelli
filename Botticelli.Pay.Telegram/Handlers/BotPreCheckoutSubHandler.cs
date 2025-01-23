@@ -14,16 +14,16 @@ namespace Botticelli.Pay.Telegram.Handlers;
 public class BotPreCheckoutSubHandler : IBotUpdateSubHandler, IPreCheckoutHandler
 {
     private readonly ILogger<BotPreCheckoutSubHandler> _logger;
-    private readonly PreCheckoutChainRunner<BotPreCheckoutSubHandler> _runner;
+    private readonly PayChainRunner<BotPreCheckoutSubHandler, PreCheckoutQuery> _runner;
 
     public BotPreCheckoutSubHandler(ILogger<BotPreCheckoutSubHandler> logger)
     {
         _logger = logger;
-        _runner = new PreCheckoutChainRunner<BotPreCheckoutSubHandler>();
+        _runner = new PayChainRunner<BotPreCheckoutSubHandler, PreCheckoutQuery>();
     }
-    
+
     public BotPreCheckoutSubHandler(ILogger<BotPreCheckoutSubHandler> logger,
-        PreCheckoutChainRunner<BotPreCheckoutSubHandler> runner)
+        PayChainRunner<BotPreCheckoutSubHandler, PreCheckoutQuery> runner)
     {
         _logger = logger;
         _runner = runner;
@@ -35,9 +35,9 @@ public class BotPreCheckoutSubHandler : IBotUpdateSubHandler, IPreCheckoutHandle
         try
         {
             update.NotNull();
-           if (update.PreCheckoutQuery is null)
-               return;
-           
+            if (update.PreCheckoutQuery is null)
+                return;
+
             update.PreCheckoutQuery!.InvoicePayload.NotNullOrEmpty();
 
             _logger.LogDebug($"{nameof(Process)}() started...");
@@ -62,7 +62,7 @@ public class BotPreCheckoutSubHandler : IBotUpdateSubHandler, IPreCheckoutHandle
             var procResult = await _runner.Run(preCheckoutQuery, cancellationToken);
 
             await botClient.AnswerPreCheckoutQuery(preCheckoutQuery.Id,
-                procResult.isSuccessful ? string.Empty : procResult.errorMessage, cancellationToken);
+                procResult.isSuccessful ? default : procResult.errorMessage, cancellationToken);
 
             _logger.LogDebug($"{nameof(Process)}() finished...");
         }

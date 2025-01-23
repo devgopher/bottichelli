@@ -1,4 +1,5 @@
 using Botticelli.Pay.Handlers;
+using Botticelli.Pay.Models;
 using Botticelli.Pay.Processors;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -6,12 +7,13 @@ namespace Botticelli.Pay.Extensions;
 
 public static class ServiceCollectionExtensions
 {
-    public static PreCheckoutChainBuilder<THandler> AddPayPreCheckouts<THandler>(
+    public static PayChainBuilder<THandler, TProcessor, TQuery> AddPayPreCheckouts<THandler, TProcessor, TQuery>(
         this IServiceCollection services,
-        params IPreCheckoutProcessor<THandler>[] preCheckoutProcessors)
-        where THandler : IPreCheckoutHandler, new()
+        params TProcessor[] preCheckoutProcessors)
+        where THandler : IPayHandler
+        where TProcessor : IPayProcessor<THandler, TQuery>, new()
     {
-        var builder = AddPayPreCheckout<THandler>(services);
+        var builder = AddPayPreCheckout<THandler, TProcessor, TQuery>(services);
 
         foreach (var processor in preCheckoutProcessors)
             builder.AddElement(processor);
@@ -19,29 +21,50 @@ public static class ServiceCollectionExtensions
         return builder;
     }
 
-    public static PreCheckoutChainBuilder<THandler> AddPayPreCheckout<THandler>(
+    public static PayChainBuilder<THandler, TProcessor, TQuery> AddPayPreCheckout<THandler, TProcessor, TQuery>(
         this IServiceCollection services,
-        IPreCheckoutProcessor<THandler> processor)
-        where THandler : IPreCheckoutHandler, new() =>
-        AddPayPreCheckouts<THandler>(services)
+        IPayProcessor<THandler, TQuery> processor)
+        where THandler : IPreCheckoutHandler, new()
+        where TProcessor : IPayProcessor<THandler, TQuery>, new()
+        => AddPayPreCheckouts<THandler, TProcessor, TQuery>(services)
             .AddElement(processor);
 
-    public static PreCheckoutChainBuilder<THandler> AddPayPreCheckout<THandler>(this IServiceCollection services)
-        where THandler : IPreCheckoutHandler
+    public static PayChainBuilder<THandler, TProcessor, TQuery> AddPayPreCheckout<THandler, TProcessor, TQuery>(
+        this IServiceCollection services)
+        where THandler : IPayHandler where TProcessor : IPayProcessor<THandler, TQuery>
     {
-        services.AddSingleton<PreCheckoutChainBuilder<THandler>>();
+        services.AddSingleton<PayChainBuilder<THandler, TProcessor, TQuery>>();
 
-        return services.BuildServiceProvider().GetRequiredService<PreCheckoutChainBuilder<THandler>>();
+        return services.BuildServiceProvider().GetRequiredService<PayChainBuilder<THandler, TProcessor, TQuery>>();
     }
 
-    public static PreCheckoutChainRunner<THandler> AddPayments<THandler>(this IServiceCollection services)
-        where THandler : IPreCheckoutHandler
+    public static PayChainBuilder<THandler, TProcessor, TQuery>
+        AddPaySuccessful<THandler, TProcessor, TQuery>(this IServiceCollection services) where THandler : IPayHandler
+        where TProcessor : IPayProcessor<THandler, TQuery>
     {
-        var builder = AddPayPreCheckout<THandler>(services);
+        services.AddSingleton<PayChainBuilder<THandler, TProcessor, TQuery>>();
+
+        return services.BuildServiceProvider().GetRequiredService<PayChainBuilder<THandler, TProcessor, TQuery>>();
+    }
+
+    public static PayChainBuilder<THandler, TProcessor, TQuery>
+        AddPayError<THandler, TProcessor, TQuery>(this IServiceCollection services) where THandler : IPayHandler
+        where TProcessor : IPayProcessor<THandler, TQuery>
+    {
+        services.AddSingleton<PayChainBuilder<THandler, TProcessor, TQuery>>();
+
+        return services.BuildServiceProvider().GetRequiredService<PayChainBuilder<THandler, TProcessor, TQuery>>();
+    }
+
+    public static PayChainRunner<THandler, TQuery> AddPayments<THandler, TProcessor, TQuery>(
+        this IServiceCollection services)
+        where THandler : IPayHandler where TProcessor : IPayProcessor<THandler, TQuery>
+    {
+        var builder = AddPayPreCheckout<THandler, TProcessor, TQuery>(services);
         var runner = builder.Build();
 
-        services.AddScoped<PreCheckoutChainRunner<THandler>>(_ => runner);
-        
+        services.AddScoped<PayChainRunner<THandler, TQuery>>(_ => runner);
+
         return runner;
     }
 }

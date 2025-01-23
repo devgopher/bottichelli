@@ -5,6 +5,7 @@ using Botticelli.Framework.Telegram.Extensions;
 using Botticelli.Framework.Telegram.Options;
 using Botticelli.Pay.Extensions;
 using Botticelli.Pay.Handlers;
+using Botticelli.Pay.Models;
 using Botticelli.Pay.Processors;
 using Botticelli.Pay.Telegram.Handlers;
 using Microsoft.Extensions.Configuration;
@@ -38,7 +39,8 @@ public static class ServiceCollectionExtensions
             analyticsOptionsBuilderFunc,
             serverSettingsBuilderFunc,
             dataAccessSettingsBuilderFunc,
-            o => o.AddSubHandler<BotPreCheckoutSubHandler>());
+            o => o.AddSubHandler<BotPreCheckoutSubHandler>()
+                .AddSubHandler<BotSuccessfulPaymentSubHandler>());
     }
 
     /// <summary>
@@ -50,8 +52,9 @@ public static class ServiceCollectionExtensions
     public static IServiceCollection AddTelegramPayBot<THandler>(this IServiceCollection services, IConfiguration configuration)
         where THandler : IPreCheckoutHandler, new()
     {
-        services.AddPayments<THandler>();
+        services.AddPayments<THandler, , PreCheckoutQuery>();
 
-        return services.AddTelegramBot<TelegramPaymentBot>(configuration, o => o.AddSubHandler<BotPreCheckoutSubHandler>());
+        return services.AddTelegramBot<TelegramPaymentBot>(configuration, o => o.AddSubHandler<BotPreCheckoutSubHandler>()
+            .AddSubHandler<BotSuccessfulPaymentSubHandler>());
     }
 }

@@ -54,11 +54,11 @@ public class BotUpdateHandler : IBotUpdateHandler
                         ChatIdInnerIdLinks = new Dictionary<string, List<string>>
                         {
                             {
-                                botMessage.Chat.Id.ToString(),
-                                [botMessage.MessageId.ToString()]
+                                update.CallbackQuery?.Message.Chat?.Id.ToString(),
+                                [update.CallbackQuery.Message?.MessageId.ToString()]
                             }
                         },
-                        ChatIds = [botMessage.Chat.Id.ToString()],
+                        ChatIds = [update.CallbackQuery?.Message.Chat.Id.ToString()],
                         CallbackData = update.CallbackQuery?.Data ?? string.Empty,
                         CreatedAt = update.Message?.Date ?? DateTime.Now,
                         LastModifiedAt = update.Message?.Date ?? DateTime.Now,
@@ -131,19 +131,18 @@ public class BotUpdateHandler : IBotUpdateHandler
                         : null
                 };
             }
-            
-
-            if (botticelliMessage == null)
-                throw new NullReferenceException("botticelliMessage");
-            
-            await Process(botticelliMessage, cancellationToken);
-
+         
             foreach (var subHandler in _subHandlers) await subHandler.Process(botClient, update, cancellationToken);
-            
-            MessageReceived?.Invoke(this, new MessageReceivedBotEventArgs
+
+            if (botticelliMessage != null)
             {
-                Message = botticelliMessage
-            });
+                await Process(botticelliMessage, cancellationToken);
+
+                MessageReceived?.Invoke(this, new MessageReceivedBotEventArgs
+                {
+                    Message = botticelliMessage
+                });
+            }
 
             _logger.LogDebug($"{nameof(HandleUpdateAsync)}() finished...");
         }

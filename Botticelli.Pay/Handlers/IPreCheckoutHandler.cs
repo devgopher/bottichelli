@@ -1,6 +1,6 @@
 namespace Botticelli.Pay.Handlers;
 
-public interface IPreCheckoutHandler
+public interface IPreCheckoutHandler : IPayHandler
 {
     
 }

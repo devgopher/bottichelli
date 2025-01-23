@@ -7,15 +7,17 @@ namespace Botticelli.Pay.Processors;
 ///     Chain runner
 /// </summary>
 /// <typeparam name="THandler"></typeparam>
-public class PreCheckoutChainRunner<THandler> where THandler : IPreCheckoutHandler
+/// <typeparam name="TQuery"></typeparam>
+public class PayChainRunner<THandler, TQuery> where THandler : IPayHandler
 {
-    private readonly List<IPreCheckoutProcessor<THandler>> _preCheckoutProcessors;
+    private readonly List<IPayProcessor<THandler, TQuery>> _preCheckoutProcessors;
 
-    public PreCheckoutChainRunner(IEnumerable<IPreCheckoutProcessor<THandler>> preCheckoutProcessors) => _preCheckoutProcessors = preCheckoutProcessors.ToList();
+    public PayChainRunner(IEnumerable<IPayProcessor<THandler, TQuery>> preCheckoutProcessors) 
+        => _preCheckoutProcessors = preCheckoutProcessors.ToList();
 
-    public PreCheckoutChainRunner() => _preCheckoutProcessors = [];
+    public PayChainRunner() => _preCheckoutProcessors = [];
     
-    public async Task<(bool isSuccessful, string errorMessage)> Run(PreCheckoutQuery request,
+    public async Task<(bool isSuccessful, string errorMessage)> Run(TQuery request,
         CancellationToken token)
     {
         (bool isSuccessful, string errorMessage) procResult = (true, string.Empty);

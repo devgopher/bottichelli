@@ -56,7 +56,7 @@ public class SendInvoiceCommandProcessor<TReplyMarkup> : CommandProcessor<SendIn
                             Amount = 150
                         }
                     ],
-                    ProviderToken = ""
+                    ProviderToken = "1744374395:TEST:ba361a2dee6c29728a34"
                 }
             }
         };

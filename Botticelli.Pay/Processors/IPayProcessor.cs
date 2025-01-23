@@ -7,9 +7,9 @@ namespace Botticelli.Pay.Processors;
 ///     PreCheckout entity processor interface
 /// </summary>
 // ReSharper disable once UnusedTypeParameter
-public interface IPreCheckoutProcessor<THandler>
-    where THandler : IPreCheckoutHandler
+public interface IPayProcessor<THandler, in TQuery>
+    where THandler : IPayHandler
 {
-    public Task<(bool isSuccess, string errorMessage)> Process(PreCheckoutQuery request,
+    public Task<(bool isSuccess, string errorMessage)> Process(TQuery request,
         CancellationToken token);
 }
