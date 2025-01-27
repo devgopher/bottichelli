@@ -118,6 +118,8 @@ public abstract class CommandProcessor<TCommand> : ICommandProcessor
         {
             _metricsProcessor.Process(MetricNames.BotError, BotDataUtils.GetBotId());
             Logger.LogError(ex, $"Error in {GetType().Name}: {ex.Message}");
+            
+            await InnerProcessError(message, ex, token);
         }
     }
 
@@ -190,4 +192,5 @@ public abstract class CommandProcessor<TCommand> : ICommandProcessor
     protected virtual Task InnerProcessPoll(Message message, CancellationToken token) => Task.CompletedTask;
     protected virtual Task InnerProcessLocation(Message message, CancellationToken token) => Task.CompletedTask;
     protected abstract Task InnerProcess(Message message, CancellationToken token);
+    protected virtual Task InnerProcessError(Message message, Exception? ex, CancellationToken token) => Task.CompletedTask;
 }
