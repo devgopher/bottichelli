@@ -229,6 +229,12 @@ _pkginfo.txt
 *.appxbundle
 *.appxupload
 
+*.db
+*.db-dhm
+*.db-wal
+
+*.patch
+
 # Visual Studio cache files
 # files ending in .cache can be ignored
 *.[Cc]ache
