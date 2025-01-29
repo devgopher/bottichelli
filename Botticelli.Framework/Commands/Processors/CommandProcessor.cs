@@ -120,7 +120,7 @@ public abstract class CommandProcessor<TCommand> : ICommandProcessor
             _metricsProcessor.Process(MetricNames.BotError, BotDataUtils.GetBotId());
             Logger.LogError(ex, $"Error in {GetType().Name}: {ex.Message}");
 
-            await InnerProcessError(message, token);
+            await InnerProcessError(message, ex, token);
         }
     }
 

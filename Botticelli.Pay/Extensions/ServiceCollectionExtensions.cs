@@ -23,7 +23,7 @@ public static class ServiceCollectionExtensions
 
     public static PayChainBuilder<THandler, TProcessor, TQuery> AddPayPreCheckout<THandler, TProcessor, TQuery>(
         this IServiceCollection services,
-        IPayProcessor<THandler, TQuery> processor)
+        TProcessor processor)
         where THandler : IPreCheckoutHandler, new()
         where TProcessor : IPayProcessor<THandler, TQuery>, new()
         => AddPayPreCheckouts<THandler, TProcessor, TQuery>(services)

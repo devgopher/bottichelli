@@ -24,16 +24,16 @@ public static class ServiceCollectionExtensions
     /// <param name="serverSettingsBuilderFunc"></param>
     /// <param name="dataAccessSettingsBuilderFunc"></param>
     /// <returns></returns>
-    public static IServiceCollection AddTelegramPayBot<THandler>(this IServiceCollection services,
+    public static IServiceCollection AddTelegramPayBot<THandler, TProcessor, TQuery>(this IServiceCollection services,
         Action<BotSettingsBuilder<TelegramBotSettings>> optionsBuilderFunc,
         Action<AnalyticsClientSettingsBuilder<AnalyticsClientSettings>> analyticsOptionsBuilderFunc,
         Action<ServerSettingsBuilder<ServerSettings>> serverSettingsBuilderFunc,
         Action<DataAccessSettingsBuilder<DataAccessSettings>> dataAccessSettingsBuilderFunc)
         where THandler : IPreCheckoutHandler, new()
+        where TProcessor : IPayProcessor<THandler, TQuery>
     {
-        services.AddPayments<THandler>();
-        
-        
+        services.AddPayments<THandler, TProcessor, TQuery>();
+
         return services.AddTelegramBot<TelegramPaymentBot>(
             optionsBuilderFunc,
             analyticsOptionsBuilderFunc,
@@ -49,10 +49,11 @@ public static class ServiceCollectionExtensions
     /// <param name="services"></param>
     /// <param name="configuration"></param>
     /// <returns></returns>
-    public static IServiceCollection AddTelegramPayBot<THandler>(this IServiceCollection services, IConfiguration configuration)
+    public static IServiceCollection AddTelegramPayBot<THandler, TProcessor>(this IServiceCollection services, IConfiguration configuration)
         where THandler : IPreCheckoutHandler, new()
+        where TProcessor : IPayProcessor<THandler, PreCheckoutQuery>
     {
-        services.AddPayments<THandler, , PreCheckoutQuery>();
+        services.AddPayments<THandler, TProcessor, PreCheckoutQuery>();
 
         return services.AddTelegramBot<TelegramPaymentBot>(configuration, o => o.AddSubHandler<BotPreCheckoutSubHandler>()
             .AddSubHandler<BotSuccessfulPaymentSubHandler>());

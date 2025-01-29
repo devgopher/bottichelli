@@ -2,6 +2,8 @@ using Botticelli.Framework.Commands.Validators;
 using Botticelli.Framework.Controls.Parsers;
 using Botticelli.Framework.Extensions;
 using Botticelli.Framework.Telegram;
+using Botticelli.Pay.Models;
+using Botticelli.Pay.Processors;
 using Botticelli.Pay.Telegram.Extensions;
 using NLog.Extensions.Logging;
 using Telegram.Bot.Types.ReplyMarkups;
@@ -12,7 +14,7 @@ using TelegramPayBot.Handlers;
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Services
-    .AddTelegramPayBot<PayPreCheckoutHandler>(builder.Configuration)
+    .AddTelegramPayBot<PayPreCheckoutHandler, DummyPayProcessor<PayPreCheckoutHandler, PreCheckoutQuery>>(builder.Configuration)
     .AddLogging(cfg => cfg.AddNLog())
     .AddScoped<ILayoutParser, JsonLayoutParser>();
 
