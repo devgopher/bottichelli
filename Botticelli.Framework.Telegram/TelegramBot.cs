@@ -268,7 +268,7 @@ public sealed class TelegramBot : BaseBot<TelegramBot>
                             message = await _client.SendAudioAsync(link.chatId,
                                 audio,
                                 caption: request.Message.Subject,
-                                parseMode: ParseMode.MarkdownV2,
+                                parseMode: ParseMode.Html,
                                 replyToMessageId: request.Message.ReplyToMessageUid != default
                                     ? int.Parse(request.Message.ReplyToMessageUid)
                                     : default,
@@ -306,7 +306,7 @@ public sealed class TelegramBot : BaseBot<TelegramBot>
                             message = await _client.SendVoiceAsync(link.chatId,
                                 voice,
                                 caption: request.Message.Subject,
-                                parseMode: ParseMode.MarkdownV2,
+                                parseMode: ParseMode.Html,
                                 replyToMessageId: request.Message.ReplyToMessageUid != default
                                     ? int.Parse(request.Message.ReplyToMessageUid)
                                     : default,
@@ -387,7 +387,7 @@ public sealed class TelegramBot : BaseBot<TelegramBot>
         await _client.EditMessageTextAsync(chatId: link.chatId,
             messageId: int.Parse(link.innerId),
             sendText,
-            parseMode: ParseMode.MarkdownV2,
+            parseMode: ParseMode.Html,
             replyMarkup: replyMarkup as InlineKeyboardMarkup,
             cancellationToken: token);
     }
@@ -397,7 +397,7 @@ public sealed class TelegramBot : BaseBot<TelegramBot>
     {
         var sentMessage = await _client.SendTextMessageAsync(link.chatId,
             sendText,
-            parseMode: ParseMode.MarkdownV2,
+            parseMode: ParseMode.Html,
             replyToMessageId: request.Message.ReplyToMessageUid != null
                 ? int.Parse(request.Message.ReplyToMessageUid)
                 : 0,
