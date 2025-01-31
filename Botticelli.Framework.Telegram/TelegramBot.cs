@@ -100,7 +100,6 @@ public sealed class TelegramBot : BaseBot<TelegramBot>
                 catch ( Exception ex)
                 {
                     Logger.LogError(ex, "Failed to delete chat message");
-                    throw;
                 }
             }
 
