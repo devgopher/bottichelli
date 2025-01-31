@@ -88,13 +88,22 @@ public sealed class TelegramBot : BaseBot<TelegramBot>
         {
             if (string.IsNullOrWhiteSpace(request.Uid)) throw new BotException("request/message is null!");
 
-            foreach (var innerId in request.Message.ChatIdInnerIdLinks.SelectMany(link => link.Value))
+            foreach (var link in request.Message.ChatIdInnerIdLinks)
+            foreach (var innerId in link.Value)
             {
-                await _client.DeleteMessageAsync(innerId,
-                    int.Parse(request.Uid),
-                    token);                
+                try
+                {
+                    await _client.DeleteMessageAsync(link.Key,
+                        int.Parse(innerId),
+                        token);
+                }
+                catch ( Exception ex)
+                {
+                    Logger.LogError(ex, "Failed to delete chat message");
+                    throw;
+                }
             }
-            
+
             response.MessageRemovedStatus = MessageRemovedStatus.Ok;
         }
         catch
@@ -191,7 +200,7 @@ public sealed class TelegramBot : BaseBot<TelegramBot>
                     {
                         if (!isUpdate)
                         {
-                            await TrySend(request, token, sendText, replyMarkup, link);
+                            await TrySend(request, token, sendText, replyMarkup, link, response);
                         }
                         else
                         {
@@ -201,7 +210,7 @@ public sealed class TelegramBot : BaseBot<TelegramBot>
                             }
                             catch (ApiRequestException ex)
                             {
-                                await TrySend(request, token, sendText, replyMarkup, link);
+                                await TrySend(request, token, sendText, replyMarkup, link, response);
                             }
                         }
                     }
@@ -393,7 +402,7 @@ public sealed class TelegramBot : BaseBot<TelegramBot>
     }
 
     private async Task TrySend(SendMessageRequest request, CancellationToken token, string sendText,
-        IReplyMarkup? replyMarkup, (string chatId, string innerId) link)
+        IReplyMarkup? replyMarkup, (string chatId, string innerId) link, SendMessageResponse response)
     {
         var sentMessage = await _client.SendTextMessageAsync(link.chatId,
             sendText,
@@ -405,6 +414,8 @@ public sealed class TelegramBot : BaseBot<TelegramBot>
             cancellationToken: token);
 
         link.innerId = sentMessage.MessageId.ToString();
+
+        AddChatIdInnerIdLink(response, link.chatId, sentMessage);
     }
 
     private static void AddChatIdInnerIdLink(SendMessageResponse response, string chatId, Message message)
